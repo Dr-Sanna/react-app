@@ -66,7 +66,7 @@ axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/liens-utiles`)
         setCurrentAction('liens_utiles');
     })
     .catch(error => console.error('Erreur de récupération des liens utiles:', error));
-
+break;
             case 'accordeon':
                 // Charger les données nécessaires pour l'accordéon
                 // setActionData(lesDonnéesDeLAccordeon);
