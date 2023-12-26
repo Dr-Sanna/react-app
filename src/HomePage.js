@@ -13,10 +13,6 @@ const HomePage = () => {
     const [actionData, setActionData] = useState(null);
     const [header, setHeader] = useState(null);
     const [footer, setFooter] = useState(null);
-const createImageUrl = (basePath, imagePath) => {
-  // Assurez-vous qu'il y a exactement un slash entre les deux parties de l'URL
-  return `${basePath.replace(/\/+$/, '')}/${imagePath.replace(/^\/+/, '')}`;
-};
 
 
     useEffect(() => {
@@ -104,10 +100,11 @@ const handleBackClick = () => {
             <div className="circle-icon" onClick={() => isSousMatiere ? handleSousMatiereClick(item) : handleMatiereClick(item.id)}>
                 {item.attributes.image && item.attributes.image.data && (
 <img
-  src={createImageUrl(process.env.REACT_APP_STRAPI_URL, item.attributes.image.data.attributes.url)}
+  src={item.attributes.image.data.attributes.url}
   alt={item.attributes.titre}
   className="matiere-image"
 />
+
 
                 )}
             </div>
