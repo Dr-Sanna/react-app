@@ -13,6 +13,11 @@ const HomePage = () => {
     const [actionData, setActionData] = useState(null);
     const [header, setHeader] = useState(null);
     const [footer, setFooter] = useState(null);
+const createImageUrl = (basePath, imagePath) => {
+  // Assurez-vous qu'il y a exactement un slash entre les deux parties de l'URL
+  return `${basePath.replace(/\/+$/, '')}/${imagePath.replace(/^\/+/, '')}`;
+};
+
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/matieres?populate=*`)
@@ -98,11 +103,12 @@ const handleBackClick = () => {
         <div key={item.id} className="col-6 col-md-4 col-lg-2 text-center">
             <div className="circle-icon" onClick={() => isSousMatiere ? handleSousMatiereClick(item) : handleMatiereClick(item.id)}>
                 {item.attributes.image && item.attributes.image.data && (
-                    <img
-                        src={`${process.env.REACT_APP_STRAPI_URL}${item.attributes.image.data.attributes.url}`}
-                        alt={item.attributes.titre}
-                        className="matiere-image"
-                    />
+<img
+  src={createImageUrl(process.env.REACT_APP_STRAPI_URL, item.attributes.image.data.attributes.url)}
+  alt={item.attributes.titre}
+  className="matiere-image"
+/>
+
                 )}
             </div>
             <p>{item.attributes.titre}</p>
