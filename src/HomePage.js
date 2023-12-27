@@ -3,6 +3,7 @@ import axios from 'axios';
 import './HomePage.css';
 import LiensUtilesComponent from './LiensUtilesComponent';
 import AccordeonComponent from './AccordeonComponent';
+import { server } from './config'; // Ajustez le chemin selon l'organisation de vos fichiers
 
 const HomePage = () => {
     const [matieres, setMatieres] = useState([]);
@@ -95,22 +96,20 @@ const handleBackClick = () => {
 };
 
 
-    const renderMatiereItem = (item, isSousMatiere = false) => (
-        <div key={item.id} className="col-6 col-md-4 col-lg-2 text-center">
-            <div className="circle-icon" onClick={() => isSousMatiere ? handleSousMatiereClick(item) : handleMatiereClick(item.id)}>
-                {item.attributes.image && item.attributes.image.data && (
-<img
-  src={item.attributes.image.data.attributes.url}
-  alt={item.attributes.titre}
-  className="matiere-image"
-/>
-
-
-                )}
-            </div>
-            <p>{item.attributes.titre}</p>
+const renderMatiereItem = (item, isSousMatiere = false) => (
+    <div key={item.id} className="col-6 col-md-4 col-lg-2 text-center">
+        <div className="circle-icon" onClick={() => isSousMatiere ? handleSousMatiereClick(item) : handleMatiereClick(item.id)}>
+            {item.attributes.image && item.attributes.image.data && (
+                <img
+                    src={`${server}${item.attributes.image.data.attributes.url}`}
+                    alt={item.attributes.titre}
+                    className="matiere-image"
+                />
+            )}
         </div>
-    );
+        <p>{item.attributes.titre}</p>
+    </div>
+);
 
     return (
         <div>
