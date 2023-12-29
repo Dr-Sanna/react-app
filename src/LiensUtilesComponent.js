@@ -1,15 +1,25 @@
 import React from 'react';
+import { ListGroup } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const LiensUtilesComponent = ({ liens }) => {
+    console.log('LiensUtilesComponent liens:', liens); // Log pour vérifier les données reçues
     return (
-        <div className="list-group">
+        <ListGroup>
             {liens.map(lien => (
-                <a key={lien.id} href={lien.url} target="_blank" rel="noopener noreferrer" className="list-group-item list-group-item-action">
-                    <h4 className="list-group-item-heading">{lien.titre}</h4>
-                    <p className="list-group-item-text">{lien.description}</p>
-                </a>
+                <ListGroup.Item 
+                    key={lien.id} // Utilisez l'ID comme clé unique
+                    action 
+                    href={lien.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                >
+                    <h4>{lien.titre}</h4>
+                    <p>{lien.description}</p>
+                </ListGroup.Item>
             ))}
-        </div>
+        </ListGroup>
     );
 };
 

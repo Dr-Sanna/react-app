@@ -1,8 +1,8 @@
 /* Supprimez les marges par défaut du corps de la page */
 body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* Empêche le défilement horizontal si le contenu dépasse */
+}
+.ant-menu-item a {
+    text-decoration: none;
 }
 
 /* Style pour le header et le footer */
@@ -102,3 +102,7 @@ body {
 .btn-retour:hover {
     background-color: #0056b3; /* Couleur de fond au survol */
 }
+.card-hover-effect:hover {
+    transform: scale(1.05); /* Exemple d'effet de grossissement */
+}
+
