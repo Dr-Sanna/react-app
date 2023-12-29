@@ -16,7 +16,7 @@ const CasCliniquesComponent = () => {
 
     useEffect(() => {
     console.log('ID de la sous-matière:', sousMatiereId); 
-    axios.get(`${server}/api/cas-cliniques?populate=*&filters[sous_matiere][id][$eq]=${sousMatiereId}`)
+    axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*&filters[sous_matiere][id][$eq]=${sousMatiereId}`)
         .then(response => {
             console.log('Données des cas cliniques :', response.data); // Affichage des données
             if (response.data && response.data.data) {

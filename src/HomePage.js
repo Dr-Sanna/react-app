@@ -52,7 +52,7 @@ const HomePage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`${server}/api/cas-cliniques?populate=*`)
+        axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
             .then(response => {
                 if (response.data && response.data.data) {
                     setCasCliniques(response.data.data);
