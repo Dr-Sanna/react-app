@@ -3,11 +3,10 @@ import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import './HomePage.css';
 import LiensUtilesComponent from './LiensUtilesComponent';
-import AccordeonComponent from './AccordeonComponent';
 import CasCliniquesComponent from './CasCliniquesComponent';
 import { server } from './config';
 import { Layout, Menu } from 'antd';
-import { BrowserRouter as Router, Route, Routes, NavLink, useNavigate, useParams, useLocation, Link } from 'react-router-dom';
+import { Route, Routes, NavLink, useNavigate, useLocation, useParams } from 'react-router-dom';
 
 const { Header } = Layout;
 
@@ -96,9 +95,9 @@ const HomePage = () => {
 };
 
 const Matiere = ({ matieres, casCliniques }) => {
-    const { matiereTitle } = useParams();
     const [sousMatieres, setSousMatieres] = useState([]);
     const navigate = useNavigate();
+    const { matiereTitle } = useParams();
 
     useEffect(() => {
         const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === matiereTitle);
@@ -136,7 +135,8 @@ const handleSousMatiereClick = (sousMatiere) => {
 // Composant pour charger et afficher les liens utiles
 const LiensUtilesWithData = () => {
     const [liens, setLiens] = useState(null);
-    const { lienUtileTitle } = useParams(); // Utilisé si vous avez besoin de filtrer par titre
+    const { lienUtileTitle } = useParams(); // Récupération de lienUtileTitle de l'URL
+
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/liens-utiles`)

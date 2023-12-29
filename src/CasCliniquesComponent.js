@@ -4,7 +4,6 @@ import { server } from './config';
 import { Accordion, Card } from 'react-bootstrap';
 import { Layout, Menu } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
-import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 const { Sider } = Layout;

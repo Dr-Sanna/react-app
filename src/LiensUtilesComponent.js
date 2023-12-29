@@ -1,7 +1,6 @@
 import React from 'react';
 import { ListGroup } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+
 
 const LiensUtilesComponent = ({ liens }) => {
     console.log('LiensUtilesComponent liens:', liens); // Log pour vérifier les données reçues
