@@ -53,22 +53,32 @@ const CasCliniquesComponent = () => {
             <div className="flex-grow-1 overflow-auto p-3">
                 {selectedCas && (
                     <>
-                        <Card className="mb-4 shadow-sm">
-                            <Card.Body>
-                                <Card.Title>{selectedCas.attributes.titre}</Card.Title>
-                                 <Card.Img
-                                        variant="top"
-                                        src={`${server}${selectedCas.attributes.image.data.attributes.url}`}
-                                        style={{ height: '200px', objectFit: 'contain', cursor: 'pointer' }}
-                                        onClick={toggleModal}
-                                        title="Agrandir l'image"
-                                        alt={selectedCas.attributes.titre}
-                                    />
-                                <Card.Text style={{ marginTop: '15px', fontSize: '0.95rem', lineHeight: '1.5', textAlign: 'justify' }}>
-                                    {selectedCas.attributes.enonce}
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
+                       <Card className="mb-4 shadow-sm">
+    <Card.Body>
+        <Card.Title>{selectedCas.attributes.titre}</Card.Title>
+        <div style={{ textAlign: 'center' }}> {/* Centre l'image dans la carte */}
+            <img
+                src={`${server}${selectedCas.attributes.image.data.attributes.url}`}
+                style={{
+                    maxWidth: '100%',  // S'assure que l'image n'est pas plus large que le conteneur
+                    height: '200px',
+                    objectFit: 'contain',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                }}
+                onClick={toggleModal}
+                title="Cliquez pour agrandir"
+                alt={selectedCas.attributes.titre}
+                onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                onMouseOut={(e) => (e.currentTarget.style.transform = '')}
+            />
+        </div>
+        <Card.Text style={{ marginTop: '15px', fontSize: '0.95rem', lineHeight: '1.5', textAlign: 'justify' }}>
+            {selectedCas.attributes.enonce}
+        </Card.Text>
+    </Card.Body>
+</Card>
+
 
         <Accordion defaultActiveKey={activeKey}>
                             {selectedCas.attributes.question.map((q, index) => (

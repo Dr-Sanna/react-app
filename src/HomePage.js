@@ -10,7 +10,41 @@ import { Route, Routes, NavLink, useNavigate, useLocation, useParams } from 'rea
 
 const { Header } = Layout;
 
+// HeaderWithLogo : Composant pour afficher l'en-tête avec le logo.
+const HeaderWithLogo = () => {
+    // État pour stocker l'URL du logo.
+    const [logoUrl, setLogoUrl] = useState('');
+
+    // Effet pour charger le logo depuis Strapi au montage du composant.
+    useEffect(() => {
+        const fetchLogo = async () => {
+            try {
+                // Remplacez '[ID_OU_FILTRE]' par le critère spécifique pour votre logo.
+                const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
+                if (response.data && response.data.data && response.data.data.length > 0) {
+                    // Extraction de l'URL du logo depuis la réponse de l'API et mise à jour de l'état.
+                    const logoPath = response.data.data[0].attributes.image.data.attributes.url;
+                    setLogoUrl(`${process.env.REACT_APP_STRAPI_URL}${logoPath}`);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération du logo :', error);
+            }
+        };
+        fetchLogo();
+    }, []);
+
+    // Rendu du Header avec le logo.
+    return (
+        <Header style={{ display: 'flex', alignItems: 'center', backgroundColor: '#001529' }}>
+            {logoUrl && <img src={logoUrl} alt="Logo" style={{ height: '50px' }} />}
+            {/* Reste de votre code pour le menu... */}
+        </Header>
+    );
+};
+
+// DisplayItems : Composant pour afficher des items comme des matières ou des cas cliniques.
 const DisplayItems = ({ items, onClickItem }) => (
+    // Rendu des items dans un layout de grille avec une image et un titre.
     <Container fluid style={{ padding: 0, margin: 0 }}>
         <Row className="justify-content-center" style={{ margin: 0 }}>
             {items.map(item => (
@@ -31,16 +65,22 @@ const DisplayItems = ({ items, onClickItem }) => (
     </Container>
 );
 
+// toUrlFriendly : Fonction pour transformer un titre en format URL amical.
 const toUrlFriendly = (title) => {
     return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 };
 
+// HomePage : Composant principal de la page d'accueil.
 const HomePage = () => {
+    // États pour stocker les données des matières et des cas cliniques.
     const [matieres, setMatieres] = useState([]);
-    const [casCliniques, setCasCliniques] = useState([]); // Ajout de l'état pour les cas cliniques
+    const [casCliniques, setCasCliniques] = useState([]);
+
+    // Hooks pour la navigation et l'accès à l'emplacement actuel de la route.
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Chargement des données des matières au montage du composant.
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/matieres?populate=*`)
             .then(response => {
@@ -51,6 +91,7 @@ const HomePage = () => {
             .catch(error => console.error('Erreur de récupération des données:', error));
     }, []);
 
+    // Chargement des données des cas cliniques au montage du composant.
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
             .then(response => {
@@ -59,26 +100,29 @@ const HomePage = () => {
                 }
             })
             .catch(error => console.error('Erreur de récupération des cas cliniques:', error));
-    }, []); // Chargez les cas cliniques au chargement de la page
+    }, []);
 
+    // Fonction pour gérer le clic sur une matière et naviguer vers son URL.
     const handleMatiereClick = (matiere) => {
         const matiereTitleUrl = toUrlFriendly(matiere.attributes.titre);
         navigate(`/${matiereTitleUrl}`);
     };
 
+    // Configuration du menu de navigation et de son état sélectionné.
     const selectedKeys = location.pathname === '/' ? ['1'] : [];
     const menuItems = [
         {
             key: '1',
             label: (<NavLink to="/">Accueil</NavLink>),
         },
-        // Ajoutez d'autres éléments de menu ici si nécessaire
+        // Ajoutez d'autres éléments de menu ici si nécessaire.
     ];
 
+    // Rendu de la structure générale de la page avec un Header, un Layout et des Routes.
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ height: '10vh', padding: 0, display: 'flex', alignItems: 'center', backgroundColor: '#001529' }}>
-                <div className="logo" />
+                <HeaderWithLogo />  {/* Utilisation du composant HeaderWithLogo ici */}
                 <Menu theme="dark" mode="horizontal" selectedKeys={selectedKeys} items={menuItems} style={{ lineHeight: '10vh' }} />
             </Header>
 
