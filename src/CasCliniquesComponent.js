@@ -4,6 +4,7 @@ import { Card, Accordion, Modal } from 'react-bootstrap';
 import { Layout, Menu } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
+import { server } from './config';
 
 const { Sider } = Layout;
 
@@ -55,14 +56,14 @@ const CasCliniquesComponent = () => {
                         <Card className="mb-4 shadow-sm">
                             <Card.Body>
                                 <Card.Title>{selectedCas.attributes.titre}</Card.Title>
-                                <Card.Img
-                                    variant="top"
-                                    src={`${process.env.REACT_APP_STRAPI_URL}${selectedCas.attributes.image.data.attributes.url}`}
-                                    style={{ height: '200px', objectFit: 'contain', cursor: 'pointer' }} // Pointeur uniquement sur l'image
-                                    onClick={toggleModal}
-                                    title="Agrandir l'image"
-                                    alt={selectedCas.attributes.titre}
-                                />
+                                 <Card.Img
+                                        variant="top"
+                                        src={`${server}${selectedCas.attributes.image.data.attributes.url}`}
+                                        style={{ height: '200px', objectFit: 'contain', cursor: 'pointer' }}
+                                        onClick={toggleModal}
+                                        title="Agrandir l'image"
+                                        alt={selectedCas.attributes.titre}
+                                    />
                                 <Card.Text style={{ marginTop: '15px', fontSize: '0.95rem', lineHeight: '1.5', textAlign: 'justify' }}>
                                     {selectedCas.attributes.enonce}
                                 </Card.Text>
@@ -82,22 +83,24 @@ const CasCliniquesComponent = () => {
                             ))}
                         </Accordion>
 
-                        <Modal show={showModal} onHide={toggleModal} size="xl" centered>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{selectedCas.attributes.titre}</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body className="d-flex justify-content-center align-items-center" style={{ overflow: 'hidden', maxHeight: '90vh' }}>
-                                <img
-                                    src={`${process.env.REACT_APP_STRAPI_URL}${selectedCas.attributes.image.data.attributes.url}`}
-                                    style={{
-                                        maxHeight: '70vh',
-                                        maxWidth: '100%',
-                                        objectFit: 'contain'
-                                    }}
-                                    alt="Agrandissement"
-                                />
-                            </Modal.Body>
-                        </Modal>
+<Modal show={showModal} onHide={toggleModal} size="xl" centered>
+    <Modal.Header closeButton>
+        <Modal.Title>{selectedCas.attributes.titre}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body className="d-flex justify-content-center align-items-center" style={{ overflow: 'hidden', maxHeight: '90vh' }}>
+        {selectedCas.attributes.image && selectedCas.attributes.image.data && (
+            <img
+                src={`${server}${selectedCas.attributes.image.data.attributes.url}`}  // Utilisez la variable server pour construire l'URL
+                style={{
+                    maxHeight: '70vh',
+                    maxWidth: '100%',
+                    objectFit: 'contain'
+                }}
+                alt="Agrandissement"
+            />
+        )}
+    </Modal.Body>
+</Modal>
                     </>
                 )}
             </div>
