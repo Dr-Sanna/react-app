@@ -21,10 +21,11 @@ useEffect(() => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
             if (response.data && response.data.data && response.data.data.length > 0) {
-                // Extraction de l'URL du logo depuis la réponse de l'API et mise à jour de l'état.
-                // Utilisez directement logoPath car il est déjà formaté correctement.
-                const logoPath = response.data.data[0].attributes.image.data.attributes.url;
-                setLogoUrl(logoPath);
+                // Extraction du chemin relatif du logo depuis la réponse de l'API
+                const logoRelativePath = response.data.data[0].attributes.image.data.attributes.url;
+                // Construction de l'URL complète du logo en utilisant la variable 'server'
+                const logoFullPath = `${server}${logoRelativePath}`;
+                setLogoUrl(logoFullPath);
             }
         } catch (error) {
             console.error('Erreur lors de la récupération du logo :', error);
@@ -32,6 +33,7 @@ useEffect(() => {
     };
     fetchLogo();
 }, []);
+
 
     // Rendu du Header avec le logo.
     return (

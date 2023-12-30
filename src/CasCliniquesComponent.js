@@ -5,6 +5,7 @@ import { Layout, Menu } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 import { server } from './config';
+import ReactMarkdown from 'react-markdown';
 
 const { Sider } = Layout;
 
@@ -73,25 +74,36 @@ const CasCliniquesComponent = () => {
                 onMouseOut={(e) => (e.currentTarget.style.transform = '')}
             />
         </div>
-        <Card.Text style={{ marginTop: '15px', fontSize: '0.95rem', lineHeight: '1.5', textAlign: 'justify' }}>
-            {selectedCas.attributes.enonce}
-        </Card.Text>
+<Card.Text style={{ marginTop: '15px', fontSize: '0.95rem', lineHeight: '1.5', textAlign: 'justify' }}>
+    {selectedCas.attributes.enonce.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+            {line}
+            <br />
+        </React.Fragment>
+    ))}
+</Card.Text>
+
     </Card.Body>
 </Card>
 
 
-        <Accordion defaultActiveKey={activeKey}>
-                            {selectedCas.attributes.question.map((q, index) => (
-                                <Accordion.Item eventKey={index.toString()} key={index} style={{ marginBottom: '10px' }}>
-                                    <Accordion.Header onClick={() => handleAccordionClick(index.toString())}>
-                                        {q.question}
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        {selectedCas.attributes.correction.find(c => c.id === q.id)?.correction}
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            ))}
-                        </Accordion>
+<Accordion defaultActiveKey={activeKey}>
+    {selectedCas.attributes.question.map((q, index) => (
+    <Accordion.Item eventKey={index.toString()} key={index}>
+        <Accordion.Header onClick={() => handleAccordionClick(index.toString())}>
+            {q.question}
+        </Accordion.Header>
+        <Accordion.Body>
+            <ReactMarkdown>
+                {/* Utilisez l'index pour récupérer la réponse correspondante */}
+                {selectedCas.attributes.correction[index]?.correction}
+            </ReactMarkdown>
+        </Accordion.Body>
+    </Accordion.Item>
+))}
+
+</Accordion>
+
 
 <Modal show={showModal} onHide={toggleModal} size="xl" centered>
     <Modal.Header closeButton>
