@@ -16,22 +16,22 @@ const HeaderWithLogo = () => {
     const [logoUrl, setLogoUrl] = useState('');
 
     // Effet pour charger le logo depuis Strapi au montage du composant.
-    useEffect(() => {
-        const fetchLogo = async () => {
-            try {
-                // Remplacez '[ID_OU_FILTRE]' par le critère spécifique pour votre logo.
-                const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
-                if (response.data && response.data.data && response.data.data.length > 0) {
-                    // Extraction de l'URL du logo depuis la réponse de l'API et mise à jour de l'état.
-                    const logoPath = response.data.data[0].attributes.image.data.attributes.url;
-                    setLogoUrl(`${process.env.REACT_APP_STRAPI_URL}${logoPath}`);
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération du logo :', error);
+useEffect(() => {
+    const fetchLogo = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
+            if (response.data && response.data.data && response.data.data.length > 0) {
+                // Extraction de l'URL du logo depuis la réponse de l'API et mise à jour de l'état.
+                // Utilisez directement logoPath car il est déjà formaté correctement.
+                const logoPath = response.data.data[0].attributes.image.data.attributes.url;
+                setLogoUrl(logoPath);
             }
-        };
-        fetchLogo();
-    }, []);
+        } catch (error) {
+            console.error('Erreur lors de la récupération du logo :', error);
+        }
+    };
+    fetchLogo();
+}, []);
 
     // Rendu du Header avec le logo.
     return (
