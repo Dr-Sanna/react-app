@@ -4,6 +4,13 @@ import ReactMarkdown from 'react-markdown';
 import { CustomAccordion, CustomAccordionSummary, CustomAccordionDetails } from './CustomAccordion';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { server } from './config';
+import CustomList from './CustomList';
+
+const markdownComponents = {
+  // Lorsque ReactMarkdown rencontre un élément 'ul', il utilisera CustomList
+  ul: ({ children }) => <CustomList items={React.Children.toArray(children).filter(child => child.type === 'li')} />,
+  // Vous pouvez ajouter d'autres remplacements de composants si nécessaire
+};
 
 const CasDetailComponent = ({ selectedCas }) => {
   if (!selectedCas || !selectedCas.attributes) {
@@ -39,7 +46,7 @@ const CasDetailComponent = ({ selectedCas }) => {
           <CustomAccordionDetails style={{ paddingBottom: '10px' }}>
             <div>
               {/* Utiliser l'index pour trouver la correction correspondante */}
-              <ReactMarkdown>
+              <ReactMarkdown components={markdownComponents}>
                 {corrections[index]?.correction || 'Pas de correction disponible.'}
               </ReactMarkdown>
             </div>
