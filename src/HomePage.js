@@ -7,39 +7,68 @@ import CasCliniquesComponent from './CasCliniquesComponent';
 import { server } from './config';
 import { Layout, Menu } from 'antd';
 import { Route, Routes, NavLink, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { FaReact } from 'react-icons/fa'; // Importez les icônes de GitHub et Strapi
+import { SiStrapi } from 'react-icons/si'; // Importez les icônes de GitHub et Strapi
 
 const { Header } = Layout;
 
 // HeaderWithLogo : Composant pour afficher l'en-tête avec le logo.
 const HeaderWithLogo = () => {
-    // État pour stocker l'URL du logo.
     const [logoUrl, setLogoUrl] = useState('');
 
-    // Effet pour charger le logo depuis Strapi au montage du composant.
-useEffect(() => {
-    const fetchLogo = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
-            if (response.data && response.data.data && response.data.data.length > 0) {
-                // Extraction du chemin relatif du logo depuis la réponse de l'API
-                const logoRelativePath = response.data.data[0].attributes.image.data.attributes.url;
-                // Construction de l'URL complète du logo en utilisant la variable 'server'
-                const logoFullPath = `${server}${logoRelativePath}`;
-                setLogoUrl(logoFullPath);
+    useEffect(() => {
+        const fetchLogo = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/designs?filters[titre][$eq]=logo&populate=*`);
+                if (response.data && response.data.data && response.data.data.length > 0) {
+                    const logoRelativePath = response.data.data[0].attributes.image.data.attributes.url;
+                    const logoFullPath = `${server}${logoRelativePath}`;
+                    setLogoUrl(logoFullPath);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération du logo :', error);
             }
-        } catch (error) {
-            console.error('Erreur lors de la récupération du logo :', error);
-        }
-    };
-    fetchLogo();
-}, []);
+        };
+        fetchLogo();
+    }, []);
 
+return (
+        <Header style={{ 
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center', 
+            backgroundColor: '#f6f6f9', // Couleur de fond gris plus clair
+            borderBottom: '1px solid #d9d9d9', // Bordure pour délimiter, ajustez selon vos préférences
+            padding: '0 20px',
+            height: '10vh'
+        }}>
+            {/* Section Logo */}
+            <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}> {/* Ajoutez une div pour le logo et le titre */}
+                {logoUrl && (
+                    <NavLink to="/">
+                        <img 
+                            src={logoUrl} 
+                            alt="Logo" 
+                            style={{ height: '50px', cursor: 'pointer', marginRight: '15px' }} 
+                            className="logo-shake" 
+                        />
+                    </NavLink>
+                )}
+                <h3 style={{ margin: '0', color: '#333' }}>Dr Sanna</h3> {/* h3 à côté du logo */}
+            </div>
 
-    // Rendu du Header avec le logo.
-    return (
-        <Header style={{ display: 'flex', alignItems: 'center', backgroundColor: '#001529' }}>
-            {logoUrl && <img src={logoUrl} alt="Logo" style={{ height: '50px' }} />}
-            {/* Reste de votre code pour le menu... */}
+            <div style={{ flex: 2 }}></div> {/* Espace vide pour centrer les icônes à droite */}
+
+            {/* Section Icônes */}
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                
+                <a href="https://react.dev/" target="_blank" rel="noopener noreferrer">
+                    <FaReact style={{ fontSize: '30px', margin: '0 5px' }} />
+                </a>
+                <a href="https://strapi.io/" target="_blank" rel="noopener noreferrer">
+                    <SiStrapi style={{ fontSize: '30px', margin: '0 5px' }} />
+                </a>
+            </div>
         </Header>
     );
 };
@@ -113,20 +142,24 @@ const HomePage = () => {
     // Configuration du menu de navigation et de son état sélectionné.
     const selectedKeys = location.pathname === '/' ? ['1'] : [];
     const menuItems = [
-        {
-            key: '1',
-            label: (<NavLink to="/">Accueil</NavLink>),
-        },
-        // Ajoutez d'autres éléments de menu ici si nécessaire.
+        // Autres éléments de menu que vous souhaitez conserver
     ];
 
     // Rendu de la structure générale de la page avec un Header, un Layout et des Routes.
-    return (
+        return (
         <Layout style={{ minHeight: '100vh' }}>
-            <Header style={{ height: '10vh', padding: 0, display: 'flex', alignItems: 'center', backgroundColor: '#001529' }}>
-                <HeaderWithLogo />  {/* Utilisation du composant HeaderWithLogo ici */}
-                <Menu theme="dark" mode="horizontal" selectedKeys={selectedKeys} items={menuItems} style={{ lineHeight: '10vh' }} />
-            </Header>
+            <HeaderWithLogo />  {/* Utilisation du composant HeaderWithLogo ici */}
+            <Menu 
+                theme="light" 
+                mode="horizontal" 
+                selectedKeys={selectedKeys} 
+                items={menuItems}
+                style={{ 
+                    lineHeight: '10vh',
+                    backgroundColor: '#d9d9d9', // Assurez-vous que la couleur correspond à celle de l'en-tête
+                    borderBottom: 'none' // Retirer la bordure par défaut du Menu
+                }}
+            />
 
             <Layout style={{ height: '90vh', overflow: 'auto' }}>
                 <Routes>

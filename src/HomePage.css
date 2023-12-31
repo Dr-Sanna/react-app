@@ -1,41 +1,6 @@
-/* Supprimez les marges par défaut du corps de la page */
-body {
-}
+
 .ant-menu-item a {
     text-decoration: none;
-}
-
-/* Style pour le header et le footer */
-.header, .footer {
-    width: 100%; /* Largeur de 100% de la fenêtre d'affichage */
-    display: block;
-}
-
-/* Style pour les images dans le header et le footer */
-.header img, .footer img {
-    width: 100%; /* Largeur de 100% de leur conteneur */
-    height: auto; /* Hauteur automatique pour conserver l'aspect ratio */
-    display: block; /* Élimine tout espace blanc sous l'image */
-}
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    /* Ajoutez d'autres styles pour le footer ici */
-}
-/* Style pour la bannière de bienvenue */
-.welcome-banner {
-    background-color: #81c9e2; /* Choisissez une couleur de fond */
-    text-align: center; /* Centre le texte */
-    padding: 5px 0; /* Espace au-dessus et en dessous du texte */
-}
-
-.welcome-banner h1 {
-    margin: 0; /* Supprime la marge par défaut */
-    font-family: 'Baloo 2', sans-serif; /* Utilise la police Baloo 2 */
-    font-size: 2rem; /* Taille de la police */
-    color: white; /* Couleur du texte */
 }
 
 .text-center p {
@@ -75,34 +40,14 @@ body {
 .circle-icon img:hover {
     animation: shake 0.4s ease;
 }
+.logo-shake:hover {
+  animation: shake 0.4s ease;
+}
 
 @keyframes shake {
     0%, 100% { transform: rotate(0); }
     25% { transform: rotate(-5deg); }
     50% { transform: rotate(5deg); }
     75% { transform: rotate(-5deg); }
-}
-
-
-/* Style pour le bouton de retour */
-.btn-retour {
-    position: fixed; /* Positionnement fixe par rapport à la fenêtre */
-    bottom: 20px; /* 20px du bas */
-    left: 50%; /* Centré horizontalement */
-    transform: translateX(-50%); /* Ajustement pour un centrage parfait */
-    padding: 10px 20px; /* Espacement interne */
-    background-color: #007bff; /* Couleur de fond */
-    color: white; /* Couleur du texte */
-    border: none; /* Pas de bordure */
-    border-radius: 5px; /* Bordures arrondies */
-    cursor: pointer; /* Curseur en forme de main */
-    z-index: 1000; /* S'assure qu'il est au-dessus des autres éléments */
-}
-
-.btn-retour:hover {
-    background-color: #0056b3; /* Couleur de fond au survol */
-}
-.card-hover-effect:hover {
-    transform: scale(1.05); /* Exemple d'effet de grossissement */
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import HomePage from './HomePage'; // Assurez-vous que le chemin est correct
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 function App() {
   return (
