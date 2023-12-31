@@ -8,7 +8,6 @@ import CustomLayout from './CustomLayout';
 import LeftMenu from './LeftMenu';
 import CasCardComponent from './CasCardComponent';
 import CasDetailComponent from './CasDetailComponent';
-import { server } from './config';
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
