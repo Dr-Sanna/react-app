@@ -162,12 +162,12 @@ const HomePage = () => {
             />
 
             <Layout style={{ height: '90vh', overflow: 'auto' }}>
-                <Routes>
-                    <Route exact path="/" element={<DisplayItems items={matieres} onClickItem={handleMatiereClick} />} />
-                    <Route path="/:matiereTitle" element={<Matiere matieres={matieres} casCliniques={casCliniques} />} />
-                    <Route path="/ressources-utiles/:lienUtileTitle" element={<LiensUtilesWithData />} />
-<Route path="/moco/:sousMatiereId" element={<CasCliniquesComponent />} />
-                </Routes>
+<Routes>
+  <Route path="/" element={<DisplayItems items={matieres} onClickItem={handleMatiereClick} />} />
+  <Route path="/:matiereTitle" element={<Matiere matieres={matieres} casCliniques={casCliniques} />} />
+  <Route path="/ressources-utiles/:lienUtileTitle" element={<LiensUtilesWithData />} />
+  <Route path="/moco/cas-cliniques-du-cneco/*" element={<CasCliniquesComponent />} />
+</Routes>
             </Layout>
         </Layout>
     );
