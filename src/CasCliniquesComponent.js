@@ -21,22 +21,26 @@ const CasCliniquesComponent = () => {
     return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   }, []);
 
+  // Définir ensuite updateSelectedCas avec useCallback
   const updateSelectedCas = useCallback((titre, casList) => {
-    const foundCas = casList.find(c => formatTitleForUrl(c.attributes.titre) === titre);
-    setSelectedCas(foundCas || null);
-  }, [formatTitleForUrl]); // useCallback ici
+    if (Array.isArray(casList)) {
+      const foundCas = casList.find(c => formatTitleForUrl(c.attributes.titre) === titre);
+      setSelectedCas(foundCas || null);
+    } else {
+      console.error("casList n'est pas un tableau:", casList);
+    }
+  }, [formatTitleForUrl]); // Dépendances ici
 
-  // Maintenant, updateSelectedCas est déclaré, vous pouvez l'utiliser dans useEffect
-
+  // Maintenant, vous pouvez utiliser updateSelectedCas dans useEffect
   useEffect(() => {
-    axios.get(`${server}/api/cas-cliniques?populate=*`)
+    axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
       .then(response => {
         const data = response.data && response.data.data;
         setCasCliniques(data || []);
         updateSelectedCas(titreCas, data);
       })
       .catch(error => console.error('Erreur de récupération des cas cliniques:', error));
-  }, [updateSelectedCas, titreCas]); // Inclure updateSelectedCas ici
+  }, [titreCas, updateSelectedCas]);
 
   useEffect(() => {
     if (location.pathname === "/moco/cas-cliniques-du-cneco") {
