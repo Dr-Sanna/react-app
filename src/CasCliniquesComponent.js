@@ -8,6 +8,7 @@ import CustomLayout from './CustomLayout';
 import LeftMenu from './LeftMenu';
 import CasCardComponent from './CasCardComponent';
 import CasDetailComponent from './CasDetailComponent';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ const CasCliniquesComponent = () => {
   const { titreCas } = useParams();
   const [casCliniques, setCasCliniques] = useState([]);
   const [selectedCas, setSelectedCas] = useState(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);  // Suivre le chargement de l'image
 
   const formatTitleForUrl = useCallback((title) => {
     return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
   }, []);
 
-  // Définir ensuite updateSelectedCas avec useCallback
   const updateSelectedCas = useCallback((titre, casList) => {
     if (Array.isArray(casList)) {
       const foundCas = casList.find(c => formatTitleForUrl(c.attributes.titre) === titre);
@@ -28,9 +29,8 @@ const CasCliniquesComponent = () => {
     } else {
       console.error("casList n'est pas un tableau:", casList);
     }
-  }, [formatTitleForUrl]); // Dépendances ici
+  }, [formatTitleForUrl]);
 
-  // Maintenant, vous pouvez utiliser updateSelectedCas dans useEffect
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
       .then(response => {
@@ -44,14 +44,22 @@ const CasCliniquesComponent = () => {
   useEffect(() => {
     if (location.pathname === "/moco/cas-cliniques-du-cneco") {
       setSelectedCas(null);
+      setIsImageLoaded(false);  // Réinitialiser lorsqu'on revient à la liste des cas
     } else {
       const titre = location.pathname.split("/").pop();
       updateSelectedCas(titre, casCliniques);
     }
   }, [location, casCliniques, updateSelectedCas]);
 
+  const simpleVariants = {
+    initial: { opacity: 0 },
+    enter: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, transition: { duration: 0.3 } }
+  };
+
   const handleSelection = (cas) => {
     setSelectedCas(cas);
+    setIsImageLoaded(false);  // Réinitialiser à chaque sélection d'un nouveau cas
     const formattedTitle = formatTitleForUrl(cas.attributes.titre);
     navigate(`/moco/cas-cliniques-du-cneco/${formattedTitle}`);
   };
@@ -65,10 +73,33 @@ const CasCliniquesComponent = () => {
 
   return (
     <CustomLayout leftSider={<LeftMenu menuItems={menuItems} selectedKey={selectedCas?.id?.toString() || ''} />}>
-      <PerfectScrollbar style={{ width: '65vw', padding: '2rem', backgroundColor: 'white' }}>
-        {!selectedCas
-          ? <CasCardComponent casCliniques={casCliniques} onSelection={handleSelection} />
-          : <CasDetailComponent selectedCas={selectedCas} />}
+      <PerfectScrollbar style={{ width: '65vw', padding: '1rem', backgroundColor: '#f5f5f5' }}>
+        <AnimatePresence mode="wait">
+          {!selectedCas
+            ? (
+                <motion.div
+                  key="card"
+                  variants={simpleVariants}
+                  initial="initial"
+                  animate="enter"
+                  exit="exit"
+                >
+                  <CasCardComponent casCliniques={casCliniques} onSelection={handleSelection} />
+                </motion.div>
+              )
+            : (
+                <motion.div
+                  key={selectedCas.id}
+                  variants={simpleVariants}
+                  initial="initial"
+                  animate={isImageLoaded ? "enter" : "initial"}  // Animer seulement lorsque l'image est chargée
+                  exit="exit"
+                >
+                  <CasDetailComponent selectedCas={selectedCas} onImageLoaded={() => setIsImageLoaded(true)} />
+                </motion.div>
+              )
+          }
+        </AnimatePresence>
       </PerfectScrollbar>
     </CustomLayout>
   );
