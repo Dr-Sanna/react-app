@@ -4,24 +4,41 @@ import { CustomAccordion, CustomAccordionSummary, CustomAccordionDetails } from 
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { server } from './config';
 import CustomListWithEmojis from './CustomListWithEmojis';
+import { preloadImage } from './utils'; // Assurez-vous que preloadImage est défini dans utils.js
+import { motion } from 'framer-motion';
 
-const CasDetailComponent = ({ selectedCas, onImageLoaded }) => {
+const CasDetailComponent = ({ selectedCas }) => {
   const [openAccordions, setOpenAccordions] = useState({});
+  const [isContentReady, setIsContentReady] = useState(false);
 
   useEffect(() => {
-    if (selectedCas && selectedCas.attributes && Array.isArray(selectedCas.attributes.question)) {
-      const initialAccordionState = {};
-      selectedCas.attributes.question.forEach((q, index) => {
-        initialAccordionState[index] = false; // Tous les accordéons sont fermés par défaut
-      });
-      setOpenAccordions(initialAccordionState);
-    } else {
-      setOpenAccordions({});
-    }
+    const initializeContent = async () => {
+      setIsContentReady(false);
+
+      if (selectedCas && selectedCas.attributes) {
+        const imageUrl = selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : '';
+        await preloadImage(imageUrl); // Preload the image
+
+        // Initialize the accordions based on the questions
+        if (selectedCas.attributes && Array.isArray(selectedCas.attributes.question)) {
+          const initialAccordionState = {};
+          selectedCas.attributes.question.forEach((q, index) => {
+            initialAccordionState[index] = false; // All accordions are closed by default
+          });
+          setOpenAccordions(initialAccordionState);
+        } else {
+          setOpenAccordions({});
+        }
+      }
+
+      setIsContentReady(true);
+    };
+
+    initializeContent();
   }, [selectedCas]);
 
-  if (!selectedCas || !selectedCas.attributes) {
-    return <div>Chargement du cas clinique, ou cas introuvable...</div>;
+  if (!isContentReady) {
+    return <div></div>; //loader
   }
 
   const handleAccordionToggle = (accordionId) => {
@@ -30,10 +47,17 @@ const CasDetailComponent = ({ selectedCas, onImageLoaded }) => {
       [accordionId]: !prevState[accordionId]
     }));
   };
-
+  
   const corrections = selectedCas.attributes.correction;
 
   return (
+    <motion.div 
+    key={selectedCas.id}
+  initial={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  exit={{ opacity: 0, scale: 0.8 }}
+  transition={{ type: 'spring', stiffness: 300, damping: 20, duration: 0.5 }}
+>
     <div style={{ 
       backgroundColor: 'white', 
       padding: '20px',
@@ -45,12 +69,11 @@ const CasDetailComponent = ({ selectedCas, onImageLoaded }) => {
     }}>
       <h3>{selectedCas.attributes.titre}</h3>
       <Image
-        width='50%'
-        style={{ maxWidth: '50vw', maxHeight: '50vh', objectFit: 'contain' }}
-        src={selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''}
-        preview={true}
-        onLoad={onImageLoaded}  // Appelé lorsque l'image est complètement chargée
-      />
+  width='50%'
+  style={{ maxWidth: '50vw', maxHeight: '50vh', objectFit: 'contain' }}
+  src={selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''}
+  preview={true}
+/>
       <div style={{ margin: '20px 0' }}>
         <CustomListWithEmojis markdownText={selectedCas.attributes.enonce} />
       </div>
@@ -77,7 +100,8 @@ const CasDetailComponent = ({ selectedCas, onImageLoaded }) => {
         </CustomAccordion>
       ))}
     </div>
+    </motion.div>
   );
-};
+}
 
 export default CasDetailComponent;
