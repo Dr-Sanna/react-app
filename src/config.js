@@ -2,7 +2,7 @@
 const dev = process.env.NODE_ENV !== 'production';
 
 // Configuration de l'URL du serveur en fonction de l'environnement
-export const server = dev ? process.env.REACT_APP_STRAPI_URL : 'https://your-production-url.com';
+export const server = dev ? process.env.REACT_APP_STRAPI_URL : '';
 
 // Fonction pour transformer un titre en format URL amical
 export const toUrlFriendly = (title) => {
