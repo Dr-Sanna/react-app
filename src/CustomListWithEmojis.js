@@ -1,5 +1,18 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Image } from 'antd';
+
+const MarkdownImage = ({ src, alt }) => {
+  return (
+    <Image
+      width='50vw'
+      style={{ maxWidth: '50vw', maxHeight: '50vh', objectFit: 'contain' }}
+      src={src}
+      alt={alt}
+      preview={true}
+    />
+  );
+};
 
 // Les emojis pour chaque niveau d'indentation
 const emojis = ['🚀', '🤒', '💊'];
@@ -34,8 +47,20 @@ const ListElement = ({ children, ...props }) => {
 };
 
 const Paragraph = ({ children }) => {
-  return <p style={{ marginTop: '0em', marginBottom: '1em' }}>{children}</p>;
+  // Vérifiez si l'enfant est une image
+  const isImage = React.Children.toArray(children).some(
+    (child) => child.type === MarkdownImage
+  );
+
+  if (isImage) {
+    // Rendre sans balise <p> si c'est une image
+    return <>{children}</>;
+  } else {
+    // Sinon, rendu normal avec <p>
+    return <p style={{ marginTop: '0em', marginBottom: '1em' }}>{children}</p>;
+  }
 };
+
 
 const Heading = ({ level, children, isFirstChild }) => {
   const Tag = `h${level}`;
@@ -56,6 +81,7 @@ const CustomListWithEmojis = ({ markdownText }) => {
         h2: props => <Heading {...props} level={2} />,
         h3: props => <Heading {...props} level={3} />,
         h4: (props) => <Heading {...props} level={4} isFirstChild={props.node.position.start.line === 1} />,
+        img: MarkdownImage,
       }}
     >
       {markdownText}

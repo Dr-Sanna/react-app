@@ -1,49 +1,31 @@
+// CustomAccordion.js
 import React from 'react';
-import MuiAccordion from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import { styled } from '@mui/material/styles';
 
-// Styles pour CustomAccordion
-const CustomAccordionStyled = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&::before': {
-    display: 'none',
-  },
-}));
+const CustomAccordion = ({ children, ...props }) => {
+  // props.disableGutters, props.elevation et props.square peuvent être utilisés ici si nécessaire
+  return (
+    <details className="details_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module isBrowser_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module alert alert--info details_node_modules-@docusaurus-theme-classic-lib-theme-Details-styles-module" {...props}>
+      {children}
+    </details>
+  );
+};
 
-// Styles pour CustomAccordionSummary
-const CustomAccordionSummaryStyled = styled((props) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
-  },
-}));
+const CustomAccordionSummary = ({ children, expandIcon, ...props }) => {
+  // Ici, vous pouvez gérer la logique de l'icône d'expansion si nécessaire
+  return (
+    <summary {...props}>
+      {children}
+    </summary>
+  );
+};
 
-// Styles pour CustomAccordionDetails
-const CustomAccordionDetailsStyled = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
+const CustomAccordionDetails = ({ children, ...props }) => {
+  return (
+    <div className="collapsibleContent_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module" {...props}>
+      {children}
+    </div>
+  );
+};
 
-export const CustomAccordion = ({ children, ...props }) => <CustomAccordionStyled {...props}>{children}</CustomAccordionStyled>;
-export const CustomAccordionSummary = ({ children, ...props }) => <CustomAccordionSummaryStyled {...props}>{children}</CustomAccordionSummaryStyled>;
-export const CustomAccordionDetails = ({ children, ...props }) => <CustomAccordionDetailsStyled {...props}>{children}</CustomAccordionDetailsStyled>;
+export { CustomAccordion, CustomAccordionSummary, CustomAccordionDetails };
+

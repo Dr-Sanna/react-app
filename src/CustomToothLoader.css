@@ -1,14 +1,9 @@
 .tooth-loader {
-  display: flex;
-  justify-content: center; /* Centre horizontalement */
-  align-items: center; /* Centre verticalement */
-  height: 100%; /* Ajoutez cette ligne pour occuper toute la hauteur parente */
   font-size: 48px; /* Ajustez la taille selon vos besoins */
-  animation: spin 2s linear infinite;
 }
 
 .tooth-emoji {
-  animation: spin 2s linear infinite; /* Ajoutez l'animation de rotation ici aussi si vous voulez que l'emoji tourne */
+  animation: spin 2s linear infinite;
 }
 
 @keyframes spin {

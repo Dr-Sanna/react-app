@@ -1,30 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+a{
+  cursor: pointer;
+}
 
 body {
-  line-height: 1.8; /* Augmente l'espace entre les lignes */
+  color: inherit; /* Remet la couleur du texte à sa valeur par défaut */
+  background-color: inherit; /* Remet la couleur d'arrière-plan à sa valeur par défaut */
+  /* Ajoutez toutes les autres propriétés que vous souhaitez surcharger */
+
+}
+.liens-utiles-container {
+  display: flex;
+  justify-content: center;
 }
 
-body p {
-  font-family: 'Poppins', sans-serif;
-  line-height: 1.8;
-  }
-
-  li {
-    font-family: 'Poppins', sans-serif;
-    }
-    
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700; /* Cela appliquera le style gras (700) à tous les titres */
+.liens-utiles-list {
+  list-style: none;
+  width: 75%; /* Limite la largeur à 75% de l'écran */
+  padding: 0; /* Supprime le padding par défaut */
 }
 
-body h1, body h2, body h3, body h4, body h5, body h6 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700; /* Cela appliquera le style gras (700) à tous les titres dans body */
+.liens-utiles-item {
+  background-color: #f8f9fa; /* Couleur de fond légère */
+  margin-bottom: 10px; /* Marge entre les éléments */
+  padding: 10px; /* Espace autour du contenu */
+  border: 1px solid #dee2e6; /* Bordure subtile */
+  border-radius: 5px; /* Coins arrondis */
 }
 
-body h3 {
-margin-bottom: 25px;
+.liens-utiles-link {
+  display: block; /* Transforme le lien en bloc pour remplir tout l'élément li */
+  text-decoration: none;
+  color: inherit;
+  padding: 10px; /* Espace autour du contenu */
+}
+
+.liens-utiles-link:hover {
+  background-color: #e9ecef; /* Changement de couleur au survol */
+  border-radius: 5px; /* Coins arrondis pour l'effet de survol */
+  text-decoration: none;
 }
 
 
