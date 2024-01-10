@@ -20,8 +20,8 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
     };
   }, []);
 
-  const handleMenuItemClick = (item) => {
-    // Exécuter toute action supplémentaire nécessaire pour l'élément de menu
+  const handleMenuItemClick = (item, event) => {
+    event.preventDefault();
     item.onClick();
 
     // Faire défiler le conteneur principal vers le haut
@@ -44,20 +44,23 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
       </a>
           <nav aria-label="Barre latérale des docs" className="menu thin-scrollbar menu_rWGR">
             <ul className="theme-doc-sidebar-menu menu__list">
-              {menuItems.map((item) => (
-                <li
-                  key={item.key}
-                  className="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"
-                >
-                  <a 
-                    className={`menu__link ${selectedKey === item.key ? 'menu__link--active' : ''}`} 
-                    onClick={() => handleMenuItemClick(item)}
-                    aria-current={selectedKey === item.key ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+            {menuItems.map((item) => (
+  <li
+    key={item.key}
+    className="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"
+  >
+    <a 
+  href={item.url} 
+  
+      className={`menu__link ${selectedKey === item.key ? 'menu__link--active' : ''}`}
+      onClick={(event) => handleMenuItemClick(item, event)}
+      aria-current={selectedKey === item.key ? 'page' : undefined}
+    >
+      {item.label}
+    </a>
+  </li>
+))}
+
               {/* Ajoutez ici les éléments pour les catégories ou sous-menus, si nécessaire */}
             </ul>
           </nav>

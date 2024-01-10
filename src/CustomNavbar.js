@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { DarkModeIcon, LightModeIcon } from "./IconComponents";
 
@@ -8,7 +8,7 @@ const CustomNavbar = () => {
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
   const [navbarClass, setNavbarClass] = useState("navbar navbar--fixed-top navbarHideable_uAgx");
 
-  let lastScrollY = window.scrollY;
+  const lastScrollY = useRef(window.scrollY); // Déclarez useRef ici
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -23,14 +23,14 @@ const CustomNavbar = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      if (currentScrollY < lastScrollY) {
+      if (currentScrollY < lastScrollY.current) {
         // Scrolling up
         setNavbarClass("navbar navbar--fixed-top navbarHideable_uAgx");
       } else {
         // Scrolling down
         setNavbarClass("navbar navbar--fixed-top navbarHideable_uAgx navbarHidden_QgM6");
       }
-      lastScrollY = currentScrollY;
+      lastScrollY.current = currentScrollY; // Mettez à jour la valeur de .current
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

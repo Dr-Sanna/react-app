@@ -91,8 +91,10 @@ const CasCliniquesComponent = () => {
   const menuItems = casCliniques.map((cas) => ({
     key: cas.id.toString(),
     label: cas.attributes.titre,
+    url: `/moco/cas-cliniques-du-cneco/${formatTitleForUrl(cas.attributes.titre)}`,
     onClick: () => handleSelection(cas),
   }));
+  
 
   return (
     
