@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Image } from 'antd';
-import { CustomAccordion, CustomAccordionSummary, CustomAccordionDetails } from './CustomAccordion';
+import CustomAccordion from './CustomAccordion'; // Mise à jour de l'importation
 import { server } from './config';
 import CustomListWithEmojis from './CustomListWithEmojis';
-import { preloadImage } from './utils'; // Assurez-vous que preloadImage est défini dans utils.js
+import { preloadImage } from './utils';
 import { motion } from 'framer-motion';
 
 const CasDetailComponent = ({ selectedCas }) => {
@@ -15,7 +15,7 @@ const CasDetailComponent = ({ selectedCas }) => {
 
       if (selectedCas && selectedCas.attributes) {
         const imageUrl = selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : '';
-        await preloadImage(imageUrl); // Preload the image
+        await preloadImage(imageUrl);
       }
 
       setIsContentReady(true);
@@ -25,7 +25,7 @@ const CasDetailComponent = ({ selectedCas }) => {
   }, [selectedCas]);
 
   if (!isContentReady) {
-    return <div>Chargement...</div>; // Vous pouvez mettre ici un loader plus élaboré si vous le souhaitez
+    return <div>Chargement...</div>;
   }
 
   const corrections = selectedCas.attributes.correction;
@@ -51,16 +51,15 @@ const CasDetailComponent = ({ selectedCas }) => {
         
         <h2>Questions</h2>
         {selectedCas.attributes.question.map((q, index) => (
-          <CustomAccordion key={index}>
-            <CustomAccordionSummary>
-              <p>{q.question}</p>
-            </CustomAccordionSummary>
-            <CustomAccordionDetails>
-              <div>
+          <CustomAccordion 
+            key={index}
+            title={<p>{q.question}</p>} 
+            content={
+              <div className="collapsibleContent_EoA1">
                 <CustomListWithEmojis markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} />
               </div>
-            </CustomAccordionDetails>
-          </CustomAccordion>
+            }
+          />
         ))}
       </div>
     </motion.div>

@@ -1,31 +1,58 @@
-// CustomAccordion.js
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const CustomAccordion = ({ children, ...props }) => {
-  // props.disableGutters, props.elevation et props.square peuvent être utilisés ici si nécessaire
+const CustomAccordion = ({ title, content }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const currentContent = contentRef.current;
+    if (!currentContent) return;
+
+    const updateHeight = () => {
+      currentContent.style.height = isOpen ? `${currentContent.scrollHeight}px` : '0px';
+    };
+
+    const transitionEnd = () => {
+      if (isOpen) {
+        currentContent.style.height = 'auto';
+      }
+      currentContent.removeEventListener('transitionend', transitionEnd);
+    };
+
+    currentContent.addEventListener('transitionend', transitionEnd);
+
+    updateHeight();
+
+    return () => {
+      currentContent.removeEventListener('transitionend', transitionEnd);
+    };
+  }, [isOpen]);
+
+  const toggleAccordion = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <details className="details_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module isBrowser_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module alert alert--info details_node_modules-@docusaurus-theme-classic-lib-theme-Details-styles-module" {...props}>
-      {children}
+    <details 
+      className="details_Nokh isBrowser_QrB5 alert alert--info details_Cn_P"
+      data-collapsed={!isOpen}
+      open={isOpen}
+      onClick={toggleAccordion}
+    >
+      <summary>{title}</summary>
+      <div 
+        ref={contentRef} 
+        style={{ 
+          height: '0px', 
+          overflow: 'hidden', 
+          transition: 'height 318ms ease-in-out' 
+        }}
+      >
+        {content}
+      </div>
     </details>
   );
 };
 
-const CustomAccordionSummary = ({ children, expandIcon, ...props }) => {
-  // Ici, vous pouvez gérer la logique de l'icône d'expansion si nécessaire
-  return (
-    <summary {...props}>
-      {children}
-    </summary>
-  );
-};
-
-const CustomAccordionDetails = ({ children, ...props }) => {
-  return (
-    <div className="collapsibleContent_node_modules-@docusaurus-theme-common-lib-components-Details-styles-module" {...props}>
-      {children}
-    </div>
-  );
-};
-
-export { CustomAccordion, CustomAccordionSummary, CustomAccordionDetails };
-
+export default CustomAccordion;

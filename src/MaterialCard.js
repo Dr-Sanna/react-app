@@ -47,8 +47,6 @@ const MaterialCard = React.memo(({ title, imageUrl, onClick }) => {
     <h6 style={{ 
       margin: '0', 
       padding: '0', 
-      fontFamily: 'Poppins', 
-      fontWeight: 700,
       minHeight: '60px', // Hauteur minimale basée sur le titre le plus long
     }}>
       {title}

@@ -91,68 +91,70 @@ const CasCliniquesComponent = () => {
   const menuItems = casCliniques.map((cas) => ({
     key: cas.id.toString(),
     label: cas.attributes.titre,
-    url: `/moco/cas-cliniques-du-cneco/${formatTitleForUrl(cas.attributes.titre)}`,
+    url: `/moco/cas-cliniques-du-cneco/${formatTitleForUrl(
+      cas.attributes.titre
+    )}`,
     onClick: () => handleSelection(cas),
   }));
-  
 
   return (
-    
     <div className="docsWrapper_lLmf">
-      <button aria-label="Retour au début de la page"
-        className="clean-btn theme-back-to-top-button backToTopButton_PuQw" type="button"></button>
+      <button
+        aria-label="Retour au début de la page"
+        className="clean-btn theme-back-to-top-button backToTopButton_PuQw"
+        type="button"
+      ></button>
       <div className="docRoot_kBZ6">
+        {/* Sidebar gauche */}
+        <LeftMenu
+          menuItems={menuItems}
+          selectedKey={selectedCas?.id?.toString() || ""}
+        />
 
-      {/* Sidebar gauche */}
-      <LeftMenu
-        menuItems={menuItems}
-        selectedKey={selectedCas?.id?.toString() || ""}
-      />
+        {/* Contenu principal */}
+        <main className="docMainContainer_EfwR">
+          <div className="container padding-top--md padding-bottom--lg">
+            <div className="row">
+              <div className="col docItemCol_n6xZ">
+                <div className="docItemContainer_RhpI">
+                  <article>
+                    <BreadcrumbsComponent
+                      currentPath={currentPath}
+                      selectedCas={selectedCas}
+                    />
 
-      {/* Contenu principal */}
-      <main className="docMainContainer_EfwR">
-        <div className="container padding-top--md padding-bottom--lg">
-          <div className="row">
-            
-            <div
-              className="col docItemCol_node_modules-@docusaurus-theme-classic-lib-theme-DocItem-Layout-styles-module"
-              >
-              <BreadcrumbsComponent
-                currentPath={currentPath}
-                selectedCas={selectedCas}
-              />
-              
-                {isLoading ? (
-                  // CustomToothLoader centré dans l'espace disponible
-                  <CustomToothLoader />
-                ) : !selectedCas ? (
-                  <CasCardComponent
-                    casCliniques={casCliniques}
-                    onSelection={handleSelection}
-                  />
-                ) : (
-                  // Afficher les détails d'un cas sélectionné
-                  <CasDetailComponent selectedCas={selectedCas} />
-                )}
-              
-            </div>
-
-            <div className="col col--3">
-            <div
-  className="tableOfContents_RLlU thin-scrollbar theme-doc-toc-desktop"
-  style={{ position: 'sticky', top: '76px' }}  // Ajoutez ceci
->
-                <ul className="table-of-contents table-of-contents__left-border" style={{ minHeight: '50vh' }}>
-                  
-                </ul>
+                    {isLoading ? (
+                      // CustomToothLoader centré dans l'espace disponible
+                      <CustomToothLoader />
+                    ) : !selectedCas ? (
+                      <CasCardComponent
+                        casCliniques={casCliniques}
+                        onSelection={handleSelection}
+                      />
+                    ) : (
+                      // Afficher les détails d'un cas sélectionné
+                      <CasDetailComponent selectedCas={selectedCas} />
+                    )}
+                  </article>
+                </div>
+                </div>
+                <div className="col col--3">
+                  <div
+                    className="tableOfContents_RLlU thin-scrollbar theme-doc-toc-desktop"
+                    
+                  >
+                    <ul
+                      className="table-of-contents table-of-contents__left-border"
+                      style={{ minHeight: "50vh" }}
+                    ></ul>
+                  </div>
+                
               </div>
             </div>
           </div>
-        </div>
         </main>
-        </div>
-        </div>
-    
+      </div>
+    </div>
   );
 };
 
