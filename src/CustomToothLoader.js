@@ -9,6 +9,4 @@ const CustomToothLoader = () => {
   );
 };
 
-
-
 export { CustomToothLoader }; // Exportez CustomToothLoader en tant qu'exportation nommée

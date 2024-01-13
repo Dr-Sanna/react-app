@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { CollapseIcon } from "./IconComponents";
+import { CollapseIcon, ExpandIcon } from "./IconComponents";
+import { useSidebarContext } from './SidebarContext'; // Importez le hook
 
 const LeftMenu = ({ menuItems, selectedKey }) => {
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));
+  const { isSidebarVisible, setIsSidebarVisible } = useSidebarContext();
+
+  const toggleSidebarVisibility = () => {
+    setIsSidebarVisible(!isSidebarVisible); // Bascule l'état de visibilité
+  };
 
   useEffect(() => {
     const themeObserver = new MutationObserver((mutations) => {
@@ -29,9 +35,9 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
   };
 
   return (
-    <aside className="theme-doc-sidebar-container docSidebarContainer_S51O">
-      <div className="sidebarViewport_K3q9">
-        <div className="sidebar_vtcw sidebarWithHideableNavbar_tZ9s">
+    <aside className={`theme-doc-sidebar-container docSidebarContainer_S51O ${isSidebarVisible ? '' : 'docSidebarContainerHidden_gbDM'}`}>
+      <div className={"sidebarViewport_K3q9"}>
+        <div className={`sidebar_vtcw sidebarWithHideableNavbar_tZ9s ${isSidebarVisible ? '' : 'sidebarHidden_PrHU'}`}>
           {/* Ajout du logo Docusaurus et du bouton pour réduire la barre latérale */}
           <a tabIndex="-1" className="sidebarLogo_UK0N" href="/">
         <img 
@@ -65,10 +71,29 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
             </ul>
           </nav>
           {/* Bouton pour réduire la barre latérale */}
-          <button type="button" title="Réduire la barre latérale" aria-label="Réduire la barre latérale" className="button button--secondary button--outline collapseSidebarButton_PUyN">
+          <button
+        type="button"
+        title="Réduire la barre latérale"
+        aria-label="Réduire la barre latérale"
+        className="button button--secondary button--outline collapseSidebarButton_PUyN"
+        onClick={toggleSidebarVisibility}
+      >
             <CollapseIcon /> {/* Utilisation de l'icône importée ici */}
           </button>
+          </div>
+      
+      {!isSidebarVisible && (
+        <div
+          className="expandButton_ockD"
+          title="Développer la barre latérale"
+          aria-label="Développer la barre latérale"
+          tabIndex="0"
+          role="button"
+          onClick={toggleSidebarVisibility}
+        >
+          <ExpandIcon />
         </div>
+      )}
       </div>
     </aside>
   );

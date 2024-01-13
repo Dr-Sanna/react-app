@@ -1,8 +1,18 @@
 .tooth-loader {
-  font-size: 48px; /* Ajustez la taille selon vos besoins */
+  position: fixed; /* Utilisez fixed au lieu de absolute pour le positionner par rapport au viewport */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Largeur du viewport */
+  height: 100vh; /* Hauteur du viewport */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent */
+  z-index: 1000; /* S'assurer qu'il est au-dessus des autres éléments */
 }
 
 .tooth-emoji {
+  font-size: 48px; /* Ajustez la taille selon vos besoins */
   animation: spin 2s linear infinite;
 }
 

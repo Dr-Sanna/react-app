@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-
 import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
@@ -10,6 +9,7 @@ import CasDetailComponent from "./CasDetailComponent";
 import { server } from "./config";
 import { preloadImage } from "./utils"; // Importez depuis utils.js
 import { CustomToothLoader } from "./CustomToothLoader"; // Importez CustomToothLoader en tant qu'exportation nommée
+import { useSidebarContext } from './SidebarContext'; // Importez le hook
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const CasCliniquesComponent = () => {
   const [selectedCas, setSelectedCas] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const currentPath = location.pathname;
+  const { isSidebarVisible } = useSidebarContext();
 
   const formatTitleForUrl = useCallback((title) => {
     return title
@@ -112,8 +113,8 @@ const CasCliniquesComponent = () => {
         />
 
         {/* Contenu principal */}
-        <main className="docMainContainer_EfwR">
-          <div className="container padding-top--md padding-bottom--lg">
+        <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
+      <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             <div className="row">
               <div className="col docItemCol_n6xZ">
                 <div className="docItemContainer_RhpI">
