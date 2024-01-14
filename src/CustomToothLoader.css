@@ -20,3 +20,8 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Styles pour le mode sombre */
+[data-theme="dark"] .tooth-loader {
+background-color: rgba(0, 0, 0, 0.8);
+}

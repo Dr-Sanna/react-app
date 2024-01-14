@@ -1,17 +1,3 @@
-
-.ant-menu-item a {
-    text-decoration: none;
-}
-
-.text-center p {
-    text-align: center; /* Centre le texte */
-}
-
-.text-center img {
-    max-height: 150px; /* Ajuster selon les besoins */
-    width: auto;
-}
-
 .circle-icon {
     width: 100px;
     height: 100px;
@@ -19,9 +5,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
- margin: 5px auto;
+    margin: 5px auto;
     font-size: 2em; /* Taille de l'icône */
-    background-color: #ddd;
 }
 
 .circle-icon {
@@ -33,13 +18,10 @@
     height: auto;
 }
 
-.circle-icon:hover {
-    background-color: #ccc;
-}
-
 .circle-icon img:hover {
     animation: shake 0.4s ease;
 }
+
 .logo-shake:hover {
   animation: shake 0.4s ease;
 }

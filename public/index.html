@@ -8,6 +8,14 @@
     <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <script>
+      (function() {
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        const theme = isDarkMode ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+    
     <title>Dr Sanna</title>
   </head>
   <body style="overflow: visible">

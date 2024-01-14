@@ -24,9 +24,7 @@ const CasDetailComponent = ({ selectedCas }) => {
     initializeContent();
   }, [selectedCas]);
 
-  if (!isContentReady) {
-    return <div>Chargement...</div>;
-  }
+
 
   const corrections = selectedCas.attributes.correction;
 
