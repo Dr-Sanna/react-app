@@ -1,31 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Image } from 'antd';
+import React from 'react';
 import CustomAccordion from './CustomAccordion'; // Mise à jour de l'importation
-import { server } from './config';
 import CustomListWithEmojis from './CustomListWithEmojis';
-import { preloadImage } from './utils';
 import { motion } from 'framer-motion';
+import ModalImage from "react-modal-image";
 
-const CasDetailComponent = ({ selectedCas }) => {
-  const [isContentReady, setIsContentReady] = useState(false);
-
-  useEffect(() => {
-    const initializeContent = async () => {
-      setIsContentReady(false);
-
-      if (selectedCas && selectedCas.attributes) {
-        const imageUrl = selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : '';
-        await preloadImage(imageUrl);
-      }
-
-      setIsContentReady(true);
-    };
-
-    initializeContent();
-  }, [selectedCas]);
-
-
-
+const CasDetailComponent = ({ selectedCas, imageUrl }) => {
   const corrections = selectedCas.attributes.correction;
 
   return (
@@ -39,12 +18,13 @@ const CasDetailComponent = ({ selectedCas }) => {
       <div className="markdown">
         <h1>{selectedCas.attributes.titre}</h1>
         <CustomListWithEmojis markdownText={selectedCas.attributes.enonce} />
-        <Image
-          width='50%'
-          style={{ maxWidth: '50vw', maxHeight: '50vh', objectFit: 'contain' }}
-          src={selectedCas.attributes.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''}
-          preview={true}
-        />
+        {imageUrl && (
+          <ModalImage
+            small={imageUrl}
+            large={imageUrl}
+            alt={"Cas Image"}
+          />
+          )}
         <div style={{ margin: '20px 0' }}></div>
         
         <h2>Questions</h2>

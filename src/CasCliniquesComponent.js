@@ -134,7 +134,7 @@ const CasCliniquesComponent = () => {
                       />
                     ) : (
                       // Afficher les détails d'un cas sélectionné
-                      <CasDetailComponent selectedCas={selectedCas} />
+                      <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
                     )}
                   </article>
                 </div>
