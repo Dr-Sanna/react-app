@@ -119,7 +119,7 @@ const CustomNavbar = () => {
       <div role="presentation" className="navbar-sidebar__backdrop"></div>
       <div className="navbar-sidebar">
         <div className="navbar-sidebar__brand">
-          <a className="navbar__brand" href="/fr/">
+        <NavLink className="navbar__brand" to="/">
             <div className="navbar__logo">
               <img
                 src="/logo.svg"
@@ -130,7 +130,7 @@ const CustomNavbar = () => {
               />
             </div>
             <b className="navbar__title text--truncate">Dr Sanna</b>
-          </a>
+            </NavLink>
           {/* Bouton pour basculer entre le mode sombre et le mode clair */}
           <div className="toggle_bT41 margin-right--md">
             <button

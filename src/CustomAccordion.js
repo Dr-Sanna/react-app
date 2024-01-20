@@ -32,6 +32,10 @@ const CustomAccordion = ({ title, content }) => {
     e.preventDefault();
     setIsOpen(!isOpen);
   };
+  
+  const handleContentClick = (e) => {
+    e.stopPropagation(); // Empêche l'événement de remonter jusqu'au <details>
+  };
 
   return (
     <details 
@@ -48,6 +52,7 @@ const CustomAccordion = ({ title, content }) => {
           overflow: 'hidden', 
           transition: 'height 318ms ease-in-out' 
         }}
+        onClick={handleContentClick} // Ajoutez le gestionnaire ici
       >
         {content}
       </div>

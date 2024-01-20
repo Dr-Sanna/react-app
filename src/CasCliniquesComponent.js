@@ -114,33 +114,23 @@ const CasCliniquesComponent = () => {
 
         {/* Contenu principal */}
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
-      <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            <div className="row">
-              <div className="col docItemCol_n6xZ">
-                <div className="docItemContainer_RhpI">
-                  <article>
-                    <BreadcrumbsComponent
-                      currentPath={currentPath}
-                      selectedCas={selectedCas}
-                    />
-
-                    {isLoading ? (
-                      // CustomToothLoader centré dans l'espace disponible
-                      <CustomToothLoader />
-                    ) : !selectedCas ? (
-                      <CasCardComponent
-                        casCliniques={casCliniques}
-                        onSelection={handleSelection}
+          <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
+            {selectedCas ? (
+              // Affichage quand un cas est sélectionné
+              <div className="row">
+                <div className="col docItemCol_n6xZ">
+                  <div className="docItemContainer_RhpI">
+                    <article>
+                      <BreadcrumbsComponent
+                        currentPath={currentPath}
+                        selectedCas={selectedCas}
                       />
-                    ) : (
-                      // Afficher les détails d'un cas sélectionné
                       <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
-                    )}
-                  </article>
-                </div>
+                    </article>
+                  </div>
                 </div>
                 <div className="col col--3">
-                  <div
+                <div
                     className="tableOfContents_RLlU thin-scrollbar theme-doc-toc-desktop"
                     
                   >
@@ -149,9 +139,25 @@ const CasCliniquesComponent = () => {
                       style={{ minHeight: "50vh" }}
                     ></ul>
                   </div>
-                
+                </div>
               </div>
-            </div>
+            ) : (
+              // Affichage initial sans colonne ni table des matières
+              <div className="docItemContainer_RhpI">
+                <BreadcrumbsComponent
+                  currentPath={currentPath}
+                  selectedCas={selectedCas}
+                />
+                {isLoading ? (
+                  <CustomToothLoader />
+                ) : (
+                  <CasCardComponent
+                    casCliniques={casCliniques}
+                    onSelection={handleSelection}
+                  />
+                )}
+              </div>
+            )}
           </div>
         </main>
       </div>
