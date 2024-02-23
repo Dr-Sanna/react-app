@@ -74,6 +74,14 @@ const HomePage = () => {
           path="/moco/cas-cliniques-du-cneco/*"
           element={<CasCliniquesComponent />}
         />
+        <Route
+          path="/guide-clinique-d-odontologie/bilans-sanguins/*"
+          element={<CasCliniquesComponent />}
+        />
+        <Route
+          path="/guide-clinique-d-odontologie/foyers-infectieux-buccodentaires/*"
+          element={<CasCliniquesComponent />}
+        />
       </Routes>
     </div>
   );

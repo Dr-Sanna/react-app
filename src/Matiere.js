@@ -22,21 +22,24 @@ const Matiere = ({ matieres }) => {
         }
     }, [matiereTitle, matieres]);
 
-const handleSousMatiereClick = (sousMatiere) => {
-    const titleUrl = toUrlFriendly(sousMatiere.attributes.titre); // Le titre formaté pour l'URL
-    const sousMatiereId = sousMatiere.id;  // Récupération de l'ID de la sous-matière
+    const handleSousMatiereClick = (sousMatiere) => {
+        const titleUrl = toUrlFriendly(sousMatiere.attributes.titre); // Le titre formaté pour l'URL
+        const sousMatiereId = sousMatiere.id;  // Récupération de l'ID de la sous-matière
+        
+        switch (sousMatiere.attributes.actionType) {
+            case 'cas_cliniques':
+                // Utilisez `matiereTitle` pour construire le chemin dynamiquement
+                navigate(`/${matiereTitle}/${titleUrl}`, { state: { sousMatiereId: sousMatiereId } });
+                break;
+            case 'liens_utiles':
+                // Ici aussi, ajustez si nécessaire en fonction de la matière
+                navigate(`/ressources-utiles/${titleUrl}`, { state: { lienId: sousMatiere.id } });
+                break;
+            default:
+                console.log("Type d'action non reconnu");
+        }
+    };
     
-    switch (sousMatiere.attributes.actionType) {
-        case 'cas_cliniques':
-            navigate(`/moco/${titleUrl}`, { state: { sousMatiereId: sousMatiereId } });
-            break;
-        case 'liens_utiles':
-            navigate(`/ressources-utiles/${titleUrl}`, { state: { lienId: sousMatiere.id } }); // Assurez-vous que `sousMatiere.id` représente l'ID correct du lien utile.
-            break;
-        default:
-            console.log("Type d'action non reconnu");
-    }
-};
 
     return <DisplayItems items={sousMatieres} onClickItem={handleSousMatiereClick} />;
 };

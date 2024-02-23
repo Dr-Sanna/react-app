@@ -1,56 +1,68 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { HomeIcon } from './IconComponents'; // Assurez-vous que l'importation est correcte
 
-const GenericBreadcrumbs = ({ breadcrumbs }) => {
-  return (
-    <nav
-      aria-label="Fil d'Ariane"
-      className="theme-doc-breadcrumbs breadcrumbsContainer_Wvrh">
-      <ul className="breadcrumbs" itemScope itemType="https://schema.org/BreadcrumbList">
-        {breadcrumbs.map((crumb, index) => (
-          <li 
-            key={index} 
-            className={`breadcrumbs__item ${crumb.active ? 'breadcrumbs__item--active' : ''}`} 
-            itemScope 
-            itemType="https://schema.org/ListItem">
-            {crumb.link ? (
-              <Link to={crumb.link} className="breadcrumbs__link" aria-label={crumb.isHome ? "Page d’accueil" : crumb.title} itemProp="item">
-                {crumb.isHome ? (
-                  <svg viewBox="0 0 24 24" className="breadcrumbHomeIcon_uaSn">
-                    <path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path>
-                  </svg>
-                ) : (
-                  <span itemProp="name">{crumb.title}</span>
-                )}
-              </Link>
-            ) : (
-              <span className="breadcrumbs__link" itemProp="name">{crumb.title}</span>
-            )}
-            <meta itemProp="position" content={index + 1} />
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
+// Carte d'équivalence URL-titre pour les breadcrumbs
+const breadcrumbsMap = {
+  '/': { title: 'Home', isHome: true },
+  '/guide-clinique-d-odontologie': { title: 'Guide clinique d\'odontologie' },
+  '/guide-clinique-d-odontologie/bilans-sanguins': { title: 'Bilans sanguins' },
+  '/guide-clinique-d-odontologie/foyers-infectieux-buccodentaires': { title: 'Foyers infectieux buccodentaires' },
+  '/moco': { title: 'Moco' },
+  '/moco/cas-cliniques-du-cneco': { title: 'Cas cliniques du CNECO' },
+  // Ajoutez d'autres chemins au besoin
 };
 
-const BreadcrumbsComponent = ({ selectedCas, currentPath }) => {
-  // Logique pour déterminer les éléments du fil d'Ariane
-  const breadcrumbs = [
-    { title: 'Home', link: '/', active: currentPath === '/', isHome: true },
-    { title: 'Moco', link: '/moco', active: currentPath === '/moco' },
-    // Ajoutez d'autres éléments ici en fonction de votre logique et de votre structure URL
-  ];
-
-  // Conditionnellement, ajoutez "Cas clinique" et le cas sélectionné si nécessaire
-  if (currentPath.startsWith('/moco/cas-cliniques-du-cneco')) {
-    breadcrumbs.push({ title: 'Cas clinique du CNECO', link: '/moco/cas-cliniques-du-cneco', active: currentPath === '/moco/cas-cliniques-du-cneco' && !selectedCas });
-    if (selectedCas) {
-      breadcrumbs.push({ title: selectedCas.attributes.titre, active: true }); // Pas de lien ici car c'est l'élément actif
+// Fonction pour générer les breadcrumbs basée sur le chemin actuel et le titre du cas sélectionné
+const generateBreadcrumbs = (currentPath, selectedCasTitle) => {
+  const pathSegments = currentPath.split('/').filter(Boolean);
+  let pathAccum = '';
+  const breadcrumbs = pathSegments.map((segment, index) => {
+    pathAccum += `/${segment}`;
+    let title;
+    const isLast = index === pathSegments.length - 1;
+    if (isLast && selectedCasTitle) {
+      // Si un titre de cas est fourni et que nous sommes sur le dernier segment, utilisez ce titre
+      title = selectedCasTitle;
+    } else {
+      // Sinon, utilisez le titre de la carte ou le segment lui-même
+      title = breadcrumbsMap[pathAccum]?.title || segment;
     }
-  }
+    const isHome = breadcrumbsMap[pathAccum]?.isHome || false;
 
-  // Utilisation du composant générique pour rendre les éléments du fil d'Ariane
+    return {
+      title,
+      link: !isLast ? pathAccum : null, // Pas de lien pour le dernier élément
+      active: isLast,
+      isHome,
+    };
+  });
+
+  // Ajoute le breadcrumb "Home" au début
+  return [{ title: 'Home', link: '/', active: false, isHome: true }, ...breadcrumbs];
+};
+
+const GenericBreadcrumbs = ({ breadcrumbs }) => (
+  <nav aria-label="Fil d'Ariane" className="theme-doc-breadcrumbs breadcrumbsContainer_Wvrh">
+    <ul className="breadcrumbs" itemScope itemType="https://schema.org/BreadcrumbList">
+      {breadcrumbs.map((crumb, index) => (
+        <li key={index} className={`breadcrumbs__item ${crumb.active ? 'breadcrumbs__item--active' : ''}`} itemScope itemType="https://schema.org/ListItem">
+          {crumb.link ? (
+            <Link to={crumb.link} className="breadcrumbs__link" aria-label={crumb.isHome ? "Page d’accueil" : crumb.title} itemProp="item">
+              {crumb.isHome ? <HomeIcon className="breadcrumbHomeIcon_uaSn" /> : <span itemProp="name">{crumb.title}</span>}
+            </Link>
+          ) : (
+            <span className="breadcrumbs__link" itemProp="name">{crumb.title}</span>
+          )}
+          <meta itemProp="position" content={index + 1} />
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
+
+const BreadcrumbsComponent = ({ currentPath, selectedCasTitle }) => {
+  const breadcrumbs = generateBreadcrumbs(currentPath, selectedCasTitle);
   return <GenericBreadcrumbs breadcrumbs={breadcrumbs} />;
 };
 

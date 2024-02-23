@@ -1,100 +1,96 @@
-// CasCliniquesComponent.js
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CasDetailComponent from "./CasDetailComponent";
 import { server } from "./config";
-import { preloadImage } from "./utils"; // Importez depuis utils.js
-import { CustomToothLoader } from "./CustomToothLoader"; // Importez CustomToothLoader en tant qu'exportation nommée
-import { useSidebarContext } from './SidebarContext'; // Importez le hook
+import { preloadImage } from "./utils";
+import { CustomToothLoader } from "./CustomToothLoader";
+import { useSidebarContext } from './SidebarContext';
+import { toUrlFriendly } from "./config";
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { titreCas } = useParams();
   const [casCliniques, setCasCliniques] = useState([]);
   const [selectedCas, setSelectedCas] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const currentPath = location.pathname;
+  const currentPath = location.pathname; // Utilisé pour la dépendance du useEffect
   const { isSidebarVisible } = useSidebarContext();
-
-  const formatTitleForUrl = useCallback((title) => {
-    return title
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
-  }, []);
-
+  const sousMatiereId = location.state?.sousMatiereId;
+  
   const updateSelectedCas = useCallback(
     (titre, casList) => {
       if (Array.isArray(casList)) {
         const foundCas = casList.find(
-          (c) => formatTitleForUrl(c.attributes.titre) === titre
+          (c) => toUrlFriendly(c.attributes.titre) === titre
         );
         setSelectedCas(foundCas || null);
       } else {
         console.error("casList n'est pas un tableau:", casList);
       }
     },
-    [formatTitleForUrl]
+    [] // Supprimez formatTitleForUrl des dépendances car il n'est plus utilisé
   );
-
+  
   useEffect(() => {
-    setIsLoading(true); // Commencer à afficher le loader global
+    setIsLoading(true);
+    let queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`;
+  
+    if (currentPath.includes('guide-clinique-d-odontologie/bilans-sanguins')) {
+      queryURL += `&filters[sous_matiere][id][$eq]=${4}`;
+    } else if (currentPath.includes('guide-clinique-d-odontologie/foyers-infectieux-buccodentaires')) {
+      queryURL += `&filters[sous_matiere][id][$eq]=${5}`;  
+    } else if (currentPath.includes('moco/cas-cliniques-du-cneco')) {
+      queryURL += `&filters[sous_matiere][id][$eq]=${3}`;
+    } else if (sousMatiereId) {
+      queryURL += `&filters[sous_matiere][id][$eq]=${sousMatiereId}`;
+    }
 
-    axios
-      .get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
+    axios.get(queryURL)
       .then(async (response) => {
-        const data = response.data && response.data.data;
+        const data = response.data.data;
+        const preloadedData = await Promise.all(data.map(async (cas) => {
+          const imageUrl = cas.attributes.image ? `${server}${cas.attributes.image.data.attributes.url}` : "";
+          await preloadImage(imageUrl);
+          return {
+            ...cas,
+            preloaded: true,
+            urlFriendlyTitre: toUrlFriendly(cas.attributes.titre),
+          };
+        }));
 
-        // Précharger toutes les images des cas
-        const preloadedData = await Promise.all(
-          data.map(async (cas) => {
-            const imageUrl = cas.attributes.image
-              ? `${server}${cas.attributes.image.data.attributes.url}`
-              : "";
-            // Précharge chaque image
-            await preloadImage(imageUrl);
-            return { ...cas, preloaded: true }; // Marquez le cas comme préchargé
-          })
-        );
-
-        setCasCliniques(preloadedData || []);
-        updateSelectedCas(titreCas, preloadedData);
-        setIsLoading(false); // Masquer le loader global une fois toutes les images chargées
+        setCasCliniques(preloadedData);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Erreur de récupération des cas cliniques:", error);
         setIsLoading(false);
       });
-  }, [titreCas, updateSelectedCas]);
-
+  }, [sousMatiereId, currentPath]); // Ajout de currentPath dans le tableau de dépendances
+  
   useEffect(() => {
-    if (location.pathname === "/moco/cas-cliniques-du-cneco") {
+    if (currentPath === "/moco/cas-cliniques-du-cneco") {
       setSelectedCas(null);
     } else {
-      const titre = location.pathname.split("/").pop();
+      const titre = currentPath.split("/").pop();
       updateSelectedCas(titre, casCliniques);
     }
-  }, [location, casCliniques, updateSelectedCas]);
+  }, [location, casCliniques, updateSelectedCas, currentPath]); // Ajout de currentPath dans le tableau de dépendances
 
-  const handleSelection = async (cas) => {
-    if (selectedCas && cas.id === selectedCas.id) {
-      return;
-    }
-    const formattedTitle = formatTitleForUrl(cas.attributes.titre);
-    navigate(`/moco/cas-cliniques-du-cneco/${formattedTitle}`);
+  const handleSelection = (cas) => {
+    const pathSegments = location.pathname.split('/');
+    const newPath = [...pathSegments.slice(0, 3), cas.urlFriendlyTitre].join('/');
+    navigate(newPath, { state: { sousMatiereId } });
+    setSelectedCas(cas);
   };
 
-  const menuItems = casCliniques.map((cas) => ({
+  const menuItems = casCliniques.map(cas => ({
     key: cas.id.toString(),
     label: cas.attributes.titre,
-    url: `/moco/cas-cliniques-du-cneco/${formatTitleForUrl(
-      cas.attributes.titre
-    )}`,
+    url: `${location.pathname}/${cas.urlFriendlyTitre}`,
     onClick: () => handleSelection(cas),
   }));
 
@@ -121,10 +117,10 @@ const CasCliniquesComponent = () => {
                 <div className="col docItemCol_n6xZ">
                   <div className="docItemContainer_RhpI">
                     <article>
-                      <BreadcrumbsComponent
-                        currentPath={currentPath}
-                        selectedCas={selectedCas}
-                      />
+                    <BreadcrumbsComponent
+  currentPath={location.pathname}
+  selectedCasTitle={selectedCas ? selectedCas.attributes.titre : ''}
+/>
                       <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
                     </article>
                   </div>
@@ -145,9 +141,10 @@ const CasCliniquesComponent = () => {
               // Affichage initial sans colonne ni table des matières
               <div className="docItemContainer_RhpI">
                 <BreadcrumbsComponent
-                  currentPath={currentPath}
-                  selectedCas={selectedCas}
-                />
+        currentPath={location.pathname}
+        selectedCas={selectedCas}
+        sousMatiereId={sousMatiereId}
+      />
                 {isLoading ? (
                   <CustomToothLoader />
                 ) : (

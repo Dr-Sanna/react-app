@@ -1,11 +1,11 @@
 import React from 'react';
-import CustomAccordion from './CustomAccordion'; // Mise à jour de l'importation
-import CustomListWithEmojis from './CustomListWithEmojis';
+import CustomAccordion from './CustomAccordion';
+import CustomMarkdown from './CustomMarkdown';
 import { motion } from 'framer-motion';
-import ModalImage from "react-modal-image";
 
-const CasDetailComponent = ({ selectedCas, imageUrl }) => {
+const CasDetailComponent = ({ selectedCas }) => {
   const corrections = selectedCas.attributes.correction;
+  const questions = selectedCas.attributes.question;
 
   return (
     <motion.div 
@@ -17,28 +17,26 @@ const CasDetailComponent = ({ selectedCas, imageUrl }) => {
     >
       <div className="markdown">
         <h1>{selectedCas.attributes.titre}</h1>
-        <CustomListWithEmojis markdownText={selectedCas.attributes.enonce} />
-        {imageUrl && (
-          <ModalImage
-            small={imageUrl}
-            large={imageUrl}
-            alt={"Cas Image"}
-          />
-          )}
+        <CustomMarkdown markdownText={selectedCas.attributes.enonce} />
         <div style={{ margin: '20px 0' }}></div>
         
-        <h2>Questions</h2>
-        {selectedCas.attributes.question.map((q, index) => (
-          <CustomAccordion 
-            key={index}
-            title={<p>{q.question}</p>} 
-            content={
-              <div className="collapsibleContent_EoA1">
-                <CustomListWithEmojis markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} />
-              </div>
-            }
-          />
-        ))}
+        {/* Affichez "Questions" uniquement si il y a des questions */}
+        {questions && questions.length > 0 && (
+          <>
+            <h2>Questions</h2>
+            {questions.map((q, index) => (
+              <CustomAccordion 
+                key={index}
+                title={<p><strong>{q.question}</strong></p>} 
+                content={
+                  <div className="collapsibleContent_EoA1">
+                    <CustomMarkdown markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} />
+                  </div>
+                }
+              />
+            ))}
+          </>
+        )}
       </div>
     </motion.div>
   );

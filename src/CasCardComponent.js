@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
+import { useLocation } from 'react-router-dom';
 
 const CasCardContainer = styled.div`
   display: grid;
@@ -28,60 +29,66 @@ const CasCardContainer = styled.div`
 `;
 
 const CasCardComponent = ({ casCliniques, onSelection }) => {
+  const location = useLocation();
+  const pathSegments = location.pathname.split('/').filter(Boolean); // Enlève les segments vides pour les cas où l'URL commence par "/"
+  // Supposons que votre URL soit structurée comme /matiere/sous-matiere/...
+  // Ajustez ces indices selon votre structure d'URL réelle.
+  const matiere = pathSegments[0];
+  const sousMatiere = pathSegments[1];
+
   return (
     <CasCardContainer>
       {casCliniques.map(cas => {
         const imageUrl = cas?.attributes?.image?.data?.attributes?.url
           ? `${server}${cas.attributes.image.data.attributes.url}`
           : '/defaultImage.jpg';
+        // Construit l'URL pour la prévisualisation en utilisant la matière et la sous-matière extraites
+        const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${cas.urlFriendlyTitre}`;
 
         return (
           <div key={cas.id} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 500, damping: 15 }}
-              onClick={() => onSelection(cas)}
-              style={{ width: '100%' }} // Utilisez la largeur complète de la colonne
-            >
-              <Card sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%', // Utilisez 100% pour la largeur
-                height: '0', // Initialiser la hauteur à 0
-                paddingTop: '75%', // Ratio de 4:3 (75%)
-                position: 'relative',
-                bgcolor: 'white',
-                borderRadius: '10px',
-                boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
-              }}>
-                <CardMedia
-                  component="img"
-                  image={imageUrl}
-                  alt={cas?.attributes?.titre || 'Titre inconnu'}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-                 <CardContent style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  width: '100%',
-                  height: '60px', // Hauteur originale
-                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                  textAlign: 'center',
+            <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
+              <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(cas); }}>
+                <Card sx={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '5px', // Marge interne pour le contenu
+                  flexDirection: 'column',
+                  width: '100%',
+                  height: '0',
+                  paddingTop: '75%', // Ratio de 4:3 (75%)
+                  position: 'relative',
+                  bgcolor: 'white',
+                  borderRadius: '10px',
+                  boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
                 }}>
-                  <h6 style={{
-                    margin: '0', // Aucune marge externe pour le titre
-                    width: '100%', // Largeur complète pour le titre
-                    overflow: 'hidden', // Cache le texte débordant
-                    whiteSpace: 'normal', // Permet les retours à la ligne
+                  <CardMedia
+                    component="img"
+                    image={imageUrl}
+                    alt={cas?.attributes?.titre || 'Titre inconnu'}
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <CardContent style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                    height: '60px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '5px',
                   }}>
-                    {cas?.attributes?.titre || 'Titre inconnu'}
-                  </h6>
-                </CardContent>
-              </Card>
+                    <h6 style={{
+                      margin: '0',
+                      width: '100%',
+                      overflow: 'hidden',
+                      whiteSpace: 'normal',
+                    }}>
+                      {cas?.attributes?.titre || 'Titre inconnu'}
+                    </h6>
+                  </CardContent>
+                </Card>
+              </a>
             </motion.div>
           </div>
         );
@@ -89,6 +96,5 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
     </CasCardContainer>
   );
 };
-
 
 export default React.memo(CasCardComponent);

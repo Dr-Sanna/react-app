@@ -1,0 +1,31 @@
+// Les emojis pour chaque niveau d'indentation
+const emojis = ['🚀', '🤒', '💊'];
+
+const ListElement = ({ children, ...props }) => {
+  const level = (props.node.position.start.column - 1) / 2; // suppose 2 espaces par niveau d'indentation
+  const emoji = emojis[level % emojis.length];  // choisir l'emoji en fonction du niveau
+
+  // Appliquer une bordure et un espacement uniquement pour les éléments de liste de niveau 1
+  const borderBottom = level === 0 ? '1px solid rgb(240, 240, 240)' : 'none';
+  const marginBottom = level === 0 ? '10px' : '0'; // Ajouter un peu d'espace entre les éléments de niveau 1
+
+  return (
+    <li style={{ 
+        listStyleType: 'none', 
+        padding: level === 0 ? '5px 0' : '0 0 0 5px', // Ajouter un padding en haut et en bas pour le niveau 1
+        margin: '0 0 5px 0 ' + marginBottom + ' 20px', // Appliquer la marge en bas
+        borderBottom,
+        position: 'relative'  // Ajouté pour positionner l'emoji
+    }}>
+      <span role="img" aria-label="list bullet" style={{ 
+          margin: '5px 10px 0 0', 
+          position: 'absolute',  // Position absolue pour l'emoji
+          left: '-25px',  // Ajustez selon l'espacement souhaité
+          top: '0' 
+      }}>
+        {emoji}
+      </span>
+      {children}
+    </li>
+  );
+};

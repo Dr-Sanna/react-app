@@ -3,7 +3,7 @@ import HomePage from './HomePage';
 import { SidebarProvider } from './SidebarContext';
 import './App.css';
 import './styles2.css';
-
+import './markdown.css';
 
 function App() {
   return (

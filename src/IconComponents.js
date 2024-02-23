@@ -13,6 +13,12 @@ export const DarkModeIcon = () => (
   </svg>
 );
 
+export const HomeIcon = () => (
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" className="breadcrumbHomeIcon_uaSn">
+    <path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z"/>
+  </svg>
+);
+
 export const CollapseIcon = () => (
   <svg
     width="20"
@@ -27,6 +33,16 @@ export const CollapseIcon = () => (
   </svg>
 );
 
+export const DangerIcon = () => (
+  <svg viewBox="0 0 12 16">
+    <path fillRule="evenodd" d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path>
+  </svg>
+);
+
+export const InfoIcon = () => (
+  <svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg>
+);
+
 export const ExpandIcon = () => (
 <svg width="20" height="20" aria-hidden="true" className="expandButtonIcon_H1n0">
   <g fill="#7a7a7a">
@@ -35,3 +51,5 @@ export const ExpandIcon = () => (
   </g>
 </svg>
 );
+
+
