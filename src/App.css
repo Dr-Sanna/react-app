@@ -21,4 +21,13 @@ body {
 .navbar__brand:hover .navbar__logo {
   animation: shake 0.4s ease;
 }
+/* Ajustement de l'effet de flou */
+.image-blur-transition {
+  transition: filter 5s ease; /* Ralentit la transition du flou */
+}
+
+/* Applique un léger flou initialement, qui sera enlevé après le chargement */
+.lazy-load-image-background.image-blur-transition.blur {
+  filter: blur(8px);
+}
 
