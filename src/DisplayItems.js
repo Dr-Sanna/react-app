@@ -1,42 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { server } from './config';
 
-// ImageWithTransition Component
-const ImageWithTransition = ({ src, alt, onLoad }) => {
-  const [loaded, setLoaded] = useState(false);
-  
-  const imageStyle = {
-    transition: 'opacity 0.5s ease, filter 0.5s ease',
-    filter: loaded ? 'blur(0)' : 'blur(8px)',
-    opacity: loaded ? 1 : 0.5
-  };
-
-  const handleLoad = () => {
-    setLoaded(true);
-    onLoad(); // Appelle le callback onLoad passé en prop
-  };
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      style={imageStyle}
-      onLoad={handleLoad}
-    />
-  );
-};
-
-// DisplayItems Component
 const DisplayItems = ({ items, onClickItem }) => {
-  const [loadedImages, setLoadedImages] = useState({});
-
-  const handleImageLoaded = (id) => {
-    setLoadedImages(prev => ({ ...prev, [id]: true }));
-  };
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+  const [loadedCount, setLoadedCount] = useState(0);
 
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
+
+  useEffect(() => {
+    if (loadedCount === items.length) {
+      setAllImagesLoaded(true);
+    }
+  }, [loadedCount, items.length]);
 
   const getItemStyle = () => {
     if (isDesktop) {
@@ -48,8 +25,20 @@ const DisplayItems = ({ items, onClickItem }) => {
     }
   };
 
+  const containerStyle = {
+    padding: 0,
+    margin: 0,
+    maxWidth: '100%',
+    opacity: allImagesLoaded ? 1 : 0,
+    transition: 'opacity 1s ease',
+  };
+
+  const handleImageLoaded = () => {
+    setLoadedCount((count) => count + 1);
+  };
+
   return (
-    <div style={{ padding: 0, margin: 0, maxWidth: '100%' }}>
+    <div style={containerStyle}>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: 0 }}>
         {items.map(item => (
           <div
@@ -59,7 +48,6 @@ const DisplayItems = ({ items, onClickItem }) => {
               marginTop: '16px',
               boxSizing: 'border-box',
               padding: '0 15px',
-              display: loadedImages[item.id] ? 'block' : 'none' // Affiche l'item uniquement si son image est chargée
             }}
             key={item.id}
             onClick={() => onClickItem(item)}
@@ -69,7 +57,7 @@ const DisplayItems = ({ items, onClickItem }) => {
                 <ImageWithTransition
                   src={`${server}${item.attributes.image.data.attributes.url}`}
                   alt={item.attributes.titre}
-                  onLoad={() => handleImageLoaded(item.id)}
+                  onLoad={handleImageLoaded}
                 />
               )}
             </div>
@@ -78,6 +66,21 @@ const DisplayItems = ({ items, onClickItem }) => {
         ))}
       </div>
     </div>
+  );
+};
+
+const ImageWithTransition = ({ src, alt, onLoad }) => {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      style={{
+        transition: 'opacity 0.5s ease, filter 0.5s ease',
+        opacity: 1,
+        filter: 'blur(0)'
+      }}
+      onLoad={onLoad}
+    />
   );
 };
 
