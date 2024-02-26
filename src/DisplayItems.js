@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import { server } from './config';
 
 const DisplayItems = ({ items, onClickItem }) => {
@@ -54,7 +52,7 @@ const ImageWithTransition = ({ src, alt }) => {
   const [loaded, setLoaded] = useState(false);
   
   const imageStyle = {
-    transition: 'opacity 1s ease, filter 1s ease',
+    transition: 'opacity 0.5s ease, filter 0.5s ease',
     filter: loaded ? 'blur(0)' : 'blur(8px)',
     opacity: loaded ? 1 : 0.5
   };
