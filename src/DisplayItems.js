@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { server } from './config';
+import { CustomToothLoader } from './CustomToothLoader'; // Assurez-vous que le chemin d'importation est correct
 
 const DisplayItems = ({ items, onClickItem }) => {
-  const [loaded, setLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
   useEffect(() => {
-    let imagesLoaded = 0;
-    items.forEach(item => {
-      if (item.attributes.image && item.attributes.image.data) {
-        const img = new Image();
-        img.onload = () => {
-          imagesLoaded++;
-          if (imagesLoaded === items.length) {
-            setLoaded(true);
-          }
-        };
-        img.src = `${server}${item.attributes.image.data.attributes.url}`;
-      }
-    });
+    // Précharge toutes les images avant d'afficher les composants
+    const imageUrls = items.map(item => item.attributes.image && item.attributes.image.data ? `${server}${item.attributes.image.data.attributes.url}` : null).filter(url => url !== null);
+    Promise.all(imageUrls.map(url => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = resolve;
+      img.onerror = reject;
+    }))).then(() => setIsLoading(false)); // Toutes les images sont chargées
   }, [items]);
 
   const getItemStyle = () => {
@@ -33,11 +29,9 @@ const DisplayItems = ({ items, onClickItem }) => {
     }
   };
 
-  const textStyle = {
-    transition: 'opacity 0.5s ease, filter 0.5s ease',
-    filter: loaded ? 'blur(0)' : 'blur(8px)',
-    opacity: loaded ? 1 : 0.5,
-  };
+  if (isLoading) {
+    return <CustomToothLoader />; // Affiche le loader pendant le chargement
+  }
 
   return (
     <div style={{ padding: 0, margin: 0, maxWidth: '100%' }}>
@@ -56,37 +50,17 @@ const DisplayItems = ({ items, onClickItem }) => {
           >
             <div className="circle-icon" style={{ position: 'relative', width: '100%', height: 'auto' }}>
               {item.attributes.image && item.attributes.image.data && (
-                <ImageWithTransition
+                <img
                   src={`${server}${item.attributes.image.data.attributes.url}`}
                   alt={item.attributes.titre}
                 />
               )}
             </div>
-            <p style={textStyle}>{item.attributes.titre}</p>
+            <p>{item.attributes.titre}</p>
           </div>
         ))}
       </div>
     </div>
-  );
-};
-
-// ImageWithTransition Component
-const ImageWithTransition = ({ src, alt }) => {
-  const [loaded, setLoaded] = useState(false);
-  
-  const imageStyle = {
-    transition: 'opacity 0.5s ease, filter 0.5s ease',
-    filter: loaded ? 'blur(0)' : 'blur(8px)',
-    opacity: loaded ? 1 : 0.5
-  };
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      style={imageStyle}
-      onLoad={() => setLoaded(true)}
-    />
   );
 };
 
