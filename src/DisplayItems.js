@@ -4,19 +4,27 @@ import { server } from './config';
 import { CustomToothLoader } from './CustomToothLoader'; // Assurez-vous que le chemin d'importation est correct
 
 const DisplayItems = ({ items, onClickItem }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [allLoaded, setAllLoaded] = useState(false);
+  const [showLoader, setShowLoader] = useState(false);
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
   useEffect(() => {
-    // Précharge toutes les images avant d'afficher les composants
-    const imageUrls = items.map(item => item.attributes.image && item.attributes.image.data ? `${server}${item.attributes.image.data.attributes.url}` : null).filter(url => url !== null);
-    Promise.all(imageUrls.map(url => new Promise((resolve, reject) => {
+    let imagesLoaded = 0;
+    const loadingTimeout = setTimeout(() => setShowLoader(true), 300); // Délai avant d'afficher le loader
+
+    items.forEach(item => {
       const img = new Image();
-      img.src = url;
-      img.onload = resolve;
-      img.onerror = reject;
-    }))).then(() => setIsLoading(false)); // Toutes les images sont chargées
+      img.src = `${server}${item.attributes.image.data.attributes.url}`;
+      img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === items.length) {
+          clearTimeout(loadingTimeout); // Annule l'affichage du loader si le chargement est rapide
+          setShowLoader(false); // Assurez-vous de masquer le loader
+          setAllLoaded(true); // Tout est chargé, on peut afficher le contenu
+        }
+      };
+    });
   }, [items]);
 
   const getItemStyle = () => {
@@ -29,8 +37,8 @@ const DisplayItems = ({ items, onClickItem }) => {
     }
   };
 
-  if (isLoading) {
-    return <CustomToothLoader />; // Affiche le loader pendant le chargement
+  if (!allLoaded && showLoader) {
+    return <CustomToothLoader />; // Affiche le loader uniquement si showLoader est vrai
   }
 
   return (
@@ -65,3 +73,4 @@ const DisplayItems = ({ items, onClickItem }) => {
 };
 
 export default DisplayItems;
+
