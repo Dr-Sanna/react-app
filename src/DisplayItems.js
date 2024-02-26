@@ -11,7 +11,7 @@ const DisplayItems = ({ items, onClickItem }) => {
 
   useEffect(() => {
     if (loadedCount === items.length) {
-      setAllImagesLoaded(true);
+      setTimeout(() => setAllImagesLoaded(true), 100); // Un petit délai pour s'assurer que tout est prêt
     }
   }, [loadedCount, items.length]);
 
@@ -31,6 +31,7 @@ const DisplayItems = ({ items, onClickItem }) => {
     maxWidth: '100%',
     opacity: allImagesLoaded ? 1 : 0,
     transition: 'opacity 1s ease',
+    visibility: allImagesLoaded ? 'visible' : 'hidden', // Ajout pour contrôler la visibilité
   };
 
   const handleImageLoaded = () => {
@@ -74,12 +75,12 @@ const ImageWithTransition = ({ src, alt, onLoad }) => {
     <img
       src={src}
       alt={alt}
+      onLoad={onLoad}
       style={{
         transition: 'opacity 0.5s ease, filter 0.5s ease',
         opacity: 1,
-        filter: 'blur(0)'
+        filter: 'blur(0)',
       }}
-      onLoad={onLoad}
     />
   );
 };
