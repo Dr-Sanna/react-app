@@ -3,26 +3,25 @@ import { useMediaQuery } from 'react-responsive';
 import { server } from './config';
 
 const DisplayItems = ({ items, onClickItem }) => {
-  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-
+  const [loaded, setLoaded] = useState(false);
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
   useEffect(() => {
-    const imageSources = items.map(item => `${server}${item.attributes.image.data.attributes.url}`);
-    preloadImages(imageSources).then(() => setAllImagesLoaded(true));
-  }, [items]);
-
-  const preloadImages = (srcArray) => {
-    return Promise.all(srcArray.map(src => {
-      return new Promise((resolve, reject) => {
+    let imagesLoaded = 0;
+    items.forEach(item => {
+      if (item.attributes.image && item.attributes.image.data) {
         const img = new Image();
-        img.src = src;
-        img.onload = resolve;
-        img.onerror = reject;
-      });
-    }));
-  };
+        img.onload = () => {
+          imagesLoaded++;
+          if (imagesLoaded === items.length) {
+            setLoaded(true);
+          }
+        };
+        img.src = `${server}${item.attributes.image.data.attributes.url}`;
+      }
+    });
+  }, [items]);
 
   const getItemStyle = () => {
     if (isDesktop) {
@@ -34,17 +33,14 @@ const DisplayItems = ({ items, onClickItem }) => {
     }
   };
 
-  const containerStyle = {
-    padding: 0,
-    margin: 0,
-    maxWidth: '100%',
-    opacity: allImagesLoaded ? 1 : 0,
-    transition: allImagesLoaded ? 'opacity 1s ease' : 'none',
-    visibility: allImagesLoaded ? 'visible' : 'hidden',
+  const textStyle = {
+    transition: 'opacity 0.5s ease, filter 0.5s ease',
+    filter: loaded ? 'blur(0)' : 'blur(8px)',
+    opacity: loaded ? 1 : 0.5,
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={{ padding: 0, margin: 0, maxWidth: '100%' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: 0 }}>
         {items.map(item => (
           <div
@@ -53,29 +49,44 @@ const DisplayItems = ({ items, onClickItem }) => {
               textAlign: 'center',
               marginTop: '16px',
               boxSizing: 'border-box',
-              padding: '0 15px',
+              padding: '0 15px'
             }}
             key={item.id}
             onClick={() => onClickItem(item)}
           >
             <div className="circle-icon" style={{ position: 'relative', width: '100%', height: 'auto' }}>
               {item.attributes.image && item.attributes.image.data && (
-                <img
+                <ImageWithTransition
                   src={`${server}${item.attributes.image.data.attributes.url}`}
                   alt={item.attributes.titre}
-                  style={{
-                    opacity: 1,
-                    transition: 'opacity 0.5s ease, filter 0.5s ease',
-                    filter: 'blur(0)',
-                  }}
                 />
               )}
             </div>
-            <p>{item.attributes.titre}</p>
+            <p style={textStyle}>{item.attributes.titre}</p>
           </div>
         ))}
       </div>
     </div>
+  );
+};
+
+// ImageWithTransition Component
+const ImageWithTransition = ({ src, alt }) => {
+  const [loaded, setLoaded] = useState(false);
+  
+  const imageStyle = {
+    transition: 'opacity 0.5s ease, filter 0.5s ease',
+    filter: loaded ? 'blur(0)' : 'blur(8px)',
+    opacity: loaded ? 1 : 0.5
+  };
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      style={imageStyle}
+      onLoad={() => setLoaded(true)}
+    />
   );
 };
 
