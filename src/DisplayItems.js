@@ -4,16 +4,25 @@ import { server } from './config';
 
 const DisplayItems = ({ items, onClickItem }) => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(0);
 
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
   useEffect(() => {
-    if (loadedCount === items.length) {
-      setTimeout(() => setAllImagesLoaded(true), 100); // Un petit délai pour s'assurer que tout est prêt
-    }
-  }, [loadedCount, items.length]);
+    const imageSources = items.map(item => `${server}${item.attributes.image.data.attributes.url}`);
+    preloadImages(imageSources).then(() => setAllImagesLoaded(true));
+  }, [items]);
+
+  const preloadImages = (srcArray) => {
+    return Promise.all(srcArray.map(src => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+    }));
+  };
 
   const getItemStyle = () => {
     if (isDesktop) {
@@ -30,12 +39,8 @@ const DisplayItems = ({ items, onClickItem }) => {
     margin: 0,
     maxWidth: '100%',
     opacity: allImagesLoaded ? 1 : 0,
-    transition: 'opacity 1s ease',
-    visibility: allImagesLoaded ? 'visible' : 'hidden', // Ajout pour contrôler la visibilité
-  };
-
-  const handleImageLoaded = () => {
-    setLoadedCount((count) => count + 1);
+    transition: allImagesLoaded ? 'opacity 1s ease' : 'none',
+    visibility: allImagesLoaded ? 'visible' : 'hidden',
   };
 
   return (
@@ -55,10 +60,14 @@ const DisplayItems = ({ items, onClickItem }) => {
           >
             <div className="circle-icon" style={{ position: 'relative', width: '100%', height: 'auto' }}>
               {item.attributes.image && item.attributes.image.data && (
-                <ImageWithTransition
+                <img
                   src={`${server}${item.attributes.image.data.attributes.url}`}
                   alt={item.attributes.titre}
-                  onLoad={handleImageLoaded}
+                  style={{
+                    opacity: 1,
+                    transition: 'opacity 0.5s ease, filter 0.5s ease',
+                    filter: 'blur(0)',
+                  }}
                 />
               )}
             </div>
@@ -67,21 +76,6 @@ const DisplayItems = ({ items, onClickItem }) => {
         ))}
       </div>
     </div>
-  );
-};
-
-const ImageWithTransition = ({ src, alt, onLoad }) => {
-  return (
-    <img
-      src={src}
-      alt={alt}
-      onLoad={onLoad}
-      style={{
-        transition: 'opacity 0.5s ease, filter 0.5s ease',
-        opacity: 1,
-        filter: 'blur(0)',
-      }}
-    />
   );
 };
 
