@@ -4,14 +4,16 @@ import { server } from './config';
 import { CustomToothLoader } from './CustomToothLoader'; // Assurez-vous que le chemin d'importation est correct
 
 const DisplayItems = ({ items, onClickItem }) => {
-  const [allLoaded, setAllLoaded] = useState(false);
+  const [contentReady, setContentReady] = useState(false); // Nouvel état pour gérer la disponibilité du contenu
   const [showLoader, setShowLoader] = useState(false);
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
   useEffect(() => {
     let imagesLoaded = 0;
-    const loadingTimeout = setTimeout(() => setShowLoader(true), 300); // Délai avant d'afficher le loader
+    const loadingTimeout = setTimeout(() => {
+      setShowLoader(true); // Affiche le loader si le contenu n'est pas chargé rapidement
+    }, 300); // Délai avant d'afficher le loader
 
     items.forEach(item => {
       const img = new Image();
@@ -21,7 +23,7 @@ const DisplayItems = ({ items, onClickItem }) => {
         if (imagesLoaded === items.length) {
           clearTimeout(loadingTimeout); // Annule l'affichage du loader si le chargement est rapide
           setShowLoader(false); // Assurez-vous de masquer le loader
-          setAllLoaded(true); // Tout est chargé, on peut afficher le contenu
+          setContentReady(true); // Indique que le contenu est prêt à être affiché
         }
       };
     });
@@ -37,8 +39,12 @@ const DisplayItems = ({ items, onClickItem }) => {
     }
   };
 
-  if (!allLoaded && showLoader) {
-    return <CustomToothLoader />; // Affiche le loader uniquement si showLoader est vrai
+  // Condition pour gérer l'affichage du loader ou du contenu
+  if (!contentReady) {
+    if (showLoader) {
+      return <CustomToothLoader />; // Affiche le loader si déterminé nécessaire
+    }
+    return null; // Ne rien afficher pendant l'attente, évite l'affichage fugace du texte
   }
 
   return (
@@ -73,4 +79,3 @@ const DisplayItems = ({ items, onClickItem }) => {
 };
 
 export default DisplayItems;
-
