@@ -7,16 +7,17 @@ import GuideCliniqueHit from './GuideCliniqueHit';
 import CasCliniqueHit from './CasCliniqueHit';
 import CustomResults from './CustomResults'; // Importer le composant CustomResults
 
+// Log pour vérifier les variables d'environnement
+console.log('Algolia App ID:', process.env.REACT_APP_ALGOLIA_APP_ID);
+console.log('Algolia API Key:', process.env.REACT_APP_ALGOLIA_ADMIN_KEY);
+console.log('Index Prefix:', process.env.REACT_APP_ALGOLIA_INDEX_PREFIX);
+
 const searchClient = algoliasearch(
-  process.env.ALGOLIA_APP_ID,
-  process.env.ALGOLIA_ADMIN_KEY
+  process.env.REACT_APP_ALGOLIA_APP_ID,
+  process.env.REACT_APP_ALGOLIA_ADMIN_KEY
 );
 
-// Log pour vérifier les variables d'environnement
-console.log('Algolia App ID:', process.env.ALGOLIA_APP_ID);
-console.log('Algolia API Key:', process.env.ALGOLIA_ADMIN_KEY);
-console.log('Index Prefix:', process.env.ALGOLIA_INDEX_PREFIX);
-const indexPrefix = process.env.ALGOLIA_INDEX_PREFIX || 'development_api';
+const indexPrefix = process.env.REACT_APP_ALGOLIA_INDEX_PREFIX || 'development_api';
 
 const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
   <form className="DocSearch-Form">
