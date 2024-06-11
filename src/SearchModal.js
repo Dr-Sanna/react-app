@@ -1,32 +1,18 @@
 import React, { useEffect, useCallback, useRef } from "react";
-import { InstantSearch, connectSearchBox, Hits, connectStateResults, Index } from "react-instantsearch-dom";
+import { InstantSearch, connectSearchBox, Index, Hits } from "react-instantsearch-dom";
 import algoliasearch from "algoliasearch/lite";
 import { SearchIcon, ResetIcon, LoadingIndicator, AlgoliaLogo, ArrowDownIcon, ArrowUpIcon, EnterKeyIcon, EscapeKeyIcon } from './IconComponents';
 import LiensUtileHit from './LiensUtileHit';
 import GuideCliniqueHit from './GuideCliniqueHit';
 import CasCliniqueHit from './CasCliniqueHit';
-import { indexes } from "./indexes"; // Importez vos index depuis le fichier
+import CustomResults from './CustomResults'; // Importer le composant CustomResults
 
 const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_APP_ID,
   process.env.REACT_APP_ALGOLIA_ADMIN_KEY
 );
 
-const Results = connectStateResults(({ searchState, searchResults, hitComponent }) => {
-  const hasResults = searchResults && searchResults.nbHits !== 0;
-
-  return searchState && searchState.query ? (
-    <section className="DocSearch-Hits">
-      <ul role="listbox" aria-labelledby="docsearch-label" id="docsearch-list">
-        {hasResults ? (
-          <Hits hitComponent={hitComponent} />
-        ) : (
-          <div>No results found</div>
-        )}
-      </ul>
-    </section>
-  ) : null;
-});
+const indexPrefix = process.env.REACT_APP_ALGOLIA_INDEX_PREFIX || 'development_api';
 
 const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
   <form className="DocSearch-Form">
@@ -92,23 +78,25 @@ const SearchModal = ({ onClose }) => {
   return (
     <div className="DocSearch DocSearch-Container">
       <div className="DocSearch-Modal" ref={modalRef}>
-        <InstantSearch searchClient={searchClient} indexName={indexes[0].name}>
+        <InstantSearch searchClient={searchClient} indexName={`${indexPrefix}::liens-utile.liens-utile`}>
           <header className="DocSearch-SearchBar">
             <CustomSearchBoxConnected />
           </header>
-          <div className="DocSearch-Dropdown">
-            <div className="DocSearch-Dropdown-Container">
-              <Index indexName="development_api::liens-utile.liens-utile">
-                <Results hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
-              </Index>
-              <Index indexName="development_api::guide-clinique.guide-clinique">
-                <Results hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
-              </Index>
-              <Index indexName="development_api::cas-clinique.cas-clinique">
-                <Results hitComponent={(props) => <CasCliniqueHit {...props} onClose={onClose} />} />
-              </Index>
+          <CustomResults>
+            <div className="DocSearch-Dropdown">
+              <div className="DocSearch-Dropdown-Container">
+                <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+                  <Hits hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
+                </Index>
+                <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
+                  <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
+                </Index>
+                <Index indexName={`${indexPrefix}::cas-clinique.cas-clinique`}>
+                  <Hits hitComponent={(props) => <CasCliniqueHit {...props} onClose={onClose} />} />
+                </Index>
+              </div>
             </div>
-          </div>
+          </CustomResults>
         </InstantSearch>
         <footer className="DocSearch-Footer">
           <div className="DocSearch-Logo">
