@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { DarkModeIcon, LightModeIcon } from "./IconComponents";
+import Search  from "./Search";
 
 const CustomNavbar = () => {
   const [logoUrl] = useState("/logo.svg");
@@ -178,6 +179,7 @@ const CustomNavbar = () => {
           </div>
         </div>
       </div>
+      <Search />
     </nav>
   );
 };

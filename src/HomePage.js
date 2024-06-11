@@ -79,7 +79,7 @@ const HomePage = () => {
           element={<CasCliniquesComponent />}
         />
         <Route
-          path="/guide-clinique-d-odontologie/foyers-infectieux-buccodentaires/*"
+          path="/guide-clinique-d-odontologie/risque-infectieux/*"
           element={<CasCliniquesComponent />}
         />
       </Routes>

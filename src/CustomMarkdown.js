@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import gfm from 'remark-gfm';
+import CustomAccordion from './CustomAccordion';
 
 function preprocessMarkdown(markdownText) {
   // Premièrement, traiter les balises :::danger avec un titre potentiel
+  let isOpenAccordion = false;
   let processedText = markdownText.replace(
     /:::danger(?:\\\[([^\\\]]*?)\\\])?/g,
     (match, title) => {
@@ -90,10 +93,30 @@ function preprocessMarkdown(markdownText) {
     }
   );
 
+   // Traitement des balises :::accordion
+   processedText = processedText.replace(
+    /:::accordion(?:\\\[([^\\\]]*?)\\\])?/g,
+    (match, title) => {
+      const finalTitle = title ? title : 'Remarque';
+      return `<details class="details_Nokh isBrowser_QrB5 alert alert--info details_Cn_P">
+    <summary>
+          ${finalTitle}
+        </summary>
+        <div class="collapsibleContent_EoA1">
+    `;
+    }
+  );
+
   // Ensuite, remplacer les balises ::: seules par </div></div>, en s'assurant de ne pas consommer les sauts de ligne
   processedText = processedText.replace(/(\n?):::(\n?)/g, (match, before, after) => {
     return `${before}</div></div>${after}`;
   });
+  
+ // Ensuite, remplacer les balises ::: seules par </div></div>, en s'assurant de ne pas consommer les sauts de ligne
+ processedText = processedText.replace(/(\n?):-:(\n?)/g, (match, before, after) => {
+  return `${before}</div></details>${after}`;
+});
+
 
   return processedText;
 }
@@ -107,25 +130,15 @@ const CustomMarkdown = ({ markdownText }) => {
   return (
     <ReactMarkdown
       children={processedText}
+      remarkPlugins={[gfm]}
       rehypePlugins={[rehypeRaw]} // Permet le rendu de l'HTML brut
       components={{
-        // Ici, vous pouvez ajouter des personnalisations pour d'autres balises Markdown si nécessaire
-        h1: ({node, ...props}) => <Heading {...props} level={1} />,
-        h2: ({node, ...props}) => <Heading {...props} level={2} />,
-        h3: ({node, ...props}) => <Heading {...props} level={3} />,
-        h4: ({node, ...props}) => <Heading {...props} level={4} isFirstChild={node.position.start.line === 1} />,
+        CustomAccordion: ({ node, ...props }) => <CustomAccordion {...props} />,
+
       }}
     />
   );
 };
 
-// Composant pour gérer les en-têtes avec un style conditionnel
-const Heading = ({ level, children, isFirstChild }) => {
-  const Tag = `h${level}`;
-  const style = {
-    marginTop: isFirstChild && level === 4 ? '0' : '1em',
-  };
-  return <Tag style={style}>{children}</Tag>;
-};
 
 export default CustomMarkdown;

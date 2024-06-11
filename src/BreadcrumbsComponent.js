@@ -7,7 +7,7 @@ const breadcrumbsMap = {
   '/': { title: 'Home', isHome: true },
   '/guide-clinique-d-odontologie': { title: 'Guide clinique d\'odontologie' },
   '/guide-clinique-d-odontologie/bilans-sanguins': { title: 'Bilans sanguins' },
-  '/guide-clinique-d-odontologie/foyers-infectieux-buccodentaires': { title: 'Foyers infectieux buccodentaires' },
+  '/guide-clinique-d-odontologie/risque-infectieux': { title: 'Risque infectieux' },
   '/moco': { title: 'Moco' },
   '/moco/cas-cliniques-du-cneco': { title: 'Cas cliniques du CNECO' },
   // Ajoutez d'autres chemins au besoin
