@@ -7,6 +7,11 @@ const CasDetailComponent = ({ selectedCas }) => {
   const corrections = selectedCas.attributes.correction;
   const questions = selectedCas.attributes.question;
 
+  const imgStyle = {
+    maxHeight: '60vh', // 3/4 de la hauteur de l'écran
+    width: 'auto' // Pour conserver le ratio d'aspect
+  };
+
   return (
     <motion.div 
       key={selectedCas.id}
@@ -17,7 +22,7 @@ const CasDetailComponent = ({ selectedCas }) => {
     >
       <div className="markdown">
         <h1>{selectedCas.attributes.titre}</h1>
-        <CustomMarkdown markdownText={selectedCas.attributes.enonce} />
+        <CustomMarkdown markdownText={selectedCas.attributes.enonce} imageStyle={imgStyle} />
         <div style={{ margin: '20px 0' }}></div>
         
         {/* Affichez "Questions" uniquement si il y a des questions */}
@@ -30,7 +35,10 @@ const CasDetailComponent = ({ selectedCas }) => {
                 title={<p><strong>{q.question}</strong></p>} 
                 content={
                   <div className="collapsibleContent_EoA1">
-                    <CustomMarkdown markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} />
+                    <CustomMarkdown 
+                      markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} 
+                      imageStyle={imgStyle}
+                    />
                   </div>
                 }
               />

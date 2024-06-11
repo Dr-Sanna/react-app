@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
 import CustomAccordion from './CustomAccordion';
+import ModalImage from 'react-modal-image';
 
 function preprocessMarkdown(markdownText) {
   // Premièrement, traiter les balises :::danger avec un titre potentiel
@@ -124,7 +125,7 @@ function preprocessMarkdown(markdownText) {
 
 
 
-const CustomMarkdown = ({ markdownText }) => {
+const CustomMarkdown = ({ markdownText, imageStyle }) => {
   const processedText = preprocessMarkdown(markdownText);
 
   return (
@@ -134,11 +135,20 @@ const CustomMarkdown = ({ markdownText }) => {
       rehypePlugins={[rehypeRaw]} // Permet le rendu de l'HTML brut
       components={{
         CustomAccordion: ({ node, ...props }) => <CustomAccordion {...props} />,
-
+        img: ({ node, ...props }) => (
+          <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>
+            <ModalImage
+              small={props.src}
+              large={props.src}
+              alt={props.alt}
+              hideDownload={true}
+              hideZoom={false}
+            />
+          </div>
+        )
       }}
     />
   );
 };
-
 
 export default CustomMarkdown;

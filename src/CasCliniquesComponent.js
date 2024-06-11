@@ -134,9 +134,8 @@ const CasCliniquesComponent = () => {
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             {selectedCas ? (
               // Affichage quand un cas est sélectionné
-              <div className="row">
-                <div className="col docItemCol_n6xZ">
-                  <div className="docItemContainer_RhpI">
+              
+              <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                     <article>
                       <BreadcrumbsComponent
                         currentPath={location.pathname}
@@ -151,16 +150,8 @@ const CasCliniquesComponent = () => {
                         onNavigate={handleSelection}
                       />
                     )}
-                  </div>
-                </div>
-                <div className="col col--3">
-                  <div className="tableOfContents_RLlU thin-scrollbar theme-doc-toc-desktop">
-                    <ul
-                      className="table-of-contents table-of-contents__left-border"
-                      style={{ minHeight: "50vh" }}
-                    ></ul>
-                  </div>
-                </div>
+                  
+                
               </div>
             ) : (
               // Affichage initial sans colonne ni table des matières
