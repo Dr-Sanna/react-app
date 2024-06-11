@@ -13,7 +13,7 @@ const searchClient = algoliasearch(
 
 const indexPrefix = process.env.REACT_APP_ALGOLIA_INDEX_PREFIX || 'development_api';
 
-const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
+const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine, onChange }) => (
   <form className="DocSearch-Form">
     <label className="DocSearch-MagnifierLabel" htmlFor="docsearch-input" id="docsearch-label">
       <SearchIcon />
@@ -35,14 +35,20 @@ const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
       maxLength="64"
       type="search"
       value={currentRefinement}
-      onChange={(event) => refine(event.currentTarget.value)}
+      onChange={(event) => {
+        refine(event.currentTarget.value);
+        onChange(event);
+      }}
     />
     <button
       type="reset"
       title="Effacer la requête"
       className="DocSearch-Reset"
       aria-label="Effacer la requête"
-      onClick={() => refine('')}
+      onClick={() => {
+        refine('');
+        onChange({ target: { value: '' } });
+      }}
       hidden={!currentRefinement}
     >
       <ResetIcon />
@@ -63,10 +69,23 @@ const Results = connectStateResults(({ searchState, searchResults, children }) =
   ) : null;
 });
 
+const NoResults = connectStateResults(({ searchState }) => {
+  return !searchState.query || searchState.query.trim() === "" ? null : (
+    <div className="DocSearch-NoResults">
+      <div className="DocSearch-Screen-Icon">
+        <svg width="40" height="40" viewBox="0 0 20 20" fill="none" fillRule="evenodd" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15.5 4.8c2 3 1.7 7-1 9.7h0l4.3 4.3-4.3-4.3a7.8 7.8 0 01-9.8 1m-2.2-2.2A7.8 7.8 0 0113.2 2.4M2 18L18 2"></path>
+        </svg>
+      </div>
+      <p className="DocSearch-Title">Aucun résultat pour "<strong>{searchState.query}</strong>"</p>
+    </div>
+  );
+});
+
 const SearchModal = ({ onClose }) => {
   const modalRef = useRef(null);
-  const [hasResults, setHasResults] = useState(true);
   const [isQueryEmpty, setIsQueryEmpty] = useState(true);
+  const [hasResults, setHasResults] = useState(true);
 
   const handleOutsideClick = useCallback(
     (event) => {
@@ -87,51 +106,54 @@ const SearchModal = ({ onClose }) => {
     };
   }, [handleOutsideClick]);
 
-  const handleSearchResults = useCallback((results) => {
-    if (Array.isArray(results)) {
-      const hasResults = results.some(result => result && result.nbHits !== 0);
-      setHasResults(hasResults);
-    } else {
-      setHasResults(false);
-    }
-  }, []);
-
   const handleInputChange = (event) => {
     setIsQueryEmpty(event.target.value.trim() === "");
+    setHasResults(true); // Reset results state when query changes
+  };
+
+  const handleSearchStateChange = ({ results }) => {
+    const hasAnyResults = results && Object.values(results).some(result => result.nbHits > 0);
+    setHasResults(hasAnyResults);
   };
 
   return (
     <div className="DocSearch DocSearch-Container">
       <div className="DocSearch-Modal" ref={modalRef}>
-        <InstantSearch searchClient={searchClient} indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+        <InstantSearch
+          searchClient={searchClient}
+          indexName={`${indexPrefix}::liens-utile.liens-utile`}
+          onSearchStateChange={handleSearchStateChange}
+        >
           <header className="DocSearch-SearchBar">
             <CustomSearchBoxConnected onChange={handleInputChange} />
           </header>
-          <div className="DocSearch-Dropdown">
-            <div className="DocSearch-Dropdown-Container">
-              <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
-                <Results>
-                  <Hits hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
-                </Results>
-              </Index>
-              <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
-                <Results>
-                  <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
-                </Results>
-              </Index>
-              <Index indexName={`${indexPrefix}::cas-clinique.cas-clinique`}>
-                <Results>
-                  <Hits hitComponent={(props) => <CasCliniqueHit {...props} onClose={onClose} />} />
-                </Results>
-              </Index>
+          {isQueryEmpty ? (
+            <div className="DocSearch-StartScreen">
+              <p className="DocSearch-Help">Commencez à taper pour rechercher...</p>
             </div>
-          </div>
+          ) : (
+            <div className="DocSearch-Dropdown">
+              <div className="DocSearch-Dropdown-Container">
+                <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+                  <Results>
+                    <Hits hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
+                  </Results>
+                </Index>
+                <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
+                  <Results>
+                    <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
+                  </Results>
+                </Index>
+                <Index indexName={`${indexPrefix}::cas-clinique.cas-clinique`}>
+                  <Results>
+                    <Hits hitComponent={(props) => <CasCliniqueHit {...props} onClose={onClose} />} />
+                  </Results>
+                </Index>
+                {!hasResults && <NoResults />}
+              </div>
+            </div>
+          )}
         </InstantSearch>
-        {!hasResults && !isQueryEmpty && (
-          <div className="DocSearch-NoResults">
-            Aucun résultat trouvé
-          </div>
-        )}
         <footer className="DocSearch-Footer">
           <div className="DocSearch-Logo">
             <a
