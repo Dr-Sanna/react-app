@@ -1,20 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connectStateResults } from 'react-instantsearch-dom';
 
-const CustomResults = ({ searchState, searchResults, allSearchResults, children }) => {
-  const hasResults =
-    allSearchResults &&
-    Object.values(allSearchResults).some((results) => results && results.nbHits !== 0);
+const CustomResults = ({ searchState, searchResults, children, onSearchResults }) => {
+  useEffect(() => {
+    if (searchResults) {
+      onSearchResults(searchResults.results);
+    }
+  }, [searchResults, onSearchResults]);
 
-  return searchState && searchState.query ? (
-    <section className="DocSearch-Hits">
-      {hasResults ? (
-        children
-      ) : (
-        <div>Aucun résultat trouvé</div>
-      )}
-    </section>
-  ) : null;
+  return (
+    <div>
+      {children}
+    </div>
+  );
 };
 
 export default connectStateResults(CustomResults);

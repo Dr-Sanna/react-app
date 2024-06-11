@@ -1,16 +1,10 @@
-import React, { useEffect, useCallback, useRef } from "react";
-import { InstantSearch, connectSearchBox, Index, Hits } from "react-instantsearch-dom";
+import React, { useEffect, useCallback, useRef, useState } from "react";
+import { InstantSearch, connectSearchBox, Index, Hits, connectStateResults } from "react-instantsearch-dom";
 import algoliasearch from "algoliasearch/lite";
 import { SearchIcon, ResetIcon, LoadingIndicator, AlgoliaLogo, ArrowDownIcon, ArrowUpIcon, EnterKeyIcon, EscapeKeyIcon } from './IconComponents';
 import LiensUtileHit from './LiensUtileHit';
 import GuideCliniqueHit from './GuideCliniqueHit';
 import CasCliniqueHit from './CasCliniqueHit';
-import CustomResults from './CustomResults'; // Importer le composant CustomResults
-
-// Log pour vérifier les variables d'environnement
-console.log('Algolia App ID:', process.env.REACT_APP_ALGOLIA_APP_ID);
-console.log('Algolia API Key:', process.env.REACT_APP_ALGOLIA_ADMIN_KEY);
-console.log('Index Prefix:', process.env.REACT_APP_ALGOLIA_INDEX_PREFIX);
 
 const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_APP_ID,
@@ -58,8 +52,21 @@ const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
 
 const CustomSearchBoxConnected = connectSearchBox(CustomSearchBox);
 
+const Results = connectStateResults(({ searchState, searchResults, children }) => {
+  const hasResults = searchResults && searchResults.nbHits !== 0;
+  return searchState && searchState.query ? (
+    <section className="DocSearch-Hits">
+      <ul role="listbox" aria-labelledby="docsearch-label" id="docsearch-list">
+        {hasResults ? children : null}
+      </ul>
+    </section>
+  ) : null;
+});
+
 const SearchModal = ({ onClose }) => {
   const modalRef = useRef(null);
+  const [hasResults, setHasResults] = useState(true);
+  const [isQueryEmpty, setIsQueryEmpty] = useState(true);
 
   const handleOutsideClick = useCallback(
     (event) => {
@@ -80,29 +87,51 @@ const SearchModal = ({ onClose }) => {
     };
   }, [handleOutsideClick]);
 
+  const handleSearchResults = useCallback((results) => {
+    if (Array.isArray(results)) {
+      const hasResults = results.some(result => result && result.nbHits !== 0);
+      setHasResults(hasResults);
+    } else {
+      setHasResults(false);
+    }
+  }, []);
+
+  const handleInputChange = (event) => {
+    setIsQueryEmpty(event.target.value.trim() === "");
+  };
+
   return (
     <div className="DocSearch DocSearch-Container">
       <div className="DocSearch-Modal" ref={modalRef}>
         <InstantSearch searchClient={searchClient} indexName={`${indexPrefix}::liens-utile.liens-utile`}>
           <header className="DocSearch-SearchBar">
-            <CustomSearchBoxConnected />
+            <CustomSearchBoxConnected onChange={handleInputChange} />
           </header>
-          <CustomResults>
-            <div className="DocSearch-Dropdown">
-              <div className="DocSearch-Dropdown-Container">
-                <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+          <div className="DocSearch-Dropdown">
+            <div className="DocSearch-Dropdown-Container">
+              <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+                <Results>
                   <Hits hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
-                </Index>
-                <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
+                </Results>
+              </Index>
+              <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
+                <Results>
                   <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
-                </Index>
-                <Index indexName={`${indexPrefix}::cas-clinique.cas-clinique`}>
+                </Results>
+              </Index>
+              <Index indexName={`${indexPrefix}::cas-clinique.cas-clinique`}>
+                <Results>
                   <Hits hitComponent={(props) => <CasCliniqueHit {...props} onClose={onClose} />} />
-                </Index>
-              </div>
+                </Results>
+              </Index>
             </div>
-          </CustomResults>
+          </div>
         </InstantSearch>
+        {!hasResults && !isQueryEmpty && (
+          <div className="DocSearch-NoResults">
+            Aucun résultat trouvé
+          </div>
+        )}
         <footer className="DocSearch-Footer">
           <div className="DocSearch-Logo">
             <a
