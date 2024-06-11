@@ -6,7 +6,7 @@ import CustomAccordion from './CustomAccordion';
 
 function preprocessMarkdown(markdownText) {
   // Premièrement, traiter les balises :::danger avec un titre potentiel
-  let isOpenAccordion = false;
+
   let processedText = markdownText.replace(
     /:::danger(?:\\\[([^\\\]]*?)\\\])?/g,
     (match, title) => {

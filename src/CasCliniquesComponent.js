@@ -107,10 +107,6 @@ const CasCliniquesComponent = () => {
     setSelectedCas(cas);
   };
 
-  const handleNavigate = (cas) => {
-    // Utiliser handleSelection pour gérer la navigation et la mise à jour de l'état
-    handleSelection(cas);
-  };
 
   const menuItems = casCliniques.map(cas => ({
     key: cas.id.toString(),
