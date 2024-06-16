@@ -4,6 +4,7 @@ import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
 import CustomAccordion from './CustomAccordion';
 import ModalImage from 'react-modal-image';
+import ImageCarousel from './ImageCarousel';
 
 function preprocessMarkdown(markdownText) {
   // Premièrement, traiter les balises :::danger avec un titre potentiel
@@ -118,23 +119,30 @@ function preprocessMarkdown(markdownText) {
   return `${before}</div></details>${after}`;
 });
 
+// Ajoutez ceci pour remplacer [carousel] par une balise unique
+processedText = processedText.replace(/\[carousel\]/g, '<div class="custom-carousel"></div>');
 
+processedText = processedText.replace(
+  /\\\[carousel\\\]/g,
+  () => {
+    return '<div class="custom-carousel"></div>';
+  }
+);
   return processedText;
 }
 
 
 
 
-const CustomMarkdown = ({ markdownText, imageStyle }) => {
+const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
   const processedText = preprocessMarkdown(markdownText);
 
   return (
     <ReactMarkdown
       children={processedText}
       remarkPlugins={[gfm]}
-      rehypePlugins={[rehypeRaw]} // Permet le rendu de l'HTML brut
+      rehypePlugins={[rehypeRaw]}
       components={{
-        CustomAccordion: ({ node, ...props }) => <CustomAccordion {...props} />,
         img: ({ node, ...props }) => (
           <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>
             <ModalImage
@@ -145,10 +153,17 @@ const CustomMarkdown = ({ markdownText, imageStyle }) => {
               hideZoom={false}
             />
           </div>
-        )
+        ),
+        div: ({ node, className, ...props }) => {
+          if (className === 'custom-carousel') {
+            return <ImageCarousel images={carouselImages} />;
+          }
+          return <div className={className} {...props} />;
+        }
       }}
     />
   );
 };
+
 
 export default CustomMarkdown;

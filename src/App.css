@@ -23,3 +23,49 @@ body {
 }
 
 .cls-1,.cls-2{fill:#003dff;}.cls-2{fill-rule:evenodd;}
+
+/* CSS pour le bouton toggle personnalisé */
+.toggleButtonCustom {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 10px !important; /* Augmenter le padding pour élargir la zone cliquable */
+  font-size: 14px;
+  font-weight: bold; /* Mettre le texte en gras */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.toggleButtonCustom:hover {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-navbar-link-hover-color);
+}
+
+.toggleButtonCustom span {
+  margin-right: 5px;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+}
+
+.colorModeToggleCustom {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+.toggleButton_x9TT {
+  padding: 5px !important; /* Augmenter le padding pour élargir la zone cliquable */
+}
+
+.carousel .control-arrow {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.carousel:hover .control-arrow {
+  opacity: 1;
+}

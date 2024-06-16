@@ -2,7 +2,6 @@ import React, { useEffect, useCallback, useRef, useState } from "react";
 import { InstantSearch, connectSearchBox, Index, Hits, connectStateResults } from "react-instantsearch-dom";
 import algoliasearch from "algoliasearch/lite";
 import { SearchIcon, ResetIcon, LoadingIndicator, AlgoliaLogo, ArrowDownIcon, ArrowUpIcon, EnterKeyIcon, EscapeKeyIcon } from './IconComponents';
-import LiensUtileHit from './LiensUtileHit';
 import GuideCliniqueHit from './GuideCliniqueHit';
 import CasCliniqueHit from './CasCliniqueHit';
 
@@ -11,7 +10,7 @@ const searchClient = algoliasearch(
   process.env.REACT_APP_ALGOLIA_ADMIN_KEY
 );
 
-const indexPrefix = process.env.REACT_APP_ALGOLIA_INDEX_PREFIX || 'development_api';
+const indexPrefix = process.env.REACT_APP_ALGOLIA_INDEX_PREFIX;
 
 const CustomSearchBox = ({ currentRefinement, isSearchStalled, refine, onChange }) => (
   <form className="DocSearch-Form">
@@ -121,7 +120,7 @@ const SearchModal = ({ onClose }) => {
       <div className="DocSearch-Modal" ref={modalRef}>
         <InstantSearch
           searchClient={searchClient}
-          indexName={`${indexPrefix}::liens-utile.liens-utile`}
+          indexName={`${indexPrefix}::guide-clinique.guide-clinique`}
           onSearchStateChange={handleSearchStateChange}
         >
           <header className="DocSearch-SearchBar">
@@ -134,12 +133,12 @@ const SearchModal = ({ onClose }) => {
           ) : (
             <div className="DocSearch-Dropdown">
               <div className="DocSearch-Dropdown-Container">
-                <Index indexName={`${indexPrefix}::liens-utile.liens-utile`}>
+                <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
                   <Results>
-                    <Hits hitComponent={(props) => <LiensUtileHit {...props} onClose={onClose} />} />
+                    <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
                   </Results>
                 </Index>
-                <Index indexName={`${indexPrefix}::guide-clinique.guide-clinique`}>
+                <Index indexName={`${indexPrefix}::odontologie-pediatrique.odontologie-pediatrique`}>
                   <Results>
                     <Hits hitComponent={(props) => <GuideCliniqueHit {...props} onClose={onClose} />} />
                   </Results>

@@ -1,57 +1,36 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useContext, useMemo } from 'react';
+import { DataContext } from './DataContext';
 import "./HomePage.css";
 import DisplayItems from "./DisplayItems";
 import Matiere from "./Matiere";
 import LiensUtilesWithData from "./LiensUtilesWithData";
 import CasCliniquesComponent from "./CasCliniquesComponent";
+import CoursComponent from "./CoursComponent";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
 
 const HomePage = () => {
-  const [matieres, setMatieres] = useState([]);
-  const [casCliniques, setCasCliniques] = useState([]);
+  const { matieres, sousMatieres } = useContext(DataContext);
   const navigate = useNavigate();
 
-  // Chargement des données des matières au montage du composant.
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_STRAPI_URL}/api/matieres?populate=*`)
-      .then((response) => {
-        if (response.data && response.data.data) {
-          setMatieres(response.data.data);
-        }
-      })
-      .catch((error) =>
-        console.error("Erreur de récupération des données:", error)
-      );
-  }, []);
-
-  // Chargement des données des cas cliniques au montage du composant.
-  useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`)
-      .then((response) => {
-        if (response.data && response.data.data) {
-          setCasCliniques(response.data.data);
-        }
-      })
-      .catch((error) =>
-        console.error("Erreur de récupération des cas cliniques:", error)
-      );
-  }, []);
-
-
-  // Fonction pour gérer le clic sur une matière et naviguer vers son URL.
   const handleMatiereClick = (matiere) => {
     const matiereTitleUrl = toUrlFriendly(matiere.attributes.titre);
     navigate(`/${matiereTitleUrl}`);
   };
 
-    // Rendu de la structure générale de la page avec un Header, un Layout et des Routes.
+  const getComponentByActionType = useMemo(() => (actionType) => {
+    switch(actionType) {
+      case 'cours':
+        return CoursComponent;
+      case 'cas_cliniques':
+        return CasCliniquesComponent;
+      default:
+        return CoursComponent;
+    }
+  }, []);
+
   return (
-    
     <div id="__docusaurus_skipToContent_fallback" className="main-wrapper mainWrapper_PEsc">
       <CustomNavbar />
 
@@ -64,24 +43,24 @@ const HomePage = () => {
         />
         <Route
           path="/:matiereTitle"
-          element={<Matiere matieres={matieres} casCliniques={casCliniques} />}
+          element={<Matiere />}
         />
         <Route
           path="/ressources-utiles/:lienUtileTitle"
           element={<LiensUtilesWithData />}
         />
-        <Route
-          path="/moco/cas-cliniques-du-cneco/*"
-          element={<CasCliniquesComponent />}
-        />
-        <Route
-          path="/guide-clinique-d-odontologie/bilans-sanguins/*"
-          element={<CasCliniquesComponent />}
-        />
-        <Route
-          path="/guide-clinique-d-odontologie/risque-infectieux/*"
-          element={<CasCliniquesComponent />}
-        />
+        {sousMatieres.map((sousMatiere) => {
+          const Component = getComponentByActionType(sousMatiere.attributes.actionType);
+          const matiereTitleUrl = toUrlFriendly(sousMatiere.attributes.matiere.data.attributes.titre);
+          const sousMatiereTitleUrl = toUrlFriendly(sousMatiere.attributes.titre);
+          return (
+            <Route
+              key={sousMatiere.id}
+              path={`/${matiereTitleUrl}/${sousMatiereTitleUrl}/*`}
+              element={<Component />}
+            />
+          );
+        })}
       </Routes>
     </div>
   );

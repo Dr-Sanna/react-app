@@ -1,20 +1,10 @@
-import React from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { HomeIcon } from './IconComponents'; // Assurez-vous que l'importation est correcte
+import { HomeIcon } from './IconComponents';
+import { DataContext } from './DataContext';
+import { toUrlFriendly } from "./config";
 
-// Carte d'équivalence URL-titre pour les breadcrumbs
-const breadcrumbsMap = {
-  '/': { title: 'Home', isHome: true },
-  '/guide-clinique-d-odontologie': { title: 'Guide clinique d\'odontologie' },
-  '/guide-clinique-d-odontologie/bilans-sanguins': { title: 'Bilans sanguins' },
-  '/guide-clinique-d-odontologie/risque-infectieux': { title: 'Risque infectieux' },
-  '/moco': { title: 'Moco' },
-  '/moco/cas-cliniques-du-cneco': { title: 'Cas cliniques du CNECO' },
-  // Ajoutez d'autres chemins au besoin
-};
-
-// Fonction pour générer les breadcrumbs basée sur le chemin actuel et le titre du cas sélectionné
-const generateBreadcrumbs = (currentPath, selectedCasTitle) => {
+const generateBreadcrumbs = (currentPath, selectedCasTitle, sousMatieres, matieres) => {
   const pathSegments = currentPath.split('/').filter(Boolean);
   let pathAccum = '';
   const breadcrumbs = pathSegments.map((segment, index) => {
@@ -22,27 +12,26 @@ const generateBreadcrumbs = (currentPath, selectedCasTitle) => {
     let title;
     const isLast = index === pathSegments.length - 1;
     if (isLast && selectedCasTitle) {
-      // Si un titre de cas est fourni et que nous sommes sur le dernier segment, utilisez ce titre
       title = selectedCasTitle;
     } else {
-      // Sinon, utilisez le titre de la carte ou le segment lui-même
-      title = breadcrumbsMap[pathAccum]?.title || segment;
+      const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === segment);
+      const sousMatiere = sousMatieres.find(sm => toUrlFriendly(sm.attributes.titre) === segment);
+      title = matiere ? matiere.attributes.titre : sousMatiere ? sousMatiere.attributes.titre : segment;
     }
-    const isHome = breadcrumbsMap[pathAccum]?.isHome || false;
+    const isHome = pathAccum === '/';
 
     return {
       title,
-      link: !isLast ? pathAccum : null, // Pas de lien pour le dernier élément
+      link: !isLast ? pathAccum : null,
       active: isLast,
       isHome,
     };
   });
 
-  // Ajoute le breadcrumb "Home" au début
   return [{ title: 'Home', link: '/', active: false, isHome: true }, ...breadcrumbs];
 };
 
-const GenericBreadcrumbs = ({ breadcrumbs }) => (
+const GenericBreadcrumbs = React.memo(({ breadcrumbs }) => (
   <nav aria-label="Fil d'Ariane" className="theme-doc-breadcrumbs breadcrumbsContainer_Wvrh">
     <ul className="breadcrumbs" itemScope itemType="https://schema.org/BreadcrumbList">
       {breadcrumbs.map((crumb, index) => (
@@ -59,10 +48,11 @@ const GenericBreadcrumbs = ({ breadcrumbs }) => (
       ))}
     </ul>
   </nav>
-);
+));
 
 const BreadcrumbsComponent = ({ currentPath, selectedCasTitle }) => {
-  const breadcrumbs = generateBreadcrumbs(currentPath, selectedCasTitle);
+  const { sousMatieres, matieres } = useContext(DataContext);
+  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, sousMatieres, matieres), [currentPath, selectedCasTitle, sousMatieres, matieres]);
   return <GenericBreadcrumbs breadcrumbs={breadcrumbs} />;
 };
 

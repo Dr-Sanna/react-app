@@ -29,6 +29,7 @@
     "react-modal-image": "^2.6.0",
     "react-perfect-scrollbar": "^1.5.8",
     "react-responsive": "^9.0.2",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1",
     "react-spring": "^9.7.3",

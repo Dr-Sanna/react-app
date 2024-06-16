@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import LeftMenu from "./LeftMenu";
@@ -10,17 +10,19 @@ import { preloadImage } from "./utils";
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
-import PaginationComponent from './PaginationComponent'; // Assurez-vous que le chemin est correct
+import PaginationComponent from './PaginationComponent';
+import { DataContext } from './DataContext';
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { sousMatieres } = useContext(DataContext);
   const [casCliniques, setCasCliniques] = useState([]);
   const [selectedCas, setSelectedCas] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const currentPath = location.pathname; // Utilisé pour la dépendance du useEffect
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
+  const dataLoaded = useRef(false);
 
   const updateSelectedCas = useCallback(
     (titre, casList) => {
@@ -37,66 +39,60 @@ const CasCliniquesComponent = () => {
   );
 
   useEffect(() => {
-    setIsLoading(true);
+    const fetchData = async () => {
+      if (!dataLoaded.current) {
+        setIsLoading(true);
+        let queryURL = '';
 
-    let queryURL = '';
+        if (location.pathname.includes('moco') && location.pathname.includes('cas-cliniques-du-cneco')) {
+          queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`;
+          queryURL += `&filters[sous_matiere][id][$eq]=3`;
+        }
 
-    if (currentPath.includes('guide-clinique-d-odontologie')) {
-      queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/guide-cliniques?populate=*`;
+        if (queryURL) {
+          try {
+            const response = await axios.get(queryURL);
+            const data = response.data.data || [];
+            const preloadedData = await Promise.all(data.map(async (cas) => {
+              if (cas && cas.attributes) {
+                const imageUrl = cas.attributes.image ? `${server}${cas.attributes.image.data.attributes.url}` : "";
+                await preloadImage(imageUrl);
+                return {
+                  ...cas,
+                  preloaded: true,
+                  urlFriendlyTitre: toUrlFriendly(cas.attributes.titre),
+                };
+              }
+              return null;
+            }).filter(cas => cas !== null));
 
-      if (currentPath.includes('bilans-sanguins')) {
-        queryURL += `&filters[sous_matiere][id][$eq]=4`;
-      } else if (currentPath.includes('risque-infectieux')) {
-        queryURL += `&filters[sous_matiere][id][$eq]=5`;
-      }
-
-    } else if (currentPath.includes('cas-cliniques')) {
-      queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`;
-
-      if (currentPath.includes('moco/cas-cliniques-du-cneco')) {
-        queryURL += `&filters[sous_matiere][id][$eq]=3`;
-      } else if (sousMatiereId) {
-        queryURL += `&filters[sous_matiere][id][$eq]=${sousMatiereId}`;
-      }
-    }
-
-    axios.get(queryURL)
-      .then(async (response) => {
-        const data = response.data.data || [];
-        const preloadedData = await Promise.all(data.map(async (cas) => {
-          if (cas && cas.attributes) {
-            const imageUrl = cas.attributes.image ? `${server}${cas.attributes.image.data.attributes.url}` : "";
-            await preloadImage(imageUrl);
-            return {
-              ...cas,
-              preloaded: true,
-              urlFriendlyTitre: toUrlFriendly(cas.attributes.titre),
-            };
+            setCasCliniques(preloadedData);
+            dataLoaded.current = true;
+          } catch (error) {
+            console.error("Erreur de récupération des cas cliniques:", error);
+          } finally {
+            setIsLoading(false);
           }
-          return null;
-        }).filter(cas => cas !== null));
+        } else {
+          setIsLoading(false);
+        }
+      }
+    };
 
-        setCasCliniques(preloadedData);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Erreur de récupération des cas cliniques:", error);
-        setIsLoading(false);
-      });
-  }, [sousMatiereId, currentPath]);
+    fetchData();
+  }, [sousMatiereId, location.pathname]);
 
   useEffect(() => {
-    if (currentPath === "/moco/cas-cliniques-du-cneco") {
+    if (location.pathname === "/moco/cas-cliniques-du-cneco") {
       setSelectedCas(null);
     } else {
-      const titre = currentPath.split("/").pop();
+      const titre = location.pathname.split("/").pop();
       updateSelectedCas(titre, casCliniques);
     }
-  }, [location, casCliniques, updateSelectedCas, currentPath]);
+  }, [location, casCliniques, updateSelectedCas]);
 
   const currentIndex = casCliniques.findIndex(cas => cas.id === selectedCas?.id);
 
-  // Définir l'item précédent et suivant
   const prevItem = currentIndex > 0 ? { ...casCliniques[currentIndex - 1], label: casCliniques[currentIndex - 1]?.attributes?.titre } : null;
   const nextItem = currentIndex < casCliniques.length - 1 ? { ...casCliniques[currentIndex + 1], label: casCliniques[currentIndex + 1]?.attributes?.titre } : null;
 
@@ -106,7 +102,6 @@ const CasCliniquesComponent = () => {
     navigate(newPath, { state: { sousMatiereId } });
     setSelectedCas(cas);
   };
-
 
   const menuItems = casCliniques.map(cas => ({
     key: cas.id.toString(),
@@ -123,43 +118,35 @@ const CasCliniquesComponent = () => {
         type="button"
       ></button>
       <div className="docRoot_kBZ6">
-        {/* Sidebar gauche */}
         <LeftMenu
           menuItems={menuItems}
           selectedKey={selectedCas?.id?.toString() || ""}
         />
 
-        {/* Contenu principal */}
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             {selectedCas ? (
-              // Affichage quand un cas est sélectionné
-              
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
-                    <article>
-                      <BreadcrumbsComponent
-                        currentPath={location.pathname}
-                        selectedCasTitle={selectedCas ? selectedCas.attributes.titre : ''}
-                      />
-                      <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
-                    </article>
-                    {selectedCas && (
-                      <PaginationComponent
-                        prevItem={prevItem ? { ...prevItem } : null} // Assurez-vous d'inclure toutes les propriétés nécessaires
-                        nextItem={nextItem ? { ...nextItem } : null}
-                        onNavigate={handleSelection}
-                      />
-                    )}
-                  
-                
+                <article>
+                  <BreadcrumbsComponent
+                    currentPath={location.pathname}
+                    selectedCasTitle={selectedCas ? selectedCas.attributes.titre : ''}
+                  />
+                  <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
+                </article>
+                {selectedCas && (
+                  <PaginationComponent
+                    prevItem={prevItem ? { ...prevItem } : null}
+                    nextItem={nextItem ? { ...nextItem } : null}
+                    onNavigate={handleSelection}
+                  />
+                )}
               </div>
             ) : (
-              // Affichage initial sans colonne ni table des matières
               <div className="docItemContainer_RhpI">
                 <BreadcrumbsComponent
                   currentPath={location.pathname}
                   selectedCas={selectedCas}
-                  sousMatiereId={sousMatiereId}
                 />
                 {isLoading ? (
                   <CustomToothLoader />

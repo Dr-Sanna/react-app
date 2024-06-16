@@ -4,6 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { toUrlFriendly } from './config'; // Assurez-vous d'importer cette fonction
 import { HitIcon, SelectIcon } from './IconComponents';
 
+// Fonction pour enlever les balises Markdown de base
+const removeMarkdown = (text) => {
+  return text
+    .replace(/[#*~_`>]/g, '') // Enlève les caractères de formatage Markdown de base
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Enlève les liens
+    .replace(/!\[(.*?)\]\(.*?\)/g, '$1'); // Enlève les images
+};
+
 const CasCliniqueHit = ({ hit, onClose }) => {
   const navigate = useNavigate();
 
@@ -28,7 +36,7 @@ const CasCliniqueHit = ({ hit, onClose }) => {
               <Highlight attribute="titre" hit={hit} />
             </span>
             <span className="DocSearch-Hit-path">
-              <Highlight attribute="enonce" hit={hit} />
+              {removeMarkdown(hit.enonce)}
             </span>
           </div>
           <div className="DocSearch-Hit-action">
