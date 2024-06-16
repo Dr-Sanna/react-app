@@ -2,7 +2,6 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
-import CustomAccordion from './CustomAccordion';
 import ModalImage from 'react-modal-image';
 import ImageCarousel from './ImageCarousel';
 

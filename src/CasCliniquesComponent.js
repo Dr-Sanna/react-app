@@ -11,12 +11,10 @@ import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
-import { DataContext } from './DataContext';
 
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { sousMatieres } = useContext(DataContext);
   const [casCliniques, setCasCliniques] = useState([]);
   const [selectedCas, setSelectedCas] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
