@@ -12,6 +12,29 @@ import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 
+const getQueryURL = (pathname) => {
+  if (pathname.includes('odontologie-pediatrique')) {
+    let url = `${process.env.REACT_APP_STRAPI_URL}/api/odontologie-pediatriques?populate=*`;
+    if (pathname.includes('therapeutiques-pulpaires-des-dt')) {
+      url += `&filters[sous_matiere][id][$eq]=10`;
+    }
+    return url;
+  } else if (pathname.includes('guide-clinique-d-odontologie')) {
+    let url = `${process.env.REACT_APP_STRAPI_URL}/api/guide-cliniques?populate=*`;
+    if (pathname.includes('bilans-sanguins')) {
+      url += `&filters[sous_matiere][id][$eq]=4`;
+    } else if (pathname.includes('risque-infectieux')) {
+      url += `&filters[sous_matiere][id][$eq]=5`;
+    } else if (pathname.includes('risque-hemorragique')) {
+      url += `&filters[sous_matiere][id][$eq]=11`;
+    }
+    return url;
+  } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
+    return `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
+  }
+  return '';
+};
+
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,70 +63,51 @@ const CoursComponent = () => {
     const fetchData = async () => {
       if (!dataLoaded.current) {
         setIsLoading(true);
-        let queryURL = '';
+        const queryURL = getQueryURL(location.pathname);
 
-        if (location.pathname.includes('odontologie-pediatrique')) {
-          queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/odontologie-pediatriques?populate=*`;
-        
-          if (location.pathname.includes('therapeutiques-pulpaires-des-dt')) {
-            queryURL += `&filters[sous_matiere][id][$eq]=10`; // Assurez-vous que cet ID est correct pour la sous-matière therapeutiques pulpaires des dt
+        if (queryURL) {
+          try {
+            const response = await axios.get(queryURL);
+            const data = response.data.data || [];
+            const preloadedData = await Promise.all(data.map(async (cours) => {
+              if (cours && cours.attributes) {
+                const imageUrls = cours.attributes.images ? cours.attributes.images.map(img => `${server}${img.url}`) : [];
+                await Promise.all(imageUrls.map(preloadImage));
+
+                const carouselImages = cours.attributes.Carousel?.data ? cours.attributes.Carousel.data.map(car => ({
+                  url: `${server}${car.attributes.url}`,
+                  caption: car.attributes.caption || ""
+                })) : [];
+
+                return {
+                  ...cours,
+                  preloaded: true,
+                  urlFriendlyTitre: toUrlFriendly(cours.attributes.titre),
+                  images: cours.attributes.images ? cours.attributes.images.map(img => ({
+                    url: `${server}${img.url}`,
+                    caption: img.caption
+                  })) : [],
+                  carousel: carouselImages
+                };
+              }
+              return null;
+            }).filter(cours => cours !== null));
+
+            setCours(preloadedData);
+            dataLoaded.current = true;
+          } catch (error) {
+            console.error("Erreur de récupération des cours:", error);
+          } finally {
+            setIsLoading(false);
           }
-        
-        } else if (location.pathname.includes('guide-clinique-d-odontologie')) {
-          queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/guide-cliniques?populate=*`;
-        
-          if (location.pathname.includes('bilans-sanguins')) {
-            queryURL += `&filters[sous_matiere][id][$eq]=4`;
-          } else if (location.pathname.includes('risque-infectieux')) {
-            queryURL += `&filters[sous_matiere][id][$eq]=5`;
-          } else if (location.pathname.includes('risque-hemorragique')) {
-            queryURL += `&filters[sous_matiere][id][$eq]=11`;
-          }
-        
-        } else if (location.pathname.includes('moco') && location.pathname.includes('medecine-orale')) {
-          queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*`;
-          queryURL += `&filters[sous_matiere][id][$eq]=9`; // Assurez-vous que cet ID est correct pour la sous-matière medecine orale
-        }
-
-        try {
-          const response = await axios.get(queryURL);
-          const data = response.data.data || [];
-          const preloadedData = await Promise.all(data.map(async (cours) => {
-            if (cours && cours.attributes) {
-              const imageUrls = cours.attributes.images ? cours.attributes.images.map(img => `${server}${img.url}`) : [];
-              await Promise.all(imageUrls.map(preloadImage));
-
-              const carouselImages = cours.attributes.Carousel?.data ? cours.attributes.Carousel.data.map(car => ({
-                url: `${server}${car.attributes.url}`,
-                caption: car.attributes.caption || ""
-              })) : [];
-
-              return {
-                ...cours,
-                preloaded: true,
-                urlFriendlyTitre: toUrlFriendly(cours.attributes.titre),
-                images: cours.attributes.images ? cours.attributes.images.map(img => ({
-                  url: `${server}${img.url}`,
-                  caption: img.caption
-                })) : [],
-                carousel: carouselImages
-              };
-            }
-            return null;
-          }).filter(cours => cours !== null));
-
-          setCours(preloadedData);
-          dataLoaded.current = true;
-        } catch (error) {
-          console.error("Erreur de récupération des cours:", error);
-        } finally {
+        } else {
           setIsLoading(false);
         }
       }
     };
 
     fetchData();
-  }, [sousMatiereId, location.pathname]);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (location.pathname === "/moco/medecine-orale") {

@@ -69,3 +69,31 @@ body {
 .carousel:hover .control-arrow {
   opacity: 1;
 }
+/* CSS pour supprimer l'espace après les titres h4 dans un tableau */
+td h4 {
+  margin: 0;
+}
+td p:last-child,
+td ul:last-child {
+  margin-bottom: 0;
+}
+td p:has(+ ul) {
+  margin-bottom: 0;
+}
+
+td ul {
+  list-style-type: none; /* Supprime les puces par défaut */
+  padding-left: 0; /* Supprime le padding par défaut de la liste */
+}
+
+td ul li::before {
+  content: "- "; /* Ajoute un tiret avant chaque élément de la liste */
+  margin-right: 8px; /* Ajoute un espace après le tiret pour la lisibilité */
+}
+
+td ul li {
+  margin-top: 0px !important; /* Ajoute un espace après le tiret pour la lisibilité */
+}
+td {
+  font-size: 90%; /* Réduit la taille du texte de 20% */
+}
