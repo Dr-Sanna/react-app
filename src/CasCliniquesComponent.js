@@ -151,6 +151,7 @@ const CasCliniquesComponent = () => {
                 ) : (
                   <CasCardComponent
                     casCliniques={casCliniques}
+                    isLoading={isLoading}
                     onSelection={handleSelection}
                   />
                 )}

@@ -1,15 +1,15 @@
 import React, { useContext, useMemo } from 'react';
 import { DataContext } from './DataContext';
-import "./HomePage.css";
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import DisplayItems from "./DisplayItems";
 import Matiere from "./Matiere";
 import LiensUtilesWithData from "./LiensUtilesWithData";
 import CasCliniquesComponent from "./CasCliniquesComponent";
 import CoursComponent from "./CoursComponent";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
-import CoursDetailLoader from './CoursDetailLoader'; // Importez ce composant pour gérer le chargement des détails des cours
+import CoursDetailLoader from './CoursDetailLoader';
+import { toUrlFriendly } from "./config";
+import "./HomePage.css";
 
 const HomePage = () => {
   const { matieres, sousMatieres } = useContext(DataContext);
@@ -21,7 +21,7 @@ const HomePage = () => {
   };
 
   const getComponentByActionType = useMemo(() => (actionType) => {
-    switch(actionType) {
+    switch (actionType) {
       case 'cours':
         return CoursComponent;
       case 'cas_cliniques':
@@ -40,18 +40,10 @@ const HomePage = () => {
       <Routes>
         <Route
           path="/"
-          element={
-            <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
-          }
+          element={<DisplayItems items={matieres} onClickItem={handleMatiereClick} />}
         />
-        <Route
-          path="/:matiereTitle"
-          element={<Matiere />}
-        />
-        <Route
-          path="/ressources-utiles/:lienUtileTitle"
-          element={<LiensUtilesWithData />}
-        />
+        <Route path="/:matiereTitle" element={<Matiere />} />
+        <Route path="/ressources-utiles/:lienUtileTitle" element={<LiensUtilesWithData />} />
         {sousMatieres.map((sousMatiere) => {
           const Component = getComponentByActionType(sousMatiere.attributes.actionType);
           const matiereTitleUrl = toUrlFriendly(sousMatiere.attributes.matiere.data.attributes.titre);
@@ -64,10 +56,7 @@ const HomePage = () => {
             />
           );
         })}
-        <Route
-          path="/:matiereTitle/:sousMatiereTitle/:coursTitle"
-          element={<CoursDetailLoader />}
-        />
+        <Route path="/:matiereTitle/:sousMatiereTitle/:coursTitle" element={<CoursDetailLoader />} />
       </Routes>
     </div>
   );
