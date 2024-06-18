@@ -5,7 +5,7 @@ import DisplayItems from './DisplayItems';
 import { toUrlFriendly } from './config';
 
 const Matiere = () => {
-  const { matieres, sousMatieres } = useContext(DataContext);
+  const { matieres, sousMatieres, setSelectedSousMatiere } = useContext(DataContext);
   const [filteredSousMatieres, setFilteredSousMatieres] = useState([]);
   const navigate = useNavigate();
   const { matiereTitle } = useParams();
@@ -23,7 +23,9 @@ const Matiere = () => {
   const handleSousMatiereClick = (sousMatiere) => {
     const titleUrl = toUrlFriendly(sousMatiere.attributes.titre);
     const sousMatiereId = sousMatiere.id;
-    
+
+    setSelectedSousMatiere(sousMatiere);  // Déclencher la sélection de la sous-matière
+
     switch (sousMatiere.attributes.actionType) {
       case 'cas_cliniques':
       case 'cours':

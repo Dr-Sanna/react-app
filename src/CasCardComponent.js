@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardMedia, Skeleton } from '@mui/material';
+import { Card, CardContent, Skeleton } from '@mui/material';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import styled from 'styled-components';
 import { server } from './config';
 import { useLocation } from 'react-router-dom';
@@ -65,10 +66,10 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
                     borderRadius: '10px',
                     boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
                   }}>
-                    <CardMedia
-                      component="img"
-                      image={imageUrl}
+                    <LazyLoadImage
+                      src={imageUrl}
                       alt={cas?.attributes?.titre || 'Titre inconnu'}
+                      effect="blur"
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                     <CardContent style={{

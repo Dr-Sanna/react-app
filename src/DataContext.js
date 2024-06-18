@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { fetchMatieres, fetchSousMatieres, fetchCasCliniques, fetchCoursData } from './api';
-import { preloadImage } from './utils';
+import { preloadImage, preloadImages } from './utils'; // Assurez-vous que preloadImages est également importé
 import { server } from './config';
 
 export const DataContext = createContext();
@@ -49,10 +49,10 @@ export const DataProvider = ({ children }) => {
         setIsCoursLoading(true);
         try {
           const coursData = await fetchCoursData(selectedSousMatiere.path);
-          await Promise.all(coursData.map(async (cour) => {
-            const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
-            await Promise.all(imageUrls.map(preloadImage));
-          }));
+          const imageUrls = coursData.flatMap(cour =>
+            cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : []
+          );
+          await preloadImages(imageUrls);
           setCours(coursData);
         } catch (error) {
           console.error("Erreur de récupération des cours:", error);

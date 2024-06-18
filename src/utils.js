@@ -1,3 +1,4 @@
+// utils.js
 export const preloadImage = (url) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
