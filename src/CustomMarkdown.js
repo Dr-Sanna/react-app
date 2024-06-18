@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeParse from 'rehype-parse';
+import rehypeSanitize from 'rehype-sanitize';
+import { visit } from 'unist-util-visit';
 import gfm from 'remark-gfm';
 import ModalImage from 'react-modal-image';
 import ImageCarousel from './ImageCarousel';
@@ -72,6 +75,20 @@ function preprocessMarkdown(markdownText) {
   return processedText;
 }
 
+function removePTagsAroundImages() {
+  return (tree) => {
+    visit(tree, 'element', (node, index, parent) => {
+      if (node.tagName === 'p' && parent && parent.children) {
+        const isOnlyImage = node.children.length === 1 && node.children[0].tagName === 'img';
+        if (isOnlyImage) {
+          // Replace <p> with the image directly
+          parent.children.splice(index, 1, node.children[0]);
+        }
+      }
+    });
+  };
+}
+
 const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
   const processedText = preprocessMarkdown(markdownText);
 
@@ -79,7 +96,7 @@ const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
     <ReactMarkdown
       children={processedText}
       remarkPlugins={[gfm]}
-      rehypePlugins={[rehypeRaw]}
+      rehypePlugins={[rehypeRaw, removePTagsAroundImages]}
       components={{
         img: ({ node, ...props }) => (
           <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>

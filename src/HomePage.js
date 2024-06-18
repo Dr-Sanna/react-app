@@ -9,6 +9,7 @@ import CoursComponent from "./CoursComponent";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
+import CoursDetailLoader from './CoursDetailLoader'; // Importez ce composant pour gérer le chargement des détails des cours
 
 const HomePage = () => {
   const { matieres, sousMatieres } = useContext(DataContext);
@@ -25,6 +26,8 @@ const HomePage = () => {
         return CoursComponent;
       case 'cas_cliniques':
         return CasCliniquesComponent;
+      case 'liens_utiles':
+        return LiensUtilesWithData;
       default:
         return CoursComponent;
     }
@@ -61,6 +64,10 @@ const HomePage = () => {
             />
           );
         })}
+        <Route
+          path="/:matiereTitle/:sousMatiereTitle/:coursTitle"
+          element={<CoursDetailLoader />}
+        />
       </Routes>
     </div>
   );
