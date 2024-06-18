@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
-import rehypeParse from 'rehype-parse';
-import rehypeSanitize from 'rehype-sanitize';
 import { visit } from 'unist-util-visit';
 import gfm from 'remark-gfm';
 import ModalImage from 'react-modal-image';
