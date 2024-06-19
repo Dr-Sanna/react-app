@@ -17,7 +17,8 @@ const CoursDetailComponent = ({ selectedCas }) => {
 
   const imgStyle = {
     maxHeight: '60vh',
-    width: 'auto'
+    width: 'auto', // Pour conserver le ratio d'aspect
+    marginBottom: 'var(--ifm-leading)'
   };
 
   return (

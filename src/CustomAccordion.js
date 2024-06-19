@@ -1,59 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-const CustomAccordion = ({ title, content }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const contentRef = useRef(null);
+const CustomAccordion = ({ title, content, isOpen, onToggle }) => {
+  const detailsRef = useRef(null);
 
   useEffect(() => {
-    const currentContent = contentRef.current;
-    if (!currentContent) return;
-
-    const updateHeight = () => {
-      currentContent.style.height = isOpen ? `${currentContent.scrollHeight}px` : '0px';
-    };
-
-    const transitionEnd = () => {
+    if (detailsRef.current) {
       if (isOpen) {
-        currentContent.style.height = 'auto';
+        detailsRef.current.setAttribute('open', '');
+      } else {
+        detailsRef.current.removeAttribute('open');
       }
-      currentContent.removeEventListener('transitionend', transitionEnd);
-    };
-
-    currentContent.addEventListener('transitionend', transitionEnd);
-
-    updateHeight();
-
-    return () => {
-      currentContent.removeEventListener('transitionend', transitionEnd);
-    };
+    }
   }, [isOpen]);
 
-  const toggleAccordion = (e) => {
+  const handleToggle = (e) => {
     e.preventDefault();
-    setIsOpen(!isOpen);
-  };
-  
-  const handleContentClick = (e) => {
-    e.stopPropagation(); // Empêche l'événement de remonter jusqu'au <details>
+    onToggle();
   };
 
   return (
     <details 
-      className="details_Nokh isBrowser_QrB5 alert alert--info details_Cn_P"
-      data-collapsed={!isOpen}
-      open={isOpen}
-      onClick={toggleAccordion}
+      ref={detailsRef}
+      className={`details_Nokh isBrowser_QrB5 alert alert--info details_Cn_P`} 
+      data-collapsed={isOpen ? "false" : "true"}
     >
-      <summary>{title}</summary>
-      <div 
-        ref={contentRef} 
-        style={{ 
-          height: '0px', 
-          overflow: 'hidden', 
-          transition: 'height 318ms ease-in-out' 
-        }}
-        onClick={handleContentClick} // Ajoutez le gestionnaire ici
-      >
+      <summary onClick={handleToggle}>
+        {title}
+      </summary>
+      <div className="collapsibleContent_EoA1">
         {content}
       </div>
     </details>
