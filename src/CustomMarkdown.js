@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { visit } from 'unist-util-visit';
 import gfm from 'remark-gfm';
-import ModalImage from 'react-modal-image';
+import LazyImage from './LazyImage';
 import ImageCarousel from './ImageCarousel';
 import ReactDOMServer from 'react-dom/server';
 import { IconDanger, IconInfo, IconAttention, IconAstuce, IconRemarque } from './IconComponents';
@@ -97,15 +97,11 @@ const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
       rehypePlugins={[rehypeRaw, removePTagsAroundImages]}
       components={{
         img: ({ node, ...props }) => (
-          <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>
-            <ModalImage
-              small={props.src}
-              large={props.src}
-              alt={props.alt}
-              hideDownload={true}
-              hideZoom={false}
-            />
-          </div>
+          <LazyImage
+            src={props.src}
+            alt={props.alt}
+            imageStyle={imageStyle}
+          />
         ),
         div: ({ node, className, ...props }) => {
           if (className === 'custom-carousel') {
