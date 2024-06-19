@@ -45,14 +45,19 @@ const CoursComponent = () => {
   const sousMatiereId = location.state?.sousMatiereId;
   const dataLoaded = useRef(false);
 
-  const updateSelectedCours = useCallback((titre, coursList) => {
-    if (Array.isArray(coursList)) {
-      const foundCours = coursList.find(c => c.attributes && toUrlFriendly(c.attributes.titre) === titre);
-      setSelectedCours(foundCours || null);
-    } else {
-      console.error("coursList n'est pas un tableau:", coursList);
-    }
-  }, []);
+  const updateSelectedCours = useCallback(
+    (titre, coursList) => {
+      if (Array.isArray(coursList)) {
+        const foundCours = coursList.find(
+          (c) => c.attributes && toUrlFriendly(c.attributes.titre) === titre
+        );
+        setSelectedCours(foundCours || null);
+      } else {
+        console.error("coursList n'est pas un tableau:", coursList);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -140,13 +145,19 @@ const CoursComponent = () => {
         type="button"
       ></button>
       <div className="docRoot_kBZ6">
-        <LeftMenu menuItems={menuItems} selectedKey={selectedCours?.id?.toString() || ""} />
+        <LeftMenu
+          menuItems={menuItems}
+          selectedKey={selectedCours?.id?.toString() || ""}
+        />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             {selectedCours ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
-                  <BreadcrumbsComponent currentPath={location.pathname} selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''} />
+                  <BreadcrumbsComponent
+                    currentPath={location.pathname}
+                    selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
+                  />
                   <CoursDetailComponent selectedCas={selectedCours} />
                 </article>
                 {selectedCours && (
@@ -159,11 +170,18 @@ const CoursComponent = () => {
               </div>
             ) : (
               <div className="docItemContainer_RhpI">
-                <BreadcrumbsComponent currentPath={location.pathname} selectedCas={selectedCours} sousMatiereId={sousMatiereId} />
+                <BreadcrumbsComponent
+                  currentPath={location.pathname}
+                  selectedCas={selectedCours}
+                  sousMatiereId={sousMatiereId}
+                />
                 {isLoading ? (
                   <CustomToothLoader />
                 ) : (
-                  <CasCardComponent casCliniques={cours} isLoading={isLoading} onSelection={handleSelection} />
+                  <CasCardComponent
+                    casCliniques={cours}
+                    onSelection={handleSelection}
+                  />
                 )}
               </div>
             )}

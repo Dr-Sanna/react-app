@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, Skeleton } from '@mui/material';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { Card, CardContent, CardMedia, Skeleton } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
 import { useLocation } from 'react-router-dom';
@@ -34,6 +33,19 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
+  
+  // Définir l'état des images chargées pour chaque carte
+  const [imageLoadedStates, setImageLoadedStates] = useState(
+    new Array(casCliniques.length).fill(false)
+  );
+
+  const handleImageLoad = (index) => {
+    setImageLoadedStates((prevStates) => {
+      const newStates = [...prevStates];
+      newStates[index] = true;
+      return newStates;
+    });
+  };
 
   return (
     <CasCardContainer>
@@ -45,7 +57,7 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
           </div>
         ))
       ) : (
-        casCliniques.map(cas => {
+        casCliniques.map((cas, index) => {
           const imageUrl = cas?.attributes?.image?.data?.attributes?.url
             ? `${server}${cas.attributes.image.data.attributes.url}`
             : '/defaultImage.jpg';
@@ -66,12 +78,20 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
                     borderRadius: '10px',
                     boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
                   }}>
-                    <LazyLoadImage
-                      src={imageUrl}
-                      alt={cas?.attributes?.titre || 'Titre inconnu'}
-                      effect="blur"
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
+                    <motion.div
+                      initial={{ opacity: 0, filter: 'blur(10px)' }}
+                      animate={{ opacity: imageLoadedStates[index] ? 1 : 0, filter: imageLoadedStates[index] ? 'blur(0px)' : 'blur(10px)' }}
+                      transition={{ duration: 0.5 }}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    >
+                      <CardMedia
+                        component="img"
+                        image={imageUrl}
+                        alt={cas?.attributes?.titre || 'Titre inconnu'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
+                        onLoad={() => handleImageLoad(index)}
+                      />
+                    </motion.div>
                     <CardContent style={{
                       position: 'absolute',
                       bottom: 0,
