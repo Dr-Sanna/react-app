@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { visit } from 'unist-util-visit';
 import gfm from 'remark-gfm';
-import LazyImage from './LazyImage';
+import ImageModal from './ImageModal';
 import ImageCarousel from './ImageCarousel';
 import ReactDOMServer from 'react-dom/server';
 import { IconDanger, IconInfo, IconAttention, IconAstuce, IconRemarque } from './IconComponents';
@@ -79,7 +79,6 @@ function removePTagsAroundImages() {
       if (node.tagName === 'p' && parent && parent.children) {
         const isOnlyImage = node.children.length === 1 && node.children[0].tagName === 'img';
         if (isOnlyImage) {
-          // Replace <p> with the image directly
           parent.children.splice(index, 1, node.children[0]);
         }
       }
@@ -87,7 +86,8 @@ function removePTagsAroundImages() {
   };
 }
 
-const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
+const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages }) => {
+  console.log('Rendering CustomMarkdown');
   const processedText = preprocessMarkdown(markdownText);
 
   return (
@@ -97,11 +97,13 @@ const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
       rehypePlugins={[rehypeRaw, removePTagsAroundImages]}
       components={{
         img: ({ node, ...props }) => (
-          <LazyImage
-            src={props.src}
-            alt={props.alt}
-            imageStyle={imageStyle}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>
+            <ImageModal
+              src={props.src}
+              alt={props.alt}
+              placeholder="path/to/placeholder.jpg" // Ajoutez ici le chemin de votre image de placeholder
+            />
+          </div>
         ),
         div: ({ node, className, ...props }) => {
           if (className === 'custom-carousel') {
@@ -112,6 +114,6 @@ const CustomMarkdown = ({ markdownText, imageStyle, carouselImages }) => {
       }}
     />
   );
-};
+});
 
 export default CustomMarkdown;

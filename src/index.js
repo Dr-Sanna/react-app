@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom'; // Importez BrowserRouter
+import Modal from 'react-modal'; // Importez Modal
 
+Modal.setAppElement('#__docusaurus'); // Utilisez l'ID de l'élément racine
 
 const root = ReactDOM.createRoot(document.getElementById('__docusaurus'));
 root.render(

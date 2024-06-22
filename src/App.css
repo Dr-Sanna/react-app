@@ -98,18 +98,21 @@ td {
   font-size: 90%; /* Réduit la taille du texte de 20% */
 }
 
-.accordion-item {
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
-.accordion-title {
-  background: #f7f7f7;
-  cursor: pointer;
-  padding: 10px;
+.image-blur {
+  transition: filter 0.5s, opacity 0.5s;
+  filter: blur(10px);
+  opacity: 0;
 }
 
-.accordion-content {
-  padding: 10px;
-  transition: max-height 0.3s ease-in-out;
+.image-blur.visible {
+  filter: blur(0px);
+  opacity: 1;
 }
+

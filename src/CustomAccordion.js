@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 const CustomAccordion = ({ title, content, isOpen, onToggle }) => {
+  console.log('Rendering CustomAccordion');
   const detailsRef = useRef(null);
 
   useEffect(() => {
@@ -13,10 +14,10 @@ const CustomAccordion = ({ title, content, isOpen, onToggle }) => {
     }
   }, [isOpen]);
 
-  const handleToggle = (e) => {
+  const handleToggle = useCallback((e) => {
     e.preventDefault();
     onToggle();
-  };
+  }, [onToggle]);
 
   return (
     <details 
@@ -34,4 +35,4 @@ const CustomAccordion = ({ title, content, isOpen, onToggle }) => {
   );
 };
 
-export default CustomAccordion;
+export default React.memo(CustomAccordion);

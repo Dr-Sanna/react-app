@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CustomAccordion from './CustomAccordion';
+import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
 
 const CasDetailComponent = ({ selectedCas }) => {
@@ -9,27 +9,7 @@ const CasDetailComponent = ({ selectedCas }) => {
   const imgStyle = {
     maxHeight: '60vh', // 3/4 de la hauteur de l'écran
     width: 'auto', // Pour conserver le ratio d'aspect
-    marginBottom: 'var(--ifm-leading)'
-  };
-
-  // État local pour garder la trace des accordéons ouverts
-  const [openAccordions, setOpenAccordions] = useState([]);
-
-  // Réinitialiser l'état lorsque le cas clinique change
-  useEffect(() => {
-    setOpenAccordions([]);
-  }, [selectedCas]);
-
-  const toggleAccordion = (index) => {
-    setOpenAccordions((prevOpenAccordions) => {
-      const newOpenAccordions = [...prevOpenAccordions];
-      if (newOpenAccordions.includes(index)) {
-        newOpenAccordions.splice(newOpenAccordions.indexOf(index), 1);
-      } else {
-        newOpenAccordions.push(index);
-      }
-      return newOpenAccordions;
-    });
+    marginBottom: 'var(--ifm-leading)',
   };
 
   return (
@@ -42,11 +22,10 @@ const CasDetailComponent = ({ selectedCas }) => {
         <>
           <h2>Questions</h2>
           {questions.map((q, index) => (
-            <CustomAccordion 
+            <Accordion 
               key={index}
-              isOpen={openAccordions.includes(index)}
+              selectedCas={selectedCas}
               title={<p><strong>{q.question}</strong></p>}
-              onToggle={() => toggleAccordion(index)}
               content={
                 <CustomMarkdown 
                   markdownText={corrections[index]?.correction || 'Pas de correction disponible.'} 
