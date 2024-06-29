@@ -1,0 +1,11 @@
+.image-loaded {
+  opacity: 1;
+}
+
+.image-loading {
+  opacity: 1;
+}
+
+.hidden {
+  display: none;
+}
