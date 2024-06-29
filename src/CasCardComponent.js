@@ -4,7 +4,6 @@ import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
 import { useLocation } from 'react-router-dom';
-import { CustomToothLoader } from './CustomToothLoader';
 import './CasCardComponent.css'; // Import the CSS for opacity
 
 const CasCardContainer = styled.div`
@@ -39,25 +38,6 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
-  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-
-  useEffect(() => {
-    const checkAllImagesLoaded = async () => {
-      if (imageLoadedStates.every(state => state)) {
-        await new Promise(resolve => setTimeout(resolve, 500)); // Ensure at least 500 ms delay
-        setAllImagesLoaded(true);
-        sessionStorage.setItem('allImagesLoaded', 'true');
-      }
-    };
-    checkAllImagesLoaded();
-  }, [imageLoadedStates]);
-
-  useEffect(() => {
-    const loaded = sessionStorage.getItem('allImagesLoaded') === 'true';
-    if (loaded) {
-      setAllImagesLoaded(true);
-    }
-  }, []);
 
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
@@ -69,12 +49,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
 
   return (
     <div>
-      {!allImagesLoaded && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <CustomToothLoader />
-        </div>
-      )}
-      <CasCardContainer className={!allImagesLoaded ? 'hidden' : ''}>
+      <CasCardContainer>
         {casCliniques.map((cas, index) => {
           const imageUrl = cas?.attributes?.image?.data?.attributes?.url
             ? `${server}${cas.attributes.image.data.attributes.url}`
@@ -82,7 +57,13 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
           const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${cas.urlFriendlyTitre}`;
 
           return (
-            <div key={cas.id} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <motion.div
+              key={cas.id}
+              style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: imageLoadedStates[index] ? 1 : 0, y: imageLoadedStates[index] ? 0 : 50 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
               <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
                 <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(cas); }}>
                   <Card sx={{
@@ -132,7 +113,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                   </Card>
                 </a>
               </motion.div>
-            </div>
+            </motion.div>
           );
         })}
       </CasCardContainer>
