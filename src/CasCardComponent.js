@@ -47,8 +47,11 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
 
   useEffect(() => {
     if (imageLoadedStates.every(state => state) && imageDisplayedStates.every(state => state)) {
-      setAllImagesLoaded(true);
-      sessionStorage.setItem('allImagesLoaded', 'true');
+      // Add a delay of 1 second before hiding the loader
+      setTimeout(() => {
+        setAllImagesLoaded(true);
+        sessionStorage.setItem('allImagesLoaded', 'true');
+      }, 1000); // 1 second delay
     }
   }, [imageLoadedStates, imageDisplayedStates]);
 
@@ -135,6 +138,16 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                       onLoad={() => handleImageLoad(index)}
                       data-index={index}
                       ref={node => registerImageRef(index, node)}
+                      onTransitionEnd={(e) => {
+                        // Ensure the image has fully transitioned
+                        if (e.target && e.target.classList.contains('image-loaded')) {
+                          setImageDisplayedStates(prevStates => {
+                            const newStates = [...prevStates];
+                            newStates[index] = true;
+                            return newStates;
+                          });
+                        }
+                      }}
                     />
                   </div>
                   <CardContent style={{
