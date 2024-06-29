@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
@@ -38,14 +38,19 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
+  const [imageDisplayedStates, setImageDisplayedStates] = useState(
+    new Array(casCliniques.length).fill(false)
+  );
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
+  const observerRef = useRef(null);
+
   useEffect(() => {
-    if (imageLoadedStates.every(state => state)) {
+    if (imageLoadedStates.every(state => state) && imageDisplayedStates.every(state => state)) {
       setAllImagesLoaded(true);
       sessionStorage.setItem('allImagesLoaded', 'true');
     }
-  }, [imageLoadedStates]);
+  }, [imageLoadedStates, imageDisplayedStates]);
 
   useEffect(() => {
     const loaded = sessionStorage.getItem('allImagesLoaded') === 'true';
@@ -54,12 +59,35 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
     }
   }, []);
 
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = Number(entry.target.dataset.index);
+          setImageDisplayedStates(prevStates => {
+            const newStates = [...prevStates];
+            newStates[index] = true;
+            return newStates;
+          });
+          observerRef.current.unobserve(entry.target);
+        }
+      });
+    });
+    return () => observerRef.current.disconnect();
+  }, []);
+
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
       const newStates = [...prevStates];
       newStates[index] = true;
       return newStates;
     });
+  };
+
+  const registerImageRef = (index, node) => {
+    if (node) {
+      observerRef.current.observe(node);
+    }
   };
 
   return (
@@ -102,6 +130,8 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                         alt={cas?.attributes?.titre || 'Titre inconnu'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
                         onLoad={() => handleImageLoad(index)}
+                        data-index={index}
+                        ref={node => registerImageRef(index, node)}
                       />
                     </motion.div>
                     <CardContent style={{
