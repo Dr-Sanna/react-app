@@ -42,13 +42,14 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
   useEffect(() => {
-    if (imageLoadedStates.every(state => state)) {
-      // Add a delay of 1 second before hiding the loader
-      setTimeout(() => {
+    const checkAllImagesLoaded = async () => {
+      if (imageLoadedStates.every(state => state)) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // Ensure at least 500 ms delay
         setAllImagesLoaded(true);
         sessionStorage.setItem('allImagesLoaded', 'true');
-      }, 500); // 1 second delay
-    }
+      }
+    };
+    checkAllImagesLoaded();
   }, [imageLoadedStates]);
 
   useEffect(() => {
