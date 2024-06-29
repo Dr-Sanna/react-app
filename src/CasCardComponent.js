@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia, Skeleton } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
 import { useLocation } from 'react-router-dom';
+import { CustomToothLoader } from './CustomToothLoader';
 
 const CasCardContainer = styled.div`
   display: grid;
@@ -28,15 +29,27 @@ const CasCardContainer = styled.div`
   }
 `;
 
-const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
+const CasCardComponent = ({ casCliniques, onSelection }) => {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
 
+  const [isLoading, setIsLoading] = useState(true);
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
+  const [imagesLoaded, setImagesLoaded] = useState(
+    sessionStorage.getItem('imagesLoaded') === 'true'
+  );
+
+  useEffect(() => {
+    if (imageLoadedStates.every(state => state)) {
+      setIsLoading(false);
+      setImagesLoaded(true);
+      sessionStorage.setItem('imagesLoaded', 'true');
+    }
+  }, [imageLoadedStates]);
 
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
@@ -47,14 +60,11 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
   };
 
   return (
-    <CasCardContainer style={{ backgroundColor: isLoading ? 'violet' : 'transparent' }}>
-      {isLoading ? (
-        Array.from(new Array(8)).map((_, index) => (
-          <div key={index} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-            <Skeleton variant="rectangular" width="100%" height={0} style={{ paddingTop: '75%' }} />
-            <Skeleton variant="text" width="60%" height={30} style={{ margin: '10px auto' }} />
-          </div>
-        ))
+    <CasCardContainer>
+      {isLoading && !imagesLoaded ? (
+        <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <CustomToothLoader />
+        </div>
       ) : (
         casCliniques.map((cas, index) => {
           const imageUrl = cas?.attributes?.image?.data?.attributes?.url

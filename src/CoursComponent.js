@@ -7,7 +7,6 @@ import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
 import { server } from "./config";
 import { preloadImage } from "./utils";
-import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
@@ -40,7 +39,6 @@ const CoursComponent = () => {
   const location = useLocation();
   const [cours, setCours] = useState([]);
   const [selectedCours, setSelectedCours] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
   const dataLoaded = useRef(false);
@@ -62,7 +60,6 @@ const CoursComponent = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!dataLoaded.current) {
-        setIsLoading(true);
         const queryURL = getQueryURL(location.pathname);
 
         if (queryURL) {
@@ -97,11 +94,7 @@ const CoursComponent = () => {
             dataLoaded.current = true;
           } catch (error) {
             console.error("Erreur de récupération des cours:", error);
-          } finally {
-            setIsLoading(false);
           }
-        } else {
-          setIsLoading(false);
         }
       }
     };
@@ -175,15 +168,10 @@ const CoursComponent = () => {
                   selectedCas={selectedCours}
                   sousMatiereId={sousMatiereId}
                 />
-                {isLoading ? (
-                  <CustomToothLoader />
-                ) : (
-                  <CasCardComponent
+                <CasCardComponent
                   casCliniques={cours}
                   onSelection={handleSelection}
-                  isLoading={isLoading} // Pass the isLoading prop
                 />
-                )}
               </div>
             )}
           </div>
