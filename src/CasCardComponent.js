@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardMedia, Skeleton } from '@mui/material';
+import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
 import { useLocation } from 'react-router-dom';
