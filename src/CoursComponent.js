@@ -179,9 +179,10 @@ const CoursComponent = () => {
                   <CustomToothLoader />
                 ) : (
                   <CasCardComponent
-                    casCliniques={cours}
-                    onSelection={handleSelection}
-                  />
+                  casCliniques={cours}
+                  onSelection={handleSelection}
+                  isLoading={isLoading} // Pass the isLoading prop
+                />
                 )}
               </div>
             )}

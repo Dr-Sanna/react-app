@@ -33,8 +33,7 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
-  
-  // Définir l'état des images chargées pour chaque carte
+
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
@@ -48,7 +47,7 @@ const CasCardComponent = ({ casCliniques, isLoading, onSelection }) => {
   };
 
   return (
-    <CasCardContainer>
+    <CasCardContainer style={{ backgroundColor: isLoading ? 'violet' : 'transparent' }}>
       {isLoading ? (
         Array.from(new Array(8)).map((_, index) => (
           <div key={index} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
