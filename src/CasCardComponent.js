@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
@@ -39,22 +39,17 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
-  const [imageDisplayedStates, setImageDisplayedStates] = useState(
-    new Array(casCliniques.length).fill(false)
-  );
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
-  const observerRef = useRef(null);
-
   useEffect(() => {
-    if (imageLoadedStates.every(state => state) && imageDisplayedStates.every(state => state)) {
+    if (imageLoadedStates.every(state => state)) {
       // Add a delay of 1 second before hiding the loader
       setTimeout(() => {
         setAllImagesLoaded(true);
         sessionStorage.setItem('allImagesLoaded', 'true');
-      }, 1000); // 1 second delay
+      }, 500); // 1 second delay
     }
-  }, [imageLoadedStates, imageDisplayedStates]);
+  }, [imageLoadedStates]);
 
   useEffect(() => {
     const loaded = sessionStorage.getItem('allImagesLoaded') === 'true';
@@ -63,40 +58,12 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
     }
   }, []);
 
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.target.classList.contains('image-loaded')) {
-          const index = Number(entry.target.dataset.index);
-          setImageDisplayedStates(prevStates => {
-            const newStates = [...prevStates];
-            newStates[index] = true;
-            return newStates;
-          });
-          observerRef.current.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 1.0 }); // Ensure the image is fully in view
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
       const newStates = [...prevStates];
       newStates[index] = true;
       return newStates;
     });
-  };
-
-  const registerImageRef = (index, node) => {
-    if (node && observerRef.current) {
-      observerRef.current.observe(node);
-    }
   };
 
   return (
@@ -129,7 +96,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                     boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
                   }}>
                     <div
-                      className={imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}
+                      className={`image-container ${imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}`}
                       style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                     >
                       <CardMedia
@@ -138,18 +105,6 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                         alt={cas?.attributes?.titre || 'Titre inconnu'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
                         onLoad={() => handleImageLoad(index)}
-                        data-index={index}
-                        ref={node => registerImageRef(index, node)}
-                        onTransitionEnd={(e) => {
-                          // Ensure the image has fully transitioned
-                          if (e.target && e.target.classList.contains('image-loaded')) {
-                            setImageDisplayedStates(prevStates => {
-                              const newStates = [...prevStates];
-                              newStates[index] = true;
-                              return newStates;
-                            });
-                          }
-                        }}
                       />
                     </div>
                     <CardContent style={{

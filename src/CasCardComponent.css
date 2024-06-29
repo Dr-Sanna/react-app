@@ -1,12 +1,9 @@
-.image-loaded {
-  opacity: 1;
+/* CasCardComponent.css */
+.image-container {
+  opacity: 0;
   transition: opacity 0.5s ease-in-out;
 }
 
-.image-loading {
-  opacity: 0;
-}
-
-.hidden {
-  display: none;
+.image-loaded {
+  opacity: 1;
 }
