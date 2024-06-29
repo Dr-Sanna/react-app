@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
 import { server } from './config';
@@ -114,65 +115,67 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
 
           return (
             <div key={cas.id} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-              <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(cas); }}>
-                <Card sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  width: '100%',
-                  height: '0',
-                  paddingTop: '75%',
-                  position: 'relative',
-                  bgcolor: 'white',
-                  borderRadius: '10px',
-                  boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
-                }}>
-                  <div
-                    className={imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={imageUrl}
-                      alt={cas?.attributes?.titre || 'Titre inconnu'}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
-                      onLoad={() => handleImageLoad(index)}
-                      data-index={index}
-                      ref={node => registerImageRef(index, node)}
-                      onTransitionEnd={(e) => {
-                        // Ensure the image has fully transitioned
-                        if (e.target && e.target.classList.contains('image-loaded')) {
-                          setImageDisplayedStates(prevStates => {
-                            const newStates = [...prevStates];
-                            newStates[index] = true;
-                            return newStates;
-                          });
-                        }
-                      }}
-                    />
-                  </div>
-                  <CardContent style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    width: '100%',
-                    height: '60px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                    textAlign: 'center',
+              <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
+                <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(cas); }}>
+                  <Card sx={{
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '5px',
+                    flexDirection: 'column',
+                    width: '100%',
+                    height: '0',
+                    paddingTop: '75%',
+                    position: 'relative',
+                    bgcolor: 'white',
+                    borderRadius: '10px',
+                    boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
                   }}>
-                    <h6 style={{
-                      margin: '0',
+                    <div
+                      className={imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    >
+                      <CardMedia
+                        component="img"
+                        image={imageUrl}
+                        alt={cas?.attributes?.titre || 'Titre inconnu'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
+                        onLoad={() => handleImageLoad(index)}
+                        data-index={index}
+                        ref={node => registerImageRef(index, node)}
+                        onTransitionEnd={(e) => {
+                          // Ensure the image has fully transitioned
+                          if (e.target && e.target.classList.contains('image-loaded')) {
+                            setImageDisplayedStates(prevStates => {
+                              const newStates = [...prevStates];
+                              newStates[index] = true;
+                              return newStates;
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                    <CardContent style={{
+                      position: 'absolute',
+                      bottom: 0,
                       width: '100%',
-                      overflow: 'hidden',
-                      whiteSpace: 'normal',
+                      height: '60px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      textAlign: 'center',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '5px',
                     }}>
-                      {cas?.attributes?.titre || 'Titre inconnu'}
-                    </h6>
-                  </CardContent>
-                </Card>
-              </a>
+                      <h6 style={{
+                        margin: '0',
+                        width: '100%',
+                        overflow: 'hidden',
+                        whiteSpace: 'normal',
+                      }}>
+                        {cas?.attributes?.titre || 'Titre inconnu'}
+                      </h6>
+                    </CardContent>
+                  </Card>
+                </a>
+              </motion.div>
             </div>
           );
         })}
