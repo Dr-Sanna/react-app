@@ -60,8 +60,8 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
             <motion.div
               key={cas.id}
               style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: imageLoadedStates[index] ? 1 : 0, y: imageLoadedStates[index] ? 0 : 50 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: imageLoadedStates[index] ? 1 : 0 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>

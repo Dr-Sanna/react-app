@@ -10,6 +10,7 @@ import { preloadImage } from "./utils";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
+import { CustomToothLoader } from "./CustomToothLoader";
 
 const getQueryURL = (pathname) => {
   if (pathname.includes('odontologie-pediatrique')) {
@@ -42,6 +43,8 @@ const CoursComponent = () => {
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
   const dataLoaded = useRef(false);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const updateSelectedCours = useCallback(
     (titre, coursList) => {
@@ -92,8 +95,10 @@ const CoursComponent = () => {
 
             setCours(preloadedData);
             dataLoaded.current = true;
+            setIsLoading(false);  // Set isLoading to false when data is loaded
           } catch (error) {
             console.error("Erreur de récupération des cours:", error);
+            setIsLoading(false);  // Set isLoading to false in case of error
           }
         }
       }
@@ -168,10 +173,14 @@ const CoursComponent = () => {
                   selectedCas={selectedCours}
                   sousMatiereId={sousMatiereId}
                 />
-                <CasCardComponent
-                  casCliniques={cours}
-                  onSelection={handleSelection}
-                />
+                {isLoading ? (
+                  <CustomToothLoader />
+                ) : (
+                  <CasCardComponent
+                    casCliniques={cours}
+                    onSelection={handleSelection}
+                  />
+                )}
               </div>
             )}
           </div>
