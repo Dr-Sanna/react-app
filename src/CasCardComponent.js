@@ -35,21 +35,24 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
 
-  const [isLoading, setIsLoading] = useState(true);
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(casCliniques.length).fill(false)
   );
-  const [imagesLoaded, setImagesLoaded] = useState(
-    sessionStorage.getItem('imagesLoaded') === 'true'
-  );
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
   useEffect(() => {
     if (imageLoadedStates.every(state => state)) {
-      setIsLoading(false);
-      setImagesLoaded(true);
-      sessionStorage.setItem('imagesLoaded', 'true');
+      setAllImagesLoaded(true);
+      sessionStorage.setItem('allImagesLoaded', 'true');
     }
   }, [imageLoadedStates]);
+
+  useEffect(() => {
+    const loaded = sessionStorage.getItem('allImagesLoaded') === 'true';
+    if (loaded) {
+      setAllImagesLoaded(true);
+    }
+  }, []);
 
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
@@ -61,7 +64,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
 
   return (
     <CasCardContainer>
-      {isLoading && !imagesLoaded ? (
+      {!allImagesLoaded ? (
         <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
           <CustomToothLoader />
         </div>
