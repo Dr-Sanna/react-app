@@ -33,13 +33,9 @@ const CoursComponent = () => {
   );
 
   useEffect(() => {
-    if (location.pathname === "/moco/medecine-orale") {
-      setSelectedCours(null);
-    } else {
-      const titre = location.pathname.split("/").pop();
-      updateSelectedCours(titre, cours);
-    }
-  }, [location, cours, updateSelectedCours]);
+    const titre = location.pathname.split("/").pop();
+    updateSelectedCours(titre, cours);
+  }, [location.pathname, cours, updateSelectedCours]);
 
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
 
@@ -48,15 +44,14 @@ const CoursComponent = () => {
 
   const handleSelection = (cours) => {
     const pathSegments = location.pathname.split('/');
-    const newPath = [...pathSegments.slice(0, 3), cours.urlFriendlyTitre].join('/');
+    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(cours.attributes.titre)}`;
     navigate(newPath, { state: { sousMatiereId } });
-    setSelectedCours(cours);
   };
 
   const menuItems = cours.map(c => ({
     key: c.id.toString(),
     label: c.attributes?.titre || '',
-    url: `${location.pathname}/${c.urlFriendlyTitre}`,
+    url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(c.attributes.titre)}`,
     onClick: () => handleSelection(c),
   }));
 
@@ -102,7 +97,7 @@ const CoursComponent = () => {
                   <CustomToothLoader />
                 ) : (
                   <CasCardComponent
-                    casCliniques={cours}
+                    items={cours}
                     onSelection={handleSelection}
                   />
                 )}

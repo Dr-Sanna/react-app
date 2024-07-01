@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DataContext } from "./DataContext";
 import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CasDetailComponent from "./CasDetailComponent";
 import { server } from "./config";
-import { preloadImage } from "./utils";
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
@@ -15,12 +14,10 @@ import PaginationComponent from './PaginationComponent';
 const CasCliniquesComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [casCliniques, setCasCliniques] = useState([]);
+  const { casCliniques, isLoading } = useContext(DataContext);
   const [selectedCas, setSelectedCas] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
-  const dataLoaded = useRef(false);
 
   const updateSelectedCas = useCallback(
     (titre, casList) => {
@@ -37,57 +34,9 @@ const CasCliniquesComponent = () => {
   );
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!dataLoaded.current) {
-        setIsLoading(true);
-        let queryURL = '';
-
-        if (location.pathname.includes('moco') && location.pathname.includes('cas-cliniques-du-cneco')) {
-          queryURL = `${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`;
-          queryURL += `&filters[sous_matiere][id][$eq]=3`;
-        }
-
-        if (queryURL) {
-          try {
-            const response = await axios.get(queryURL);
-            const data = response.data.data || [];
-            const preloadedData = await Promise.all(data.map(async (cas) => {
-              if (cas && cas.attributes) {
-                const imageUrl = cas.attributes.image ? `${server}${cas.attributes.image.data.attributes.url}` : "";
-                await preloadImage(imageUrl);
-                return {
-                  ...cas,
-                  preloaded: true,
-                  urlFriendlyTitre: toUrlFriendly(cas.attributes.titre),
-                };
-              }
-              return null;
-            }).filter(cas => cas !== null));
-
-            setCasCliniques(preloadedData);
-            dataLoaded.current = true;
-          } catch (error) {
-            console.error("Erreur de récupération des cas cliniques:", error);
-          } finally {
-            setIsLoading(false);
-          }
-        } else {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-  }, [sousMatiereId, location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname === "/moco/cas-cliniques-du-cneco") {
-      setSelectedCas(null);
-    } else {
-      const titre = location.pathname.split("/").pop();
-      updateSelectedCas(titre, casCliniques);
-    }
-  }, [location, casCliniques, updateSelectedCas]);
+    const titre = location.pathname.split("/").pop();
+    updateSelectedCas(titre, casCliniques);
+  }, [location.pathname, casCliniques, updateSelectedCas]);
 
   const currentIndex = casCliniques.findIndex(cas => cas.id === selectedCas?.id);
 
@@ -96,15 +45,14 @@ const CasCliniquesComponent = () => {
 
   const handleSelection = (cas) => {
     const pathSegments = location.pathname.split('/');
-    const newPath = [...pathSegments.slice(0, 3), cas.urlFriendlyTitre].join('/');
+    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(cas.attributes.titre)}`;
     navigate(newPath, { state: { sousMatiereId } });
-    setSelectedCas(cas);
   };
 
   const menuItems = casCliniques.map(cas => ({
     key: cas.id.toString(),
     label: cas.attributes?.titre || '',
-    url: `${location.pathname}/${cas.urlFriendlyTitre}`,
+    url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(cas.attributes.titre)}`,
     onClick: () => handleSelection(cas),
   }));
 
@@ -120,7 +68,6 @@ const CasCliniquesComponent = () => {
           menuItems={menuItems}
           selectedKey={selectedCas?.id?.toString() || ""}
         />
-
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             {selectedCas ? (
@@ -150,7 +97,7 @@ const CasCliniquesComponent = () => {
                   <CustomToothLoader />
                 ) : (
                   <CasCardComponent
-                    casCliniques={casCliniques}
+                    items={casCliniques}
                     onSelection={handleSelection}
                   />
                 )}

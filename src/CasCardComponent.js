@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
-import { server } from './config';
+import { server, toUrlFriendly } from './config';
 import { useLocation } from 'react-router-dom';
 import './CasCardComponent.css'; // Import the CSS for opacity
 
@@ -29,14 +29,14 @@ const CasCardContainer = styled.div`
   }
 `;
 
-const CasCardComponent = ({ casCliniques, onSelection }) => {
+const CasCardComponent = ({ items, onSelection }) => {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
 
   const [imageLoadedStates, setImageLoadedStates] = useState(
-    new Array(casCliniques.length).fill(false)
+    new Array(items.length).fill(false)
   );
 
   const handleImageLoad = (index) => {
@@ -50,22 +50,22 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
   return (
     <div>
       <CasCardContainer>
-        {casCliniques.map((cas, index) => {
-          const imageUrl = cas?.attributes?.image?.data?.attributes?.url
-            ? `${server}${cas.attributes.image.data.attributes.url}`
+        {items.map((item, index) => {
+          const imageUrl = item?.attributes?.image?.data?.attributes?.url
+            ? `${server}${item.attributes.image.data.attributes.url}`
             : '/defaultImage.jpg';
-          const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${cas.urlFriendlyTitre}`;
+          const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.attributes.titre)}`;
 
           return (
             <motion.div
-              key={cas.id}
+              key={item.id}
               style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: imageLoadedStates[index] ? 1 : 0 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
-                <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(cas); }}>
+                <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(item); }}>
                   <Card sx={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -84,7 +84,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                       <CardMedia
                         component="img"
                         image={imageUrl}
-                        alt={cas?.attributes?.titre || 'Titre inconnu'}
+                        alt={item?.attributes?.titre || 'Titre inconnu'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
                         onLoad={() => handleImageLoad(index)}
                       />
@@ -107,7 +107,7 @@ const CasCardComponent = ({ casCliniques, onSelection }) => {
                         overflow: 'hidden',
                         whiteSpace: 'normal',
                       }}>
-                        {cas?.attributes?.titre || 'Titre inconnu'}
+                        {item?.attributes?.titre || 'Titre inconnu'}
                       </h6>
                     </CardContent>
                   </Card>
