@@ -1,50 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DataContext } from "./DataContext";
 import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
-import { server } from "./config";
-import { preloadImage } from "./utils";
-import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 import { CustomToothLoader } from "./CustomToothLoader";
-
-const getQueryURL = (pathname) => {
-  if (pathname.includes('odontologie-pediatrique')) {
-    let url = `${process.env.REACT_APP_STRAPI_URL}/api/odontologie-pediatriques?populate=*`;
-    if (pathname.includes('therapeutiques-pulpaires-des-dt')) {
-      url += `&filters[sous_matiere][id][$eq]=10`;
-    }
-    return url;
-  } else if (pathname.includes('guide-clinique-d-odontologie')) {
-    let url = `${process.env.REACT_APP_STRAPI_URL}/api/guide-cliniques?populate=*`;
-    if (pathname.includes('bilans-sanguins')) {
-      url += `&filters[sous_matiere][id][$eq]=4`;
-    } else if (pathname.includes('risque-infectieux')) {
-      url += `&filters[sous_matiere][id][$eq]=5`;
-    } else if (pathname.includes('risque-hemorragique')) {
-      url += `&filters[sous_matiere][id][$eq]=11`;
-    }
-    return url;
-  } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
-    return `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
-  }
-  return '';
-};
+import { useSidebarContext } from './SidebarContext';
 
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [cours, setCours] = useState([]);
+  const { cours, isCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
-  const dataLoaded = useRef(false);
-
-  const [isLoading, setIsLoading] = useState(true);
 
   const updateSelectedCours = useCallback(
     (titre, coursList) => {
@@ -59,53 +31,6 @@ const CoursComponent = () => {
     },
     []
   );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!dataLoaded.current) {
-        const queryURL = getQueryURL(location.pathname);
-
-        if (queryURL) {
-          try {
-            const response = await axios.get(queryURL);
-            const data = response.data.data || [];
-            const preloadedData = await Promise.all(data.map(async (cours) => {
-              if (cours && cours.attributes) {
-                const imageUrls = cours.attributes.images ? cours.attributes.images.map(img => `${server}${img.url}`) : [];
-                await Promise.all(imageUrls.map(preloadImage));
-
-                const carouselImages = cours.attributes.Carousel?.data ? cours.attributes.Carousel.data.map(car => ({
-                  url: `${server}${car.attributes.url}`,
-                  caption: car.attributes.caption || ""
-                })) : [];
-
-                return {
-                  ...cours,
-                  preloaded: true,
-                  urlFriendlyTitre: toUrlFriendly(cours.attributes.titre),
-                  images: cours.attributes.images ? cours.attributes.images.map(img => ({
-                    url: `${server}${img.url}`,
-                    caption: img.caption
-                  })) : [],
-                  carousel: carouselImages
-                };
-              }
-              return null;
-            }).filter(cours => cours !== null));
-
-            setCours(preloadedData);
-            dataLoaded.current = true;
-            setIsLoading(false);  // Set isLoading to false when data is loaded
-          } catch (error) {
-            console.error("Erreur de récupération des cours:", error);
-            setIsLoading(false);  // Set isLoading to false in case of error
-          }
-        }
-      }
-    };
-
-    fetchData();
-  }, [location.pathname]);
 
   useEffect(() => {
     if (location.pathname === "/moco/medecine-orale") {
@@ -173,7 +98,7 @@ const CoursComponent = () => {
                   selectedCas={selectedCours}
                   sousMatiereId={sousMatiereId}
                 />
-                {isLoading ? (
+                {isCoursLoading ? (
                   <CustomToothLoader />
                 ) : (
                   <CasCardComponent

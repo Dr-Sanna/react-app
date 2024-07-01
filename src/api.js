@@ -1,4 +1,3 @@
-// api.js
 import axios from 'axios';
 
 export const fetchMatieres = async () => {
@@ -17,6 +16,8 @@ export const fetchCasCliniques = async () => {
 };
 
 export const fetchCoursData = async (pathname) => {
+  if (!pathname) throw new Error("Pathname is undefined");
+
   let url = '';
   if (pathname.includes('odontologie-pediatrique')) {
     url = `${process.env.REACT_APP_STRAPI_URL}/api/odontologie-pediatriques?populate=*`;
@@ -36,7 +37,7 @@ export const fetchCoursData = async (pathname) => {
     url = `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
   }
   if (!url) return [];
-  
+
   const response = await axios.get(url);
   return response.data.data;
 };

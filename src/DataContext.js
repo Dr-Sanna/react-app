@@ -45,10 +45,11 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchCours = async () => {
-      if (selectedSousMatiere) {
+      if (selectedSousMatiere && selectedSousMatiere.path) {
         setIsCoursLoading(true);
         try {
           const coursData = await fetchCoursData(selectedSousMatiere.path);
+          // Précharger les images des cours
           await Promise.all(coursData.map(async (cour) => {
             const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
             await Promise.all(imageUrls.map(preloadImage));
