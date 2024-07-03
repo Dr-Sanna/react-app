@@ -16,7 +16,7 @@ import { server } from './config';
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cours, setCours, isCoursLoading, setIsCoursLoading } = useContext(DataContext);
+  const { cours, setCours } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
@@ -75,7 +75,6 @@ const CoursComponent = () => {
   useEffect(() => {
     const fetchCours = async () => {
       if (selectedSousMatiere && selectedSousMatiere.path) {
-        setIsCoursLoading(true);
         try {
           const coursData = await fetchCoursData(selectedSousMatiere.path);
           // Précharger les images des cours
@@ -88,19 +87,17 @@ const CoursComponent = () => {
           console.error("Erreur de récupération des cours:", error);
         } finally {
           setInitialLoading(false); // Termine le chargement initial
-          setIsCoursLoading(false);
         }
       } else {
         setCours([]); // Réinitialise les cours lorsque selectedSousMatiere est nul
         setInitialLoading(false);
-        setIsCoursLoading(false);
       }
     };
 
     if (initialLoading) {
       fetchCours();
     }
-  }, [selectedSousMatiere, setCours, setIsCoursLoading, initialLoading]);
+  }, [selectedSousMatiere, setCours, initialLoading]);
 
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
   console.log(`Current cours index: ${currentIndex}`);
