@@ -16,7 +16,7 @@ import { server } from './config';
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
+  const { cours, setCours, isCoursLoading, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
@@ -55,11 +55,13 @@ const CoursComponent = () => {
           if (response) {
             setSelectedSousMatiere(prev => {
               if (!prev || prev.id !== response.id) {
-                setInitialLoading(true); // Commence le chargement initial lors du changement de sous-matière
                 return { id: response.id, path: location.pathname };
               }
               return prev;
             });
+            if (!selectedSousMatiere) {
+              setInitialLoading(true); // Commence le chargement initial lors du changement de sous-matière
+            }
           }
         }
       } catch (error) {
@@ -68,7 +70,7 @@ const CoursComponent = () => {
     };
 
     updateSousMatiere();
-  }, [sousMatierePath, location.pathname]);
+  }, [sousMatierePath, location.pathname, selectedSousMatiere]);
 
   useEffect(() => {
     const fetchCours = async () => {
@@ -95,8 +97,10 @@ const CoursComponent = () => {
       }
     };
 
-    fetchCours();
-  }, [selectedSousMatiere, setCours, setIsCoursLoading]);
+    if (initialLoading) {
+      fetchCours();
+    }
+  }, [selectedSousMatiere, setCours, setIsCoursLoading, initialLoading]);
 
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
   console.log(`Current cours index: ${currentIndex}`);
