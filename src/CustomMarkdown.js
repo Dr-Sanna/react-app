@@ -88,6 +88,8 @@ function removePTagsAroundImages() {
 
 const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages }) => {
   console.log('Rendering CustomMarkdown');
+  console.log('Carousel Images in CustomMarkdown:', carouselImages);
+
   const processedText = preprocessMarkdown(markdownText);
 
   return (

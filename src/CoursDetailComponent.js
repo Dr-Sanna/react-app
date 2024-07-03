@@ -2,9 +2,10 @@ import React from 'react';
 import CustomAccordion from './CustomAccordion';
 import CustomMarkdown from './CustomMarkdown';
 import { useToggle } from './ToggleContext';
+import { server } from './config'; // Importez la variable server
 
 const CoursDetailComponent = ({ selectedCas }) => {
-  const { showQuestions } = useToggle(); // Déplacez l'appel du hook ici
+  const { showQuestions } = useToggle();
 
   if (!selectedCas || !selectedCas.attributes) {
     return <div>Loading...</div>;
@@ -13,7 +14,14 @@ const CoursDetailComponent = ({ selectedCas }) => {
   const corrections = selectedCas.attributes.correction;
   const questions = selectedCas.attributes.question;
   const enonce = selectedCas.attributes.enonce;
-  const carouselImages = selectedCas.carousel; // Assurez-vous que ceci contient bien les images
+  
+  // Extraire les URLs des images de carousel
+  const carouselImages = selectedCas.attributes.Carousel?.data?.map(image => ({
+    url: `${server}${image.attributes.url}`, // Ajoutez server ici
+    caption: image.attributes.caption,
+  })) || [];
+
+  console.log('Carousel Images:', carouselImages); // Vérifiez les URLs des images du carousel
 
   const imgStyle = {
     maxHeight: '60vh',

@@ -20,6 +20,8 @@ const ImageCarousel = ({ images }) => {
     height: '100%'
   };
 
+  console.log('Rendering ImageCarousel with images:', images);
+
   return (
     <div style={carouselContainerStyle}>
       <Carousel showThumbs={false} autoPlay={false} infiniteLoop={true} showArrows={true}>
