@@ -9,14 +9,24 @@ import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
+import { fetchSousMatiereByPath, fetchCoursData } from "./api";
+import { preloadImage } from './utils';
+import { server } from './config';
 
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cours, isCoursLoading } = useContext(DataContext);
+  const { cours, setCours, isCoursLoading, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
-  const sousMatiereId = location.state?.sousMatiereId;
+  const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
+
+  // Sépare les segments de l'URL et filtre les segments vides
+  const pathSegments = location.pathname.split("/").filter(Boolean);
+
+  // Extrait le troisième segment de l'URL, qui est le sous-matierePath
+  const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
+  console.log(`Sous-matiere path extracted from URL: ${sousMatierePath}`);
 
   const updateSelectedCours = useCallback(
     (titre, coursList) => {
@@ -25,6 +35,7 @@ const CoursComponent = () => {
           (c) => c.attributes && toUrlFriendly(c.attributes.titre) === titre
         );
         setSelectedCours(foundCours || null);
+        console.log(`Selected cours: ${foundCours ? foundCours.attributes.titre : 'none'}`);
       } else {
         console.error("coursList n'est pas un tableau:", coursList);
       }
@@ -33,11 +44,55 @@ const CoursComponent = () => {
   );
 
   useEffect(() => {
-    const titre = location.pathname.split("/").pop();
+    const titre = pathSegments[pathSegments.length - 1]; // Dernier segment de l'URL
     updateSelectedCours(titre, cours);
   }, [location.pathname, cours, updateSelectedCours]);
 
+  useEffect(() => {
+    const updateSousMatiere = async () => {
+      try {
+        if (sousMatierePath) {
+          const response = await fetchSousMatiereByPath(sousMatierePath);
+          console.log(`Fetched sous-matiere: `, response);
+          if (response) {
+            setSelectedSousMatiere({ id: response.id, path: location.pathname });
+          }
+        }
+      } catch (error) {
+        console.error("Erreur de récupération de la sous-matière:", error);
+      }
+    };
+
+    updateSousMatiere();
+  }, [sousMatierePath]);
+
+  useEffect(() => {
+    const fetchCours = async () => {
+      if (selectedSousMatiere && selectedSousMatiere.path) {
+        setIsCoursLoading(true);
+        try {
+          const coursData = await fetchCoursData(selectedSousMatiere.path);
+          // Précharger les images des cours
+          await Promise.all(coursData.map(async (cour) => {
+            const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
+            await Promise.all(imageUrls.map(preloadImage));
+          }));
+          setCours(coursData);
+        } catch (error) {
+          console.error("Erreur de récupération des cours:", error);
+        } finally {
+          setIsCoursLoading(false);
+        }
+      } else {
+        setCours([]);
+      }
+    };
+
+    fetchCours();
+  }, [selectedSousMatiere, setCours, setIsCoursLoading]);
+
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
+  console.log(`Current cours index: ${currentIndex}`);
 
   const prevItem = currentIndex > 0 ? { ...cours[currentIndex - 1], label: cours[currentIndex - 1]?.attributes?.titre } : null;
   const nextItem = currentIndex < cours.length - 1 ? { ...cours[currentIndex + 1], label: cours[currentIndex + 1]?.attributes?.titre } : null;
@@ -45,7 +100,8 @@ const CoursComponent = () => {
   const handleSelection = (cours) => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(cours.attributes.titre)}`;
-    navigate(newPath, { state: { sousMatiereId } });
+    navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
+    console.log(`Navigating to: ${newPath}`);
   };
 
   const menuItems = cours.map(c => ({
@@ -91,7 +147,7 @@ const CoursComponent = () => {
                 <BreadcrumbsComponent
                   currentPath={location.pathname}
                   selectedCas={selectedCours}
-                  sousMatiereId={sousMatiereId}
+                  sousMatiereId={sousMatierePath}
                 />
                 {isCoursLoading ? (
                   <CustomToothLoader />

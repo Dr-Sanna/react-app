@@ -48,7 +48,7 @@ const DisplayItems = ({ items, onClickItem }) => {
   }
 
   return (
-    <div style={{ padding: 0, margin: 0, maxWidth: '100%' }}>
+    <div style={{ padding: '15px 60px', margin: 0, maxWidth: '100%' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', margin: 0 }}>
         {items.map(item => (
           <div

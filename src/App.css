@@ -70,9 +70,37 @@ body {
   opacity: 1;
 }
 /* CSS pour supprimer l'espace après les titres h4 dans un tableau */
+
+table {
+  width: fit-content !important; /* Ajuste la largeur au contenu */
+  box-shadow: 5px 5px gainsboro !important; /* Ombre nette en bas et à droite */
+border-radius: 5px;
+  border: 2px solid #4cb3d4 !important;
+  display: block; /* Pour ajuster la largeur au contenu */
+  border-spacing: 0px !important;
+  border-collapse: separate !important;
+}
+[data-theme="dark"] table {
+  box-shadow: none !important; /* Ombre nette en bas et à droite */
+
+}
+
 td h4 {
   margin: 0;
+  font-size: 100% !important;
+  font-weight: 500;
+  text-transform: uppercase !important;
+  text-align: center;
 }
+td:has(h4) {
+  background-color: #eef9fd !important; /* Couleur de fond pour les cellules contenant un h4 */
+}
+
+[data-theme="dark"] td:has(h4) {
+  background-color: #193c47 !important; /* Couleur de fond sombre pour les cellules contenant un h4 */
+  color: #ffffff !important; /* Couleur du texte en blanc pour plus de contraste */
+}
+
 td p:last-child,
 td ul:last-child {
   margin-bottom: 0;
@@ -95,9 +123,32 @@ td ul li {
   margin-top: 0px !important; /* Ajoute un espace après le tiret pour la lisibilité */
 }
 td {
-  font-size: 90%; /* Réduit la taille du texte de 20% */
+  font-size: 80%; /* Réduit la taille du texte de 20% */
+  padding: 7px !important;
+  border: 1.5px solid #4cb3d4 !important;
+  
 }
 
+
+
+
+
+
+td {
+  border-left: none !important; /* Supprime la bordure droite pour les colonnes impaires */
+  border-top: none !important;
+}
+
+
+
+/* Supprimer la bordure en bas pour la dernière ligne */
+tr:last-child td {
+  border-bottom: none !important;
+}
+
+td:last-child {
+  border-right: none !important;
+}
 
 .image-container {
   display: flex;
@@ -115,4 +166,16 @@ td {
   filter: blur(0px);
   opacity: 1;
 }
+td h3 {
+  margin: 0;
+  font-size: 110% !important;
+  text-transform: uppercase !important;
+}
+td:has(h3) {
+  background-color: #eef9fd !important; /* Couleur de fond pour les cellules contenant un h4 */
+}
 
+[data-theme="dark"] td:has(h3) {
+  background-color: #193c47 !important; /* Couleur de fond sombre pour les cellules contenant un h4 */
+  color: #ffffff !important; /* Couleur du texte en blanc pour plus de contraste */
+}

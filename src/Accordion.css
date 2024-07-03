@@ -49,6 +49,10 @@
   margin-bottom: 0;
 }
 
+.collapsibleContent_EoA1 > ul:last-child {
+  margin-bottom: 0;
+}
+
 .accordion-header > p {
   margin-bottom: 0;
 }

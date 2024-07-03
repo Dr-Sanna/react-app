@@ -101,7 +101,7 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
             <ImageModal
               src={props.src}
               alt={props.alt}
-              placeholder="path/to/placeholder.jpg" // Ajoutez ici le chemin de votre image de placeholder
+              placeholder="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg" // Ajoutez ici le chemin de votre image de placeholder
             />
           </div>
         ),
