@@ -16,7 +16,7 @@ import { server } from './config';
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cours, setCours, isCoursLoading, setIsCoursLoading } = useContext(DataContext);
+  const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
