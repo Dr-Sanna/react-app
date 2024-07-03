@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { fetchMatieres, fetchSousMatieres, fetchCasCliniques, fetchCoursData } from './api';
+import { fetchMatieres, fetchSousMatieres, fetchCasCliniques } from './api';
 import { preloadImage } from './utils';
 import { server } from './config';
 
