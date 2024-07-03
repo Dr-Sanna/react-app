@@ -20,9 +20,9 @@ const CoursComponent = () => {
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true); // Chargement initial
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
-
   const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
   console.log(`Sous-matiere path extracted from URL: ${sousMatierePath}`);
 
@@ -53,7 +53,13 @@ const CoursComponent = () => {
           const response = await fetchSousMatiereByPath(sousMatierePath);
           console.log(`Fetched sous-matiere: `, response);
           if (response) {
-            setSelectedSousMatiere({ id: response.id, path: location.pathname });
+            setSelectedSousMatiere(prev => {
+              if (!prev || prev.id !== response.id) {
+                setInitialLoading(true); // Commence le chargement initial lors du changement de sous-matière
+                return { id: response.id, path: location.pathname };
+              }
+              return prev;
+            });
           }
         }
       } catch (error) {
@@ -79,10 +85,13 @@ const CoursComponent = () => {
         } catch (error) {
           console.error("Erreur de récupération des cours:", error);
         } finally {
+          setInitialLoading(false); // Termine le chargement initial
           setIsCoursLoading(false);
         }
       } else {
-        setCours([]);
+        setCours([]); // Réinitialise les cours lorsque selectedSousMatiere est nul
+        setInitialLoading(false);
+        setIsCoursLoading(false);
       }
     };
 
@@ -123,39 +132,33 @@ const CoursComponent = () => {
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            {selectedCours ? (
-              <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
-                <article>
-                  <BreadcrumbsComponent
-                    currentPath={location.pathname}
-                    selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
-                  />
-                  <CoursDetailComponent selectedCas={selectedCours} />
-                </article>
-                {selectedCours && (
-                  <PaginationComponent
-                    prevItem={prevItem ? { ...prevItem } : null}
-                    nextItem={nextItem ? { ...nextItem } : null}
-                    onNavigate={handleSelection}
-                  />
-                )}
-              </div>
+            {initialLoading ? (
+              <CustomToothLoader />
             ) : (
-              <div className="docItemContainer_RhpI">
+              <>
                 <BreadcrumbsComponent
                   currentPath={location.pathname}
                   selectedCas={selectedCours}
                   sousMatiereId={sousMatierePath}
                 />
-                {isCoursLoading ? (
-                  <CustomToothLoader />
+                {selectedCours ? (
+                  <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
+                    <article>
+                      <CoursDetailComponent selectedCas={selectedCours} />
+                    </article>
+                    <PaginationComponent
+                      prevItem={prevItem ? { ...prevItem } : null}
+                      nextItem={nextItem ? { ...nextItem } : null}
+                      onNavigate={handleSelection}
+                    />
+                  </div>
                 ) : (
                   <CasCardComponent
                     items={cours}
                     onSelection={handleSelection}
                   />
                 )}
-              </div>
+              </>
             )}
           </div>
         </main>
