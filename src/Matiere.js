@@ -5,12 +5,14 @@ import DisplayItems from './DisplayItems';
 import { toUrlFriendly } from './config';
 
 const Matiere = () => {
-  const { matieres, sousMatieres } = useContext(DataContext);
+  const { matieres, sousMatieres, setCours } = useContext(DataContext);
   const [filteredSousMatieres, setFilteredSousMatieres] = useState([]);
   const navigate = useNavigate();
   const { matiereTitle } = useParams();
 
   useEffect(() => {
+    setCours([]); // Réinitialiser les cours au montage du composant
+
     if (matieres.length > 0 && sousMatieres.length > 0) {
       const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === matiereTitle);
       if (matiere) {
@@ -18,7 +20,7 @@ const Matiere = () => {
         setFilteredSousMatieres(relatedSousMatieres);
       }
     }
-  }, [matiereTitle, matieres, sousMatieres]);
+  }, [matiereTitle, matieres, sousMatieres, setCours]);
 
   const handleSousMatiereClick = (sousMatiere) => {
     const titleUrl = toUrlFriendly(sousMatiere.attributes.titre);

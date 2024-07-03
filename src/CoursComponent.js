@@ -7,6 +7,7 @@ import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
+import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { fetchSousMatiereByPath, fetchCoursData } from "./api";
 import { preloadImage } from './utils';
@@ -15,11 +16,11 @@ import { server } from './config';
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cours, setCours } = useContext(DataContext);
+  const { cours, setCours, isCoursLoading, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true); // Ajout de l'état initialLoading
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
@@ -31,6 +32,8 @@ const CoursComponent = () => {
           (c) => c.attributes && toUrlFriendly(c.attributes.titre) === titre
         );
         setSelectedCours(foundCours || null);
+      } else {
+        console.error("coursList n'est pas un tableau:", coursList);
       }
     },
     []
@@ -50,7 +53,8 @@ const CoursComponent = () => {
         if (response) {
           setSelectedSousMatiere(prev => {
             if (!prev || prev.id !== response.id) {
-              setLoading(true);
+              setIsCoursLoading(true);
+              setInitialLoading(true); // Déclenche le chargement initial
               return { id: response.id, path: location.pathname };
             }
             return prev;
@@ -62,13 +66,14 @@ const CoursComponent = () => {
     };
 
     updateSousMatiere();
-  }, [sousMatierePath, location.pathname]);
+  }, [sousMatierePath, location.pathname, setIsCoursLoading]);
 
   useEffect(() => {
     const fetchCours = async () => {
       if (!selectedSousMatiere || !selectedSousMatiere.path) {
         setCours([]);
-        setLoading(false);
+        setIsCoursLoading(false);
+        setInitialLoading(false); // Arrête le chargement initial
         return;
       }
 
@@ -82,12 +87,15 @@ const CoursComponent = () => {
       } catch (error) {
         console.error("Erreur de récupération des cours:", error);
       } finally {
-        setLoading(false);
+        setIsCoursLoading(false);
+        setInitialLoading(false); // Arrête le chargement initial
       }
     };
 
-    fetchCours();
-  }, [selectedSousMatiere, setCours]);
+    if (selectedSousMatiere) {
+      fetchCours();
+    }
+  }, [selectedSousMatiere, setCours, setIsCoursLoading]);
 
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
 
@@ -107,8 +115,9 @@ const CoursComponent = () => {
     onClick: () => handleSelection(c),
   }));
 
-  if (loading) {
-    return <div>Loading...</div>;
+  // Affichage du loader pendant le chargement initial
+  if (initialLoading) {
+    return <CustomToothLoader />;
   }
 
   return (
