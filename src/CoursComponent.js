@@ -21,10 +21,8 @@ const CoursComponent = () => {
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
 
-  // Sépare les segments de l'URL et filtre les segments vides
   const pathSegments = location.pathname.split("/").filter(Boolean);
 
-  // Extrait le troisième segment de l'URL, qui est le sous-matierePath
   const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
   console.log(`Sous-matiere path extracted from URL: ${sousMatierePath}`);
 
@@ -46,7 +44,7 @@ const CoursComponent = () => {
   useEffect(() => {
     const titre = pathSegments[pathSegments.length - 1]; // Dernier segment de l'URL
     updateSelectedCours(titre, cours);
-  }, [location.pathname, cours, updateSelectedCours]);
+  }, [pathSegments, cours, updateSelectedCours]);
 
   useEffect(() => {
     const updateSousMatiere = async () => {
@@ -64,7 +62,7 @@ const CoursComponent = () => {
     };
 
     updateSousMatiere();
-  }, [sousMatierePath]);
+  }, [sousMatierePath, location.pathname]);
 
   useEffect(() => {
     const fetchCours = async () => {
