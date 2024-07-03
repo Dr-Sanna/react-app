@@ -7,7 +7,6 @@ import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
-import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { fetchSousMatiereByPath, fetchCoursData } from "./api";
 import { preloadImage } from './utils';
@@ -20,11 +19,10 @@ const CoursComponent = () => {
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
-  const [initialLoading, setInitialLoading] = useState(true); // Chargement initial
+  const [loading, setLoading] = useState(true);
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
-  console.log(`Sous-matiere path extracted from URL: ${sousMatierePath}`);
 
   const updateSelectedCours = useCallback(
     (titre, coursList) => {
@@ -33,9 +31,6 @@ const CoursComponent = () => {
           (c) => c.attributes && toUrlFriendly(c.attributes.titre) === titre
         );
         setSelectedCours(foundCours || null);
-        console.log(`Selected cours: ${foundCours ? foundCours.attributes.titre : 'none'}`);
-      } else {
-        console.error("coursList n'est pas un tableau:", coursList);
       }
     },
     []
@@ -48,21 +43,18 @@ const CoursComponent = () => {
 
   useEffect(() => {
     const updateSousMatiere = async () => {
+      if (!sousMatierePath) return;
+
       try {
-        if (sousMatierePath) {
-          const response = await fetchSousMatiereByPath(sousMatierePath);
-          console.log(`Fetched sous-matiere: `, response);
-          if (response) {
-            setSelectedSousMatiere(prev => {
-              if (!prev || prev.id !== response.id) {
-                return { id: response.id, path: location.pathname };
-              }
-              return prev;
-            });
-            if (!selectedSousMatiere) {
-              setInitialLoading(true); // Commence le chargement initial lors du changement de sous-matière
+        const response = await fetchSousMatiereByPath(sousMatierePath);
+        if (response) {
+          setSelectedSousMatiere(prev => {
+            if (!prev || prev.id !== response.id) {
+              setLoading(true);
+              return { id: response.id, path: location.pathname };
             }
-          }
+            return prev;
+          });
         }
       } catch (error) {
         console.error("Erreur de récupération de la sous-matière:", error);
@@ -70,37 +62,34 @@ const CoursComponent = () => {
     };
 
     updateSousMatiere();
-  }, [sousMatierePath, location.pathname, selectedSousMatiere]);
+  }, [sousMatierePath, location.pathname]);
 
   useEffect(() => {
     const fetchCours = async () => {
-      if (selectedSousMatiere && selectedSousMatiere.path) {
-        try {
-          const coursData = await fetchCoursData(selectedSousMatiere.path);
-          // Précharger les images des cours
-          await Promise.all(coursData.map(async (cour) => {
-            const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
-            await Promise.all(imageUrls.map(preloadImage));
-          }));
-          setCours(coursData);
-        } catch (error) {
-          console.error("Erreur de récupération des cours:", error);
-        } finally {
-          setInitialLoading(false); // Termine le chargement initial
-        }
-      } else {
-        setCours([]); // Réinitialise les cours lorsque selectedSousMatiere est nul
-        setInitialLoading(false);
+      if (!selectedSousMatiere || !selectedSousMatiere.path) {
+        setCours([]);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const coursData = await fetchCoursData(selectedSousMatiere.path);
+        await Promise.all(coursData.map(async (cour) => {
+          const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
+          await Promise.all(imageUrls.map(preloadImage));
+        }));
+        setCours(coursData);
+      } catch (error) {
+        console.error("Erreur de récupération des cours:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (initialLoading) {
-      fetchCours();
-    }
-  }, [selectedSousMatiere, setCours, initialLoading]);
+    fetchCours();
+  }, [selectedSousMatiere, setCours]);
 
   const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
-  console.log(`Current cours index: ${currentIndex}`);
 
   const prevItem = currentIndex > 0 ? { ...cours[currentIndex - 1], label: cours[currentIndex - 1]?.attributes?.titre } : null;
   const nextItem = currentIndex < cours.length - 1 ? { ...cours[currentIndex + 1], label: cours[currentIndex + 1]?.attributes?.titre } : null;
@@ -109,7 +98,6 @@ const CoursComponent = () => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(cours.attributes.titre)}`;
     navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-    console.log(`Navigating to: ${newPath}`);
   };
 
   const menuItems = cours.map(c => ({
@@ -118,6 +106,10 @@ const CoursComponent = () => {
     url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(c.attributes.titre)}`,
     onClick: () => handleSelection(c),
   }));
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="docsWrapper_lLmf">
@@ -133,33 +125,27 @@ const CoursComponent = () => {
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            {initialLoading ? (
-              <CustomToothLoader />
-            ) : (
-              <>
-                <BreadcrumbsComponent
-                  currentPath={location.pathname}
-                  selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
-                  sousMatiereId={sousMatierePath}
+            <BreadcrumbsComponent
+              currentPath={location.pathname}
+              selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
+              sousMatiereId={sousMatierePath}
+            />
+            {selectedCours ? (
+              <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
+                <article>
+                  <CoursDetailComponent selectedCas={selectedCours} />
+                </article>
+                <PaginationComponent
+                  prevItem={prevItem ? { ...prevItem } : null}
+                  nextItem={nextItem ? { ...nextItem } : null}
+                  onNavigate={handleSelection}
                 />
-                {selectedCours ? (
-                  <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
-                    <article>
-                      <CoursDetailComponent selectedCas={selectedCours} />
-                    </article>
-                    <PaginationComponent
-                      prevItem={prevItem ? { ...prevItem } : null}
-                      nextItem={nextItem ? { ...nextItem } : null}
-                      onNavigate={handleSelection}
-                    />
-                  </div>
-                ) : (
-                  <CasCardComponent
-                    items={cours}
-                    onSelection={handleSelection}
-                  />
-                )}
-              </>
+              </div>
+            ) : (
+              <CasCardComponent
+                items={cours}
+                onSelection={handleSelection}
+              />
             )}
           </div>
         </main>
