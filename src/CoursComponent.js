@@ -138,7 +138,7 @@ const CoursComponent = () => {
               <>
                 <BreadcrumbsComponent
                   currentPath={location.pathname}
-                  selectedCas={selectedCours}
+                  selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
                   sousMatiereId={sousMatierePath}
                 />
                 {selectedCours ? (
