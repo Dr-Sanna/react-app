@@ -88,8 +88,6 @@ function removePTagsAroundImages() {
 
 const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages }) => {
   console.log('Rendering CustomMarkdown');
-  console.log('Carousel Images in CustomMarkdown:', carouselImages);
-
   const processedText = preprocessMarkdown(markdownText);
 
   return (
@@ -103,7 +101,7 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
             <ImageModal
               src={props.src}
               alt={props.alt}
-              placeholder="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg" // Ajoutez ici le chemin de votre image de placeholder
+              placeholder="" // Ajoutez ici le chemin de votre image de placeholder
             />
           </div>
         ),

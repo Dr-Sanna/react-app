@@ -20,7 +20,7 @@ const CoursComponent = () => {
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
-  const [initialLoading, setInitialLoading] = useState(true); // Ajout de l'état initialLoading
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
@@ -40,7 +40,7 @@ const CoursComponent = () => {
   );
 
   useEffect(() => {
-    const titre = pathSegments[pathSegments.length - 1]; // Dernier segment de l'URL
+    const titre = pathSegments[pathSegments.length - 1];
     updateSelectedCours(titre, cours);
   }, [pathSegments, cours, updateSelectedCours]);
 
@@ -54,7 +54,7 @@ const CoursComponent = () => {
           setSelectedSousMatiere(prev => {
             if (!prev || prev.id !== response.id) {
               setIsCoursLoading(true);
-              setInitialLoading(true); // Déclenche le chargement initial
+              setInitialLoading(true);
               return { id: response.id, path: location.pathname };
             }
             return prev;
@@ -73,7 +73,7 @@ const CoursComponent = () => {
       if (!selectedSousMatiere || !selectedSousMatiere.path) {
         setCours([]);
         setIsCoursLoading(false);
-        setInitialLoading(false); // Arrête le chargement initial
+        setInitialLoading(false);
         return;
       }
 
@@ -88,7 +88,7 @@ const CoursComponent = () => {
         console.error("Erreur de récupération des cours:", error);
       } finally {
         setIsCoursLoading(false);
-        setInitialLoading(false); // Arrête le chargement initial
+        setInitialLoading(false);
       }
     };
 
@@ -115,7 +115,20 @@ const CoursComponent = () => {
     onClick: () => handleSelection(c),
   }));
 
-  // Affichage du loader pendant le chargement initial
+  // Cleanup function
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      const elements = document.querySelectorAll('.highlight');
+      elements.forEach((el) => {
+        const newElement = el.cloneNode(true);
+        el.replaceWith(newElement);
+      });
+    };
+  }, []);
+
   if (initialLoading) {
     return <CustomToothLoader />;
   }
@@ -142,7 +155,7 @@ const CoursComponent = () => {
             {selectedCours ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
-                  <CoursDetailComponent selectedCas={selectedCours} />
+                  <CoursDetailComponent key={selectedCours.id} selectedCas={selectedCours} />
                 </article>
                 <PaginationComponent
                   prevItem={prevItem ? { ...prevItem } : null}

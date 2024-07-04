@@ -1,0 +1,163 @@
+.voice-reader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.voice-reader select {
+  margin-left: 1rem;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+  color: black;
+}
+
+.voice-reader select:hover {
+  background-color: #e6e6e6;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .voice-reader select {
+  margin-left: 1rem;
+  padding: 10px;
+  border: 1px solid #666;
+  border-radius: 4px;
+  background-color: #333;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .voice-reader select:hover {
+  background-color: hsla(0, 0%, 100%, 0.05);
+  cursor: pointer;
+}
+
+.voice-reader label {
+  margin-left: 1rem;
+  color: inherit; /* Adjust color for dark mode */
+}
+
+/* Survol pour les éléments de premier niveau uniquement */
+.reading-mode p:hover,
+.reading-mode ul:hover,
+.reading-mode h2:hover,
+	readin-mode h3:hover,
+.reading-mode h4:hover,
+.reading-mode .admonitionHeading_FzoX:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, .05);
+  transition: background-color 0.2s ease-in-out;
+  border-radius: 5px;
+}
+
+[data-theme="dark"] .reading-mode p:hover,
+[data-theme="dark"] .reading-mode ul:hover,
+[data-theme="dark"] .reading-mode h2:hover,
+[data-theme="dark"] .reading-mode h3:hover,
+[data-theme="dark"] .reading-mode h4:hover,
+[data-theme="dark"] .reading-mode .admonitionHeading_FzoX:hover {
+  cursor: pointer;
+  background-color: hsla(0, 0%, 100%, .05);
+  transition: background-color 0.2s ease-in-out;
+  border-radius: 5px;
+}
+
+/* Désactiver le survol pour les listes imbriquées */
+.reading-mode ul ul:hover,
+.reading-mode ul ul li:hover {
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.highlight {
+  background-color: yellow;
+  display: inline;
+  transition: background-color 0.2s ease-in-out;
+  line-height: inherit;
+  margin-top: var(--ifm-list-item-margin); /* Appliquer la même marge que les éléments li */
+}
+
+[data-theme="dark"] .highlight {
+  background-color: chocolate;
+  display: inline;
+  transition: background-color 0.2s ease-in-out;
+  line-height: inherit;
+  margin-top: var(--ifm-list-item-margin); /* Appliquer la même marge que les éléments li */
+}
+
+.reading-mode-indicator {
+  margin-left: 1rem;
+  font-style: italic;
+  color: green;
+}
+
+/* Styles for buttons */
+.voice-reader button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.voice-reader button:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+.voice-reader button:disabled {
+  background-color: #ccc; /* Grey */
+  cursor: not-allowed;
+}
+
+.voice-reader button:not(:last-child) {
+  margin-right: 10px;
+}
+
+/* Add styles for select options */
+.voice-reader select option {
+  background-color: #f9f9f9;
+  color: black;
+}
+
+[data-theme="dark"] .voice-reader select option {
+  background-color: #333;
+  color: white;
+}
+
+.voice-reader select option:hover {
+  background-color: #e6e6e6;
+}
+
+[data-theme="dark"] .voice-reader select option:hover {
+  background-color: hsla(0, 0%, 100%, 0.05);
+}
+
+.settings-icon {
+  cursor: pointer;
+  font-size: 2.75rem;
+ 
+  padding: 10px; /* Increase the padding to enlarge the hover area */
+  border-radius: 50%; /* Make it circular for better aesthetics */
+}
+.settings-icon:hover {
+  background-color: #ebedf0;
+  transition: background-color 0.2s ease-in-out;
+}
+[data-theme="dark"] .settings-icon:hover {
+  background-color: hsla(0, 0%, 100%, .05);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.settings-panel {
+  display: flex;
+  align-items: center;
+}

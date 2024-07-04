@@ -9,12 +9,20 @@ export const ToggleProvider = ({ children }) => {
     return localStorage.getItem("showQuestions") === "true";
   });
 
+  const [showVoiceReader, setShowVoiceReader] = useState(() => {
+    return localStorage.getItem("showVoiceReader") === "true";
+  });
+
   useEffect(() => {
     localStorage.setItem("showQuestions", showQuestions);
   }, [showQuestions]);
 
+  useEffect(() => {
+    localStorage.setItem("showVoiceReader", showVoiceReader);
+  }, [showVoiceReader]);
+
   return (
-    <ToggleContext.Provider value={{ showQuestions, setShowQuestions }}>
+    <ToggleContext.Provider value={{ showQuestions, setShowQuestions, showVoiceReader, setShowVoiceReader }}>
       {children}
     </ToggleContext.Provider>
   );
