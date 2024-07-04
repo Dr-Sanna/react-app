@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { DarkModeIcon, LightModeIcon } from "./IconComponents";
 import Search from "./Search";
 import { useToggle } from "./ToggleContext";
-import { FiVolume2, FiVolumeX } from 'react-icons/fi'; // Import the volume icons
 
 const CustomNavbar = () => {
   const [logoUrl] = useState("/logo.svg");
@@ -11,7 +10,7 @@ const CustomNavbar = () => {
   const [navbarClass, setNavbarClass] = useState("navbar navbar--fixed-top navbarHideable_uAgx");
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
 
-  const { showQuestions, setShowQuestions, showVoiceReader, setShowVoiceReader } = useToggle();
+  const { showQuestions, setShowQuestions } = useToggle();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
@@ -48,7 +47,6 @@ const CustomNavbar = () => {
   }, []);
 
   const toggleQuestions = () => setShowQuestions(prev => !prev);
-  const toggleVoiceReader = () => setShowVoiceReader(prev => !prev);
 
   return (
     <nav aria-label="Principale" className={navbarClass}>
@@ -81,11 +79,6 @@ const CustomNavbar = () => {
                 </>
               )}
             </button>
-            {showVoiceReader ? (
-              <FiVolume2 className="settings-icon" onClick={toggleVoiceReader} />
-            ) : (
-              <FiVolumeX className="settings-icon" onClick={toggleVoiceReader} />
-            )}
           </div>
         </div>
         <div className="navbar__items navbar__items--right">

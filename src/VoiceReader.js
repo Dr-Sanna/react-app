@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './VoiceReader.css';
 import { FiSettings } from 'react-icons/fi';
+import './VoiceReader.css';
 
 const VoiceReader = ({ contentRef }) => {
   const [isReading, setIsReading] = useState(false);
@@ -8,17 +8,17 @@ const VoiceReader = ({ contentRef }) => {
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [playbackRate, setPlaybackRate] = useState(1.5);
-  const [showSettings, setShowSettings] = useState(false);
   const utteranceRef = useRef(null);
   const currentElementIndexRef = useRef(0);
   const currentCharIndexRef = useRef(0);
   const highlightedNodeRef = useRef(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     const synth = window.speechSynthesis;
     const fetchVoices = () => {
       const allVoices = synth.getVoices();
-      const frenchVoices = allVoices.filter(voice => voice.lang.startsWith('fr') && !voice.name.includes('Google'));
+      const frenchVoices = allVoices.filter(voice => voice.lang.startsWith('fr'));
       setVoices(frenchVoices);
       if (frenchVoices.length > 2) {
         setSelectedVoice(frenchVoices[2]);
@@ -69,16 +69,10 @@ const VoiceReader = ({ contentRef }) => {
   const handleVoiceChange = (e) => {
     const selected = voices.find(voice => voice.name === e.target.value);
     setSelectedVoice(selected);
-    if (isReading) {
-      handleStopReading();
-    }
   };
 
   const handlePlaybackRateChange = (e) => {
     setPlaybackRate(parseFloat(e.target.value));
-    if (isReading) {
-      handleStopReading();
-    }
   };
 
   const handleStartReading = () => {
@@ -144,37 +138,6 @@ const VoiceReader = ({ contentRef }) => {
         currentCharIndexRef.current = event.charIndex;
       }
       highlightTextAtElement(element, event.charIndex, event.charLength);
-    };
-
-    utterance.onend = () => {
-      clearHighlight();
-      const nextIndex = currentElementIndexRef.current + 1;
-      const elements = getElementsToRead(contentRef.current);
-      if (nextIndex < elements.length) {
-        readElement(elements[nextIndex], nextIndex);
-      } else {
-        setIsReading(false);
-        if (contentRef.current) {
-          contentRef.current.classList.remove('reading-mode');
-        }
-      }
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const readElementFromPosition = (element, charIndex) => {
-    const text = element.innerText.slice(charIndex);
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = selectedVoice;
-    utterance.rate = playbackRate;
-
-    utterance.onboundary = (event) => {
-      if (event.name === 'word') {
-        currentCharIndexRef.current = charIndex + event.charIndex;
-      }
-      highlightTextAtElement(element, charIndex + event.charIndex, event.charLength);
     };
 
     utterance.onend = () => {
@@ -289,30 +252,29 @@ const VoiceReader = ({ contentRef }) => {
           </button>
         </>
       )}
-      {!isReading && (
+      <FiSettings
+        className="settings-icon"
+        onClick={() => setShowSettings(prev => !prev)}
+      />
+      {showSettings && (
         <>
-          <FiSettings onClick={() => setShowSettings(!showSettings)} className="settings-icon" />
-          {showSettings && (
-            <div className="settings-dropdown">
-              <select onChange={handleVoiceChange} value={selectedVoice?.name || ''}>
-                {voices.map(voice => (
-                  <option key={voice.name} value={voice.name}>
-                    {voice.name} ({voice.lang})
-                  </option>
-                ))}
-              </select>
-              <label htmlFor="playbackRate">Playback Speed:</label>
-              <select id="playbackRate" onChange={handlePlaybackRateChange} value={playbackRate}>
-                <option value="0.5">0.5x</option>
-                <option value="0.75">0.75x</option>
-                <option value="1">1x</option>
-                <option value="1.25">1.25x</option>
-                <option value="1.5">1.5x</option>
-                <option value="1.75">1.75x</option>
-                <option value="2">2x</option>
-              </select>
-            </div>
-          )}
+          <select onChange={handleVoiceChange} value={selectedVoice?.name || ''}>
+            {voices.filter(voice => !voice.name.includes('Google')).map(voice => (
+              <option key={voice.name} value={voice.name}>
+                {voice.name} ({voice.lang})
+              </option>
+            ))}
+          </select>
+          <label htmlFor="playbackRate">Playback Speed:</label>
+          <select id="playbackRate" onChange={handlePlaybackRateChange} value={playbackRate}>
+            <option value="0.5">0.5x</option>
+            <option value="0.75">0.75x</option>
+            <option value="1">1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="1.75">1.75x</option>
+            <option value="2">2x</option>
+          </select>
         </>
       )}
     </div>

@@ -5,10 +5,12 @@ import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
+import QuestionsComponent from "./QuestionsComponent"; // Import QuestionsComponent
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
+import { useToggle } from './ToggleContext';
 import { fetchSousMatiereByPath, fetchCoursData } from "./api";
 import { preloadImage } from './utils';
 import { server } from './config';
@@ -19,6 +21,7 @@ const CoursComponent = () => {
   const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
+  const { showQuestions } = useToggle(); // Use the toggle context for questions
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -155,7 +158,11 @@ const CoursComponent = () => {
             {selectedCours ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
-                  <CoursDetailComponent key={selectedCours.id} selectedCas={selectedCours} />
+                  {showQuestions ? (
+                    <QuestionsComponent questions={selectedCours.attributes.question} corrections={selectedCours.attributes.correction} />
+                  ) : (
+                    <CoursDetailComponent key={selectedCours.id} selectedCas={selectedCours} />
+                  )}
                 </article>
                 <PaginationComponent
                   prevItem={prevItem ? { ...prevItem } : null}
