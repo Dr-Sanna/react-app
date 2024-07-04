@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FiSettings } from 'react-icons/fi';
 import './VoiceReader.css';
 
@@ -39,20 +39,19 @@ const VoiceReader = ({ contentRef }) => {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      const currentContentRef = contentRef.current;
       if (utteranceRef.current) {
         window.speechSynthesis.cancel();
       }
       window.removeEventListener('beforeunload', handleBeforeUnload);
       clearHighlight();
       setIsReading(false);
-      if (currentContentRef) {
-        currentContentRef.classList.remove('reading-mode');
+      if (contentRef.current) {
+        contentRef.current.classList.remove('reading-mode');
       }
     };
   }, [contentRef]);
 
-  const handleElementClick = (index) => {
+  const handleElementClick = useCallback((index) => {
     if (!isReading || !selectedVoice || !contentRef.current) return;
 
     window.speechSynthesis.cancel();
@@ -62,7 +61,7 @@ const VoiceReader = ({ contentRef }) => {
     if (index < elements.length) {
       readElement(elements[index], index);
     }
-  };
+  }, [isReading, selectedVoice, contentRef]);
 
   useEffect(() => {
     if (isReading && contentRef.current) {
@@ -72,9 +71,14 @@ const VoiceReader = ({ contentRef }) => {
       });
       return () => {
         elements.forEach((el) => {
-          const newElement = el.cloneNode(true);
-          el.replaceWith(newElement);
+          if (el.parentNode) {
+            const newElement = el.cloneNode(true);
+            el.parentNode.replaceChild(newElement, el);
+          }
         });
+        if (contentRef.current) {
+          contentRef.current.classList.remove('reading-mode');
+        }
       };
     }
   }, [isReading, contentRef, handleElementClick]);
@@ -190,10 +194,12 @@ const VoiceReader = ({ contentRef }) => {
           highlightedNode.textContent = highlight;
 
           node.textContent = before;
-          node.parentNode.insertBefore(highlightedNode, node.nextSibling);
-          if (after) {
-            const afterNode = document.createTextNode(after);
-            node.parentNode.insertBefore(afterNode, highlightedNode.nextSibling);
+          if (node.parentNode) {
+            node.parentNode.insertBefore(highlightedNode, node.nextSibling);
+            if (after) {
+              const afterNode = document.createTextNode(after);
+              node.parentNode.insertBefore(afterNode, highlightedNode.nextSibling);
+            }
           }
 
           highlighted = true;
@@ -209,7 +215,9 @@ const VoiceReader = ({ contentRef }) => {
       const parent = highlightedNodeRef.current.parentNode;
       if (parent) {
         const textNode = document.createTextNode(highlightedNodeRef.current.textContent);
-        parent.replaceChild(textNode, highlightedNodeRef.current);
+        if (parent.contains(highlightedNodeRef.current)) {
+          parent.replaceChild(textNode, highlightedNodeRef.current);
+        }
         parent.normalize();
       }
       highlightedNodeRef.current = null;

@@ -5,7 +5,7 @@ import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
-import QuestionsComponent from "./QuestionsComponent"; // Import QuestionsComponent
+import QuestionsComponent from "./QuestionsComponent";
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 import { CustomToothLoader } from "./CustomToothLoader";
@@ -21,7 +21,7 @@ const CoursComponent = () => {
   const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
   const [selectedCours, setSelectedCours] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
-  const { showQuestions } = useToggle(); // Use the toggle context for questions
+  const { showQuestions } = useToggle();
   const [selectedSousMatiere, setSelectedSousMatiere] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
@@ -117,20 +117,6 @@ const CoursComponent = () => {
     url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(c.attributes.titre)}`,
     onClick: () => handleSelection(c),
   }));
-
-  // Cleanup function
-  useEffect(() => {
-    return () => {
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-      }
-      const elements = document.querySelectorAll('.highlight');
-      elements.forEach((el) => {
-        const newElement = el.cloneNode(true);
-        el.replaceWith(newElement);
-      });
-    };
-  }, []);
 
   if (initialLoading) {
     return <CustomToothLoader />;

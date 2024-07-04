@@ -1,31 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import CustomAccordion from './CustomAccordion';
 import CustomMarkdown from './CustomMarkdown';
 
 const QuestionsComponent = ({ questions, corrections }) => {
-  const contentRef = useRef(null);
-
-  useEffect(() => {
-    const cleanUp = () => {
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-      }
-      if (contentRef.current) {
-        const elements = contentRef.current.querySelectorAll('p, li');
-        elements.forEach((el) => {
-          const newElement = el.cloneNode(true);
-          el.replaceWith(newElement);
-        });
-      }
-    };
-
-    cleanUp(); // Clean up on component mount
-
-    return cleanUp; // Clean up on component unmount
-  }, [questions]);
-
   return (
-    <div ref={contentRef}>
+    <div>
       <h2>Questions</h2>
       {questions && questions.length > 0 ? (
         questions.map((q, index) => (

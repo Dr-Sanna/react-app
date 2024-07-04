@@ -14,8 +14,10 @@ const CoursDetailComponent = ({ selectedCas }) => {
       if (contentRef.current) {
         const elements = contentRef.current.querySelectorAll('p, li');
         elements.forEach((el) => {
-          const newElement = el.cloneNode(true);
-          el.replaceWith(newElement);
+          if (el.parentNode) {
+            const newElement = el.cloneNode(true);
+            el.parentNode.replaceChild(newElement, el);
+          }
         });
       }
     };
