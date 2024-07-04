@@ -39,17 +39,30 @@ const VoiceReader = ({ contentRef }) => {
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
+      const currentContentRef = contentRef.current;
       if (utteranceRef.current) {
         window.speechSynthesis.cancel();
       }
       window.removeEventListener('beforeunload', handleBeforeUnload);
       clearHighlight();
       setIsReading(false);
-      if (contentRef.current) {
-        contentRef.current.classList.remove('reading-mode');
+      if (currentContentRef) {
+        currentContentRef.classList.remove('reading-mode');
       }
     };
   }, [contentRef]);
+
+  const handleElementClick = (index) => {
+    if (!isReading || !selectedVoice || !contentRef.current) return;
+
+    window.speechSynthesis.cancel();
+    clearHighlight();
+
+    const elements = getElementsToRead(contentRef.current);
+    if (index < elements.length) {
+      readElement(elements[index], index);
+    }
+  };
 
   useEffect(() => {
     if (isReading && contentRef.current) {
@@ -64,7 +77,7 @@ const VoiceReader = ({ contentRef }) => {
         });
       };
     }
-  }, [isReading, contentRef]);
+  }, [isReading, contentRef, handleElementClick]);
 
   const handleVoiceChange = (e) => {
     const selected = voices.find(voice => voice.name === e.target.value);
@@ -111,18 +124,6 @@ const VoiceReader = ({ contentRef }) => {
       if (contentRef.current) {
         contentRef.current.classList.remove('reading-mode');
       }
-    }
-  };
-
-  const handleElementClick = (index) => {
-    if (!isReading || !selectedVoice || !contentRef.current) return;
-
-    window.speechSynthesis.cancel();
-    clearHighlight();
-
-    const elements = getElementsToRead(contentRef.current);
-    if (index < elements.length) {
-      readElement(elements[index], index);
     }
   };
 

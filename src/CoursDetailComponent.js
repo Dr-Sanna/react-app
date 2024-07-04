@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import CustomAccordion from './CustomAccordion';
 import CustomMarkdown from './CustomMarkdown';
 import VoiceReader from './VoiceReader';
 
