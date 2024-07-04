@@ -53,6 +53,45 @@ const VoiceReader = ({ contentRef }) => {
     };
   }, [contentRef]);
 
+  const highlightTextAtElement = useCallback((element, start, length) => {
+    clearHighlight(); // Clear any previous highlights
+
+    const textNodes = getTextNodes(element);
+    let currentCharIndex = 0;
+    let highlighted = false;
+
+    textNodes.forEach(node => {
+      const nodeLength = node.textContent.length;
+      if (start >= currentCharIndex && start < currentCharIndex + nodeLength && !highlighted) {
+        const wordBoundaries = findWordBoundaries(node.textContent, start - currentCharIndex, length);
+        const startIndex = wordBoundaries.start;
+        const endIndex = wordBoundaries.end;
+        const before = node.textContent.substring(0, startIndex);
+        const highlight = node.textContent.substring(startIndex, endIndex);
+        const after = node.textContent.substring(endIndex);
+
+        if (highlight.trim() !== "") { // Ensure the highlight is not empty
+          const highlightedNode = document.createElement('span');
+          highlightedNode.className = 'highlight';
+          highlightedNode.textContent = highlight;
+
+          node.textContent = before;
+          if (node.parentNode) {
+            node.parentNode.insertBefore(highlightedNode, node.nextSibling);
+            if (after) {
+              const afterNode = document.createTextNode(after);
+              node.parentNode.insertBefore(afterNode, highlightedNode.nextSibling);
+            }
+          }
+
+          highlighted = true;
+          highlightedNodeRef.current = highlightedNode;
+        }
+      }
+      currentCharIndex += nodeLength;
+    });
+  }, []);
+
   const readElement = useCallback((element, index) => {
     currentElementIndexRef.current = index;
     currentCharIndexRef.current = 0;
@@ -83,7 +122,7 @@ const VoiceReader = ({ contentRef }) => {
 
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [selectedVoice, playbackRate, contentRef]);
+  }, [selectedVoice, playbackRate, contentRef, highlightTextAtElement]);
 
   const handleElementClick = useCallback((index) => {
     if (!isReading || !selectedVoice || !contentRef.current) return;
@@ -172,45 +211,6 @@ const VoiceReader = ({ contentRef }) => {
       return !elements.some((parent) => parent !== el && parent.contains(el));
     });
     return uniqueElements;
-  };
-
-  const highlightTextAtElement = (element, start, length) => {
-    clearHighlight(); // Clear any previous highlights
-
-    const textNodes = getTextNodes(element);
-    let currentCharIndex = 0;
-    let highlighted = false;
-
-    textNodes.forEach(node => {
-      const nodeLength = node.textContent.length;
-      if (start >= currentCharIndex && start < currentCharIndex + nodeLength && !highlighted) {
-        const wordBoundaries = findWordBoundaries(node.textContent, start - currentCharIndex, length);
-        const startIndex = wordBoundaries.start;
-        const endIndex = wordBoundaries.end;
-        const before = node.textContent.substring(0, startIndex);
-        const highlight = node.textContent.substring(startIndex, endIndex);
-        const after = node.textContent.substring(endIndex);
-
-        if (highlight.trim() !== "") { // Ensure the highlight is not empty
-          const highlightedNode = document.createElement('span');
-          highlightedNode.className = 'highlight';
-          highlightedNode.textContent = highlight;
-
-          node.textContent = before;
-          if (node.parentNode) {
-            node.parentNode.insertBefore(highlightedNode, node.nextSibling);
-            if (after) {
-              const afterNode = document.createTextNode(after);
-              node.parentNode.insertBefore(afterNode, highlightedNode.nextSibling);
-            }
-          }
-
-          highlighted = true;
-          highlightedNodeRef.current = highlightedNode;
-        }
-      }
-      currentCharIndex += nodeLength;
-    });
   };
 
   const clearHighlight = () => {
