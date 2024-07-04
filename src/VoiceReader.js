@@ -38,6 +38,8 @@ const VoiceReader = ({ contentRef }) => {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
+    const localContentRef = contentRef.current;
+
     return () => {
       if (utteranceRef.current) {
         window.speechSynthesis.cancel();
@@ -45,11 +47,43 @@ const VoiceReader = ({ contentRef }) => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       clearHighlight();
       setIsReading(false);
-      if (contentRef.current) {
-        contentRef.current.classList.remove('reading-mode');
+      if (localContentRef) {
+        localContentRef.classList.remove('reading-mode');
       }
     };
   }, [contentRef]);
+
+  const readElement = useCallback((element, index) => {
+    currentElementIndexRef.current = index;
+    currentCharIndexRef.current = 0;
+    const utterance = new SpeechSynthesisUtterance(element.innerText);
+    utterance.voice = selectedVoice;
+    utterance.rate = playbackRate;
+
+    utterance.onboundary = (event) => {
+      if (event.name === 'word') {
+        currentCharIndexRef.current = event.charIndex;
+      }
+      highlightTextAtElement(element, event.charIndex, event.charLength);
+    };
+
+    utterance.onend = () => {
+      clearHighlight();
+      const nextIndex = currentElementIndexRef.current + 1;
+      const elements = getElementsToRead(contentRef.current);
+      if (nextIndex < elements.length) {
+        readElement(elements[nextIndex], nextIndex);
+      } else {
+        setIsReading(false);
+        if (contentRef.current) {
+          contentRef.current.classList.remove('reading-mode');
+        }
+      }
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  }, [selectedVoice, playbackRate, contentRef]);
 
   const handleElementClick = useCallback((index) => {
     if (!isReading || !selectedVoice || !contentRef.current) return;
@@ -61,11 +95,12 @@ const VoiceReader = ({ contentRef }) => {
     if (index < elements.length) {
       readElement(elements[index], index);
     }
-  }, [isReading, selectedVoice, contentRef]);
+  }, [isReading, selectedVoice, contentRef, readElement]);
 
   useEffect(() => {
-    if (isReading && contentRef.current) {
-      const elements = getElementsToRead(contentRef.current);
+    const localContentRef = contentRef.current;
+    if (isReading && localContentRef) {
+      const elements = getElementsToRead(localContentRef);
       elements.forEach((el, index) => {
         el.addEventListener('click', () => handleElementClick(index));
       });
@@ -76,8 +111,8 @@ const VoiceReader = ({ contentRef }) => {
             el.parentNode.replaceChild(newElement, el);
           }
         });
-        if (contentRef.current) {
-          contentRef.current.classList.remove('reading-mode');
+        if (localContentRef) {
+          localContentRef.classList.remove('reading-mode');
         }
       };
     }
@@ -129,38 +164,6 @@ const VoiceReader = ({ contentRef }) => {
         contentRef.current.classList.remove('reading-mode');
       }
     }
-  };
-
-  const readElement = (element, index) => {
-    currentElementIndexRef.current = index;
-    currentCharIndexRef.current = 0;
-    const utterance = new SpeechSynthesisUtterance(element.innerText);
-    utterance.voice = selectedVoice;
-    utterance.rate = playbackRate;
-
-    utterance.onboundary = (event) => {
-      if (event.name === 'word') {
-        currentCharIndexRef.current = event.charIndex;
-      }
-      highlightTextAtElement(element, event.charIndex, event.charLength);
-    };
-
-    utterance.onend = () => {
-      clearHighlight();
-      const nextIndex = currentElementIndexRef.current + 1;
-      const elements = getElementsToRead(contentRef.current);
-      if (nextIndex < elements.length) {
-        readElement(elements[nextIndex], nextIndex);
-      } else {
-        setIsReading(false);
-        if (contentRef.current) {
-          contentRef.current.classList.remove('reading-mode');
-        }
-      }
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
   };
 
   const getElementsToRead = (container) => {
