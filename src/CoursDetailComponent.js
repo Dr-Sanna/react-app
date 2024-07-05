@@ -1,10 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import CustomMarkdown from './CustomMarkdown';
 import VoiceReader from './VoiceReader';
+import { useToggle } from './ToggleContext';
 
 const CoursDetailComponent = ({ selectedCas }) => {
   const contentRef = useRef(null);
-  const [showVoiceReader, setShowVoiceReader] = useState(false);
+  const { showVoiceReader } = useToggle();
 
   useEffect(() => {
     const cleanUp = () => {
@@ -43,9 +44,6 @@ const CoursDetailComponent = ({ selectedCas }) => {
   return (
     <div className="markdown">
       <h1>{selectedCas.attributes.titre}</h1>
-      <button onClick={() => setShowVoiceReader(!showVoiceReader)}>
-        {showVoiceReader ? 'Hide Voice Reader' : 'Show Voice Reader'}
-      </button>
       {showVoiceReader && <VoiceReader contentRef={contentRef} />}
       <div ref={contentRef}>
         <CustomMarkdown

@@ -145,7 +145,11 @@ const CoursComponent = () => {
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
                   {showQuestions ? (
-                    <QuestionsComponent questions={selectedCours.attributes.question} corrections={selectedCours.attributes.correction} />
+                    <QuestionsComponent 
+                      questions={selectedCours.attributes.question} 
+                      corrections={selectedCours.attributes.correction}
+                      title={selectedCours.attributes.titre} // Passer le titre
+                    />
                   ) : (
                     <CoursDetailComponent key={selectedCours.id} selectedCas={selectedCours} />
                   )}

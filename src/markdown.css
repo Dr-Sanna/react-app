@@ -34,7 +34,11 @@ body {
     --ifm-h1-font-size: 3rem;
     margin-bottom: calc(var(--ifm-h1-vertical-rhythm-bottom)*var(--ifm-leading))
 }
-
+h1 {
+    --ifm-h1-font-size: 3rem;
+    --ifm-h1-vertical-rhythm-bottom: 1.25;
+    margin-bottom: calc(var(--ifm-h1-vertical-rhythm-bottom)*var(--ifm-leading))
+}
 .markdown>h2 {
     --ifm-h2-font-size: 2rem;
     margin-top: calc(var(--ifm-h2-vertical-rhythm-top)*var(--ifm-leading))

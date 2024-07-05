@@ -1,22 +1,28 @@
 import React from 'react';
-import CustomAccordion from './CustomAccordion';
+import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
 
-const QuestionsComponent = ({ questions, corrections }) => {
+const QuestionsComponent = ({ questions, corrections, title }) => {
+  const imgStyle = {
+    maxHeight: '60vh', // 3/4 de la hauteur de l'écran
+    width: 'auto', // Pour conserver le ratio d'aspect
+    marginBottom: 'var(--ifm-leading)',
+  };
+
   return (
-    <div>
+    <div className="markdown">
+      <h1>{title}</h1> {/* Ajout du titre h1 */}
       <h2>Questions</h2>
       {questions && questions.length > 0 ? (
         questions.map((q, index) => (
-          <CustomAccordion
+          <Accordion
             key={index}
             title={<p><strong>{q.question}</strong></p>}
             content={
-              <div className="collapsibleContent_EoA1">
-                <CustomMarkdown
-                  markdownText={corrections[index]?.correction || 'Pas de correction disponible.'}
-                />
-              </div>
+              <CustomMarkdown
+                markdownText={corrections[index]?.correction || 'Pas de correction disponible.'}
+                imageStyle={imgStyle}
+              />
             }
           />
         ))

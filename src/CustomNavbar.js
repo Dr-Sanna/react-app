@@ -10,7 +10,7 @@ const CustomNavbar = () => {
   const [navbarClass, setNavbarClass] = useState("navbar navbar--fixed-top navbarHideable_uAgx");
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
 
-  const { showQuestions, setShowQuestions } = useToggle();
+  const { showQuestions, setShowQuestions, showVoiceReader, setShowVoiceReader } = useToggle();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
@@ -47,6 +47,7 @@ const CustomNavbar = () => {
   }, []);
 
   const toggleQuestions = () => setShowQuestions(prev => !prev);
+  const toggleVoiceReader = () => setShowVoiceReader(prev => !prev);
 
   return (
     <nav aria-label="Principale" className={navbarClass}>
@@ -77,6 +78,19 @@ const CustomNavbar = () => {
                 <>
                   <span role="img" aria-label="Cours">📚</span> Cours
                 </>
+              )}
+            </button>
+          </div>
+          <div className="toggle-container" style={{ marginLeft: '10px' }}>
+            <button 
+              onClick={toggleVoiceReader} 
+              className="clean-btn toggleButtonCustom"
+              title="Basculer l'affichage du lecteur vocal"
+            >
+              {showVoiceReader ? (
+                <span role="img" aria-label="Voice Reader">📢</span>
+              ) : (
+                <span role="img" aria-label="Voice Reader Off">📢🚫</span>
               )}
             </button>
           </div>
