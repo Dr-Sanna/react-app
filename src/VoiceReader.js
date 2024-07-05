@@ -53,6 +53,35 @@ const VoiceReader = ({ contentRef }) => {
     };
   }, [contentRef]);
 
+  useEffect(() => {
+    const contentNode = contentRef.current;
+    if (contentNode) {
+      contentNode.querySelectorAll('table td').forEach(td => {
+        const hasBlockElement = Array.from(td.childNodes).some(child => {
+          return child.nodeType === Node.ELEMENT_NODE && /^(P|H[1-6]|UL|OL|TABLE|FIGURE)$/.test(child.tagName);
+        });
+        if (!hasBlockElement) {
+          const content = Array.from(td.childNodes)
+            .map(child => {
+              if (child.nodeType === Node.TEXT_NODE && child.nodeValue.trim() !== '') {
+                return child.textContent;
+              }
+              if (child.nodeType === Node.ELEMENT_NODE) {
+                return child.outerHTML;
+              }
+              return null;
+            })
+            .filter(Boolean)
+            .join('')
+            .trim();
+          if (content) {
+            td.innerHTML = `<p>${content}</p>`;
+          }
+        }
+      });
+    }
+  }, [contentRef]);
+
   const highlightTextAtElement = useCallback((element, start, length) => {
     clearHighlight(); // Clear any previous highlights
 
