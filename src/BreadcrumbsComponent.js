@@ -4,22 +4,30 @@ import { HomeIcon } from './IconComponents';
 import { DataContext } from './DataContext';
 import { toUrlFriendly } from "./config";
 
-const generateBreadcrumbs = (currentPath, selectedCasTitle, sousMatieres, matieres) => {
+const generateBreadcrumbs = (currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours) => {
   const pathSegments = currentPath.split('/').filter(Boolean);
   let pathAccum = '';
   const breadcrumbs = pathSegments.map((segment, index) => {
     pathAccum += `/${segment}`;
     let title;
     const isLast = index === pathSegments.length - 1;
-    if (isLast && selectedCasTitle) {
+
+    if (isLast && selectedPartieTitle) {
+      title = selectedPartieTitle;
+    } else if (isLast && selectedCasTitle) {
       title = selectedCasTitle;
     } else {
       const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === segment);
       const sousMatiere = sousMatieres.find(sm => toUrlFriendly(sm.attributes.titre) === segment);
-      title = matiere ? matiere.attributes.titre : sousMatiere ? sousMatiere.attributes.titre : segment;
-    }
-    const isHome = pathAccum === '/';
+      const cour = cours.find(c => toUrlFriendly(c.attributes.titre) === segment);
 
+      title = matiere ? matiere.attributes.titre :
+              sousMatiere ? sousMatiere.attributes.titre :
+              cour ? cour.attributes.titre :
+              segment;
+    }
+
+    const isHome = pathAccum === '/';
     return {
       title,
       link: !isLast ? pathAccum : null,
@@ -50,9 +58,9 @@ const GenericBreadcrumbs = React.memo(({ breadcrumbs }) => (
   </nav>
 ));
 
-const BreadcrumbsComponent = ({ currentPath, selectedCasTitle }) => {
-  const { sousMatieres, matieres } = useContext(DataContext);
-  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, sousMatieres, matieres), [currentPath, selectedCasTitle, sousMatieres, matieres]);
+const BreadcrumbsComponent = ({ currentPath, selectedCasTitle, selectedPartieTitle }) => {
+  const { sousMatieres, matieres, cours } = useContext(DataContext);
+  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours), [currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours]);
   return <GenericBreadcrumbs breadcrumbs={breadcrumbs} />;
 };
 

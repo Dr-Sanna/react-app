@@ -1,0 +1,32 @@
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cardContainer_Uewx {
+  display: block;
+  width: calc(33.333% - 16px);
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cardContainer_Uewx:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle_dwRT {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #000;
+}
+
+.cardDescription_mCBT {
+  color: #555;
+  margin-top: 0.5rem;
+}

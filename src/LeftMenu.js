@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { CollapseIcon, ExpandIcon } from "./IconComponents";
-import { useSidebarContext } from './SidebarContext'; // Importez le hook
+import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
-import { useLocation } from 'react-router-dom'; // Importez useLocation
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const LeftMenu = ({ menuItems, selectedKey }) => {
+const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));
+  const [expandedItems, setExpandedItems] = useState({});
   const { isSidebarVisible, setIsSidebarVisible } = useSidebarContext();
-  const location = useLocation(); // Utilisez useLocation pour accéder à l'URL actuelle
-  const pathSegments = location.pathname.split('/').filter(Boolean); // Extrait les segments de l'URL
+  const location = useLocation();
+  const navigate = useNavigate();
+  const pathSegments = location.pathname.split('/').filter(Boolean);
 
-  // Supposons que votre structure d'URL inclut la matière et la sous-matière comme deux premiers segments
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
+  const cours = pathSegments[2];
+  const partie = pathSegments[3];
 
   const toggleSidebarVisibility = () => {
-    setIsSidebarVisible(!isSidebarVisible); // Bascule l'état de visibilité
+    setIsSidebarVisible(!isSidebarVisible);
   };
 
   useEffect(() => {
@@ -36,9 +39,45 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
 
   const handleMenuItemClick = (item, event) => {
     event.preventDefault();
-    item.onClick();
+    navigate(`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`);
     window.scrollTo(0, 0);
   };
+
+  const handlePartieClick = (partie, parentCoursLabel, event) => {
+    event.preventDefault();
+    navigate(`/${matiere}/${sousMatiere}/${toUrlFriendly(parentCoursLabel)}/${toUrlFriendly(partie.attributes.titre)}`);
+    onPartieClick(partie, parentCoursLabel);
+    window.scrollTo(0, 0);
+  };
+
+  const toggleExpand = (key, event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setExpandedItems((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const isPartieSelected = (partieTitre) => {
+    return partie === toUrlFriendly(partieTitre);
+  };
+
+  const isSelectedCoursOrPartie = (item) => {
+    const itemKey = toUrlFriendly(item.label);
+    return selectedKey === item.key || cours === itemKey;
+  };
+
+  const isExpanded = (key) => !!expandedItems[key];
+
+  useEffect(() => {
+    if (selectedKey) {
+      setExpandedItems((prev) => ({
+        ...prev,
+        [selectedKey]: true,
+      }));
+    }
+  }, [selectedKey]);
 
   return (
     <aside className={`theme-doc-sidebar-container docSidebarContainer_S51O ${isSidebarVisible ? '' : 'docSidebarContainerHidden_gbDM'}`}>
@@ -55,21 +94,58 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
           </a>
           <nav aria-label="Barre latérale des docs" className="menu thin-scrollbar menu_rWGR">
             <ul className="theme-doc-sidebar-menu menu__list">
-              {menuItems.map((item) => (
-                <li
-                  key={item.key}
-                  className="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"
-                >
-                  <a 
-                    href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`} // Utilisez la matière et la sous-matière extraites pour construire l'URL
-                    className={`menu__link ${selectedKey === item.key ? 'menu__link--active' : ''}`}
-                    onClick={(event) => handleMenuItemClick(item, event)}
-                    aria-current={selectedKey === item.key ? 'page' : undefined}
+              {menuItems.map((item) => {
+                const isItemSelected = isSelectedCoursOrPartie(item);
+                const isItemExpanded = isExpanded(item.key);
+                return (
+                  <li
+                    key={item.key}
+                    className={`theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item`}
                   >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
+                    <div className={`menu__list-item-collapsible ${isItemExpanded ? 'menu__list-item-collapsible' : ''} ${isItemSelected ? 'menu__list-item-collapsible--active' : ''}`}>
+                      <a 
+                        href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`}
+                        className={`menu__link ${isItemSelected ? 'menu__link--active' : ''}`}
+                        onClick={(event) => handleMenuItemClick(item, event)}
+                        aria-current={isItemSelected ? 'page' : undefined}
+                      >
+                        {item.label}
+                      </a>
+                      {item.hasParts && (
+                        <button
+                          aria-label={`Toggle ${item.label}`}
+                          aria-expanded={isItemExpanded}
+                          type="button"
+                          className="clean-btn menu__caret"
+                          onClick={(e) => toggleExpand(item.key, e)}
+                        />
+                      )}
+                    </div>
+                    {item.hasParts && isItemExpanded && parties[item.key] && (
+                      <ul className="menu__list" style={{ display: 'block', overflow: 'visible', height: 'auto' }}>
+                        {parties[item.key].map((partie) => {
+                          const isPartieSelectedFlag = isPartieSelected(partie.attributes.titre);
+                          return (
+                            <li
+                              key={partie.id}
+                              className={`theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
+                            >
+                              <a
+                                href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(partie.attributes.titre)}`}
+                                className={`menu__link ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
+                                onClick={(event) => handlePartieClick(partie, item.label, event)}
+                                aria-current={isPartieSelectedFlag ? 'page' : undefined}
+                              >
+                                {partie.attributes.titre}
+                              </a>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </nav>
           <button
@@ -79,7 +155,7 @@ const LeftMenu = ({ menuItems, selectedKey }) => {
             className="button button--secondary button--outline collapseSidebarButton_PUyN"
             onClick={toggleSidebarVisibility}
           >
-            <CollapseIcon />
+            {isSidebarVisible ? <CollapseIcon /> : <ExpandIcon />}
           </button>
         </div>
       

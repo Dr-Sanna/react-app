@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, onNavigateNext, parentCours }) => {
+const CoursPagination = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext }) => {
   const handleClick = (item, e, isPrev) => {
     e.preventDefault();
     if (isPrev) {
@@ -11,11 +11,11 @@ const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, o
     window.scrollTo(0, 0);
   };
 
-  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.titre : (parentCours && parentCours.attributes ? parentCours.attributes.titre : "Retour aux cours");
+  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.titre : "Retour aux cours";
 
   return (
     <nav className="pagination-nav docusaurus-mt-lg" aria-label="Pages de documentation">
-      {prevItem ? (
+      {prevItem && (
         <a 
           href="#" 
           className="pagination-nav__link pagination-nav__link--prev" 
@@ -24,16 +24,7 @@ const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, o
           <div className="pagination-nav__sublabel">Précédent</div>
           <div className="pagination-nav__label">{prevLabel}</div>
         </a>
-      ) : parentCours ? (
-        <a 
-          href="#" 
-          className="pagination-nav__link pagination-nav__link--prev" 
-          onClick={(e) => handleClick(parentCours, e, true)}
-        >
-          <div className="pagination-nav__sublabel">Précédent</div>
-          <div className="pagination-nav__label">{parentCours.attributes.titre}</div>
-        </a>
-      ) : null}
+      )}
       {nextItem && (
         <a 
           href="#" 
@@ -41,11 +32,11 @@ const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, o
           onClick={(e) => handleClick(nextItem, e, false)}
         >
           <div className="pagination-nav__sublabel">Suivant</div>
-          <div className="pagination-nav__label">{nextItem.label || nextItem.attributes.titre}</div>
+          <div className="pagination-nav__label">{nextItem.attributes.titre}</div>
         </a>
       )}
     </nav>
   );
 };
 
-export default PaginationComponent;
+export default CoursPagination;

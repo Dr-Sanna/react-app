@@ -6,6 +6,7 @@ const sousMatierePathToIdMap = {
   "risque-hemorragique": 11,
   "therapeutiques-pulpaires-des-dt": 10,
   "medecine-orale": 9,
+  "occlusion-et-manducation": 12,
   // Ajoutez d'autres mappages si nécessaire
 };
 
@@ -42,6 +43,11 @@ export const fetchCoursData = async (pathname) => {
     } else if (pathname.includes('risque-hemorragique')) {
       url += `&filters[sous_matiere][id][$eq]=11`;
     }
+  } else if (pathname.includes('occlusion-et-fonction')) {
+    url = `${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonctions?populate=*`;
+    if (pathname.includes('occlusion-et-manducation')) {
+      url += `&filters[sous_matiere][id][$eq]=12`;
+    } 
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
     url = `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
   }
@@ -57,5 +63,21 @@ export const fetchSousMatiereByPath = async (path) => {
   if (!id) throw new Error(`No ID found for path: ${path}`);
 
   const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/sous-matieres/${id}`);
+  return response.data.data;
+};
+
+export const fetchPartiesData = async (coursId) => {
+  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonction-parties`, {
+    params: {
+      populate: '*',
+      filters: {
+        occlusion_et_fonction: {
+          id: {
+            $eq: coursId
+          }
+        }
+      }
+    }
+  });
   return response.data.data;
 };

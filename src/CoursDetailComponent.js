@@ -2,8 +2,10 @@ import React, { useRef, useEffect } from 'react';
 import CustomMarkdown from './CustomMarkdown';
 import VoiceReader from './VoiceReader';
 import { useToggle } from './ToggleContext';
+import CoursPagination from './CoursPagination';
+import './CoursDetailComponent.css'; // Assurez-vous d'inclure votre feuille de style
 
-const CoursDetailComponent = ({ selectedCas }) => {
+const CoursDetailComponent = ({ selectedCas, parties, selectedPartie, setSelectedPartie, onNavigatePartie, prevItem, nextItem, onNavigate, onNavigatePrev, onNavigateNext }) => {
   const contentRef = useRef(null);
   const { showVoiceReader } = useToggle();
 
@@ -25,33 +27,45 @@ const CoursDetailComponent = ({ selectedCas }) => {
 
     cleanUp(); // Clean up on component mount
 
-    return cleanUp; // Clean up on component unmount
+    return cleanUp(); // Clean up on component unmount
   }, [selectedCas]);
 
-  if (!selectedCas || !selectedCas.attributes) {
-    return <div>Loading...</div>;
-  }
-
-  const enonce = selectedCas.attributes.enonce;
-  const carouselImages = selectedCas.attributes.carousel;
-
-  const imgStyle = {
-    maxHeight: '60vh',
-    width: 'auto',
-    marginBottom: 'var(--ifm-leading)',
+  const handlePartieClick = (partie) => {
+    setSelectedPartie(partie);
+    onNavigatePartie(partie);
+    console.log("Navigating to partie:", partie);
   };
+
+  const firstPartie = parties.length > 0 ? parties[0] : null;
+  const nextItemWithParts = nextItem && nextItem.attributes.hasParts ? nextItem : null;
 
   return (
     <div className="markdown">
       <h1>{selectedCas.attributes.titre}</h1>
-      {showVoiceReader && <VoiceReader contentRef={contentRef} />}
+      {!selectedCas.attributes.hasParts && showVoiceReader && <VoiceReader contentRef={contentRef} />}
       <div ref={contentRef}>
         <CustomMarkdown
-          markdownText={enonce}
-          imageStyle={imgStyle}
-          carouselImages={carouselImages}
+          markdownText={selectedCas.attributes.enonce}
+          imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+          carouselImages={selectedCas.attributes.carousel}
         />
+        {parties.length > 0 && (
+          <div className="cards-container">
+            {parties.map(partie => (
+              <a key={partie.id} className="card padding--lg cardContainer_Uewx" onClick={() => handlePartieClick(partie)}>
+                <h2 className="text--truncate cardTitle_dwRT" title={partie.attributes.titre}>{partie.attributes.titre}</h2>
+                <p className="text--truncate cardDescription_mCBT" title={partie.attributes.enonce}>{partie.attributes.enonce}</p>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
+      <CoursPagination 
+        prevItem={prevItem} 
+        nextItem={firstPartie || nextItemWithParts || nextItem} // Utiliser la première partie si le cours a des parties
+        onNavigatePrev={onNavigatePrev}
+        onNavigateNext={firstPartie ? handlePartieClick : onNavigateNext} // Naviguer vers la première partie si elle existe
+      />
     </div>
   );
 };
