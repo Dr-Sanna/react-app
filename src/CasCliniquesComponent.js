@@ -5,7 +5,6 @@ import LeftMenu from "./LeftMenu";
 import BreadcrumbsComponent from "./BreadcrumbsComponent";
 import CasCardComponent from "./CasCardComponent";
 import CasDetailComponent from "./CasDetailComponent";
-import { server } from "./config";
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
@@ -15,19 +14,19 @@ const CasCliniquesComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { casCliniques, isLoading } = useContext(DataContext);
-  const [selectedCas, setSelectedCas] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
   const sousMatiereId = location.state?.sousMatiereId;
 
-  const updateSelectedCas = useCallback(
-    (titre, casList) => {
-      if (Array.isArray(casList)) {
-        const foundCas = casList.find(
-          (c) => c.attributes && toUrlFriendly(c.attributes.titre) === titre
+  const updateSelectedItem = useCallback(
+    (titre, itemList) => {
+      if (Array.isArray(itemList)) {
+        const foundItem = itemList.find(
+          (c) => c.attributes.test && toUrlFriendly(c.attributes.test.titre) === titre
         );
-        setSelectedCas(foundCas || null);
+        setSelectedItem(foundItem || null);
       } else {
-        console.error("casList n'est pas un tableau:", casList);
+        console.error("itemList n'est pas un tableau:", itemList);
       }
     },
     []
@@ -35,25 +34,42 @@ const CasCliniquesComponent = () => {
 
   useEffect(() => {
     const titre = location.pathname.split("/").pop();
-    updateSelectedCas(titre, casCliniques);
-  }, [location.pathname, casCliniques, updateSelectedCas]);
+    updateSelectedItem(titre, casCliniques);
+  }, [location.pathname, casCliniques, updateSelectedItem]);
 
-  const currentIndex = casCliniques.findIndex(cas => cas.id === selectedCas?.id);
+  const handleSelectionChange = (cours, partie) => {
+    console.log(`Selected cours: ${cours}, Selected partie: ${partie}`);
+    // Logique pour gérer la sélection, si nécessaire
+  };
 
-  const prevItem = currentIndex > 0 ? { ...casCliniques[currentIndex - 1], label: casCliniques[currentIndex - 1]?.attributes?.titre } : null;
-  const nextItem = currentIndex < casCliniques.length - 1 ? { ...casCliniques[currentIndex + 1], label: casCliniques[currentIndex + 1]?.attributes?.titre } : null;
-
-  const handleSelection = (cas) => {
+  const handleNavigatePrev = (item) => {
     const pathSegments = location.pathname.split('/');
-    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(cas.attributes.titre)}`;
+    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
     navigate(newPath, { state: { sousMatiereId } });
   };
 
-  const menuItems = casCliniques.map(cas => ({
-    key: cas.id.toString(),
-    label: cas.attributes?.titre || '',
-    url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(cas.attributes.titre)}`,
-    onClick: () => handleSelection(cas),
+  const handleNavigateNext = (item) => {
+    const pathSegments = location.pathname.split('/');
+    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
+    navigate(newPath, { state: { sousMatiereId } });
+  };
+
+  const currentIndex = casCliniques.findIndex(item => item.id === selectedItem?.id);
+
+  const prevItem = currentIndex > 0 ? { ...casCliniques[currentIndex - 1], label: casCliniques[currentIndex - 1]?.attributes?.test?.titre } : null;
+  const nextItem = currentIndex < casCliniques.length - 1 ? { ...casCliniques[currentIndex + 1], label: casCliniques[currentIndex + 1]?.attributes?.test?.titre } : null;
+
+  const handleSelection = (item) => {
+    const pathSegments = location.pathname.split('/');
+    const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
+    navigate(newPath, { state: { sousMatiereId } });
+  };
+
+  const menuItems = casCliniques.map(item => ({
+    key: item.id.toString(),
+    label: item.attributes?.test?.titre || '',
+    url: `${location.pathname.split('/').slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`,
+    onClick: () => handleSelection(item),
   }));
 
   return (
@@ -66,24 +82,50 @@ const CasCliniquesComponent = () => {
       <div className="docRoot_kBZ6">
         <LeftMenu
           menuItems={menuItems}
-          selectedKey={selectedCas?.id?.toString() || ""}
+          selectedKey={selectedItem?.id?.toString() || ""}
+          onSelectionChange={handleSelectionChange}
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            {selectedCas ? (
+            {selectedItem ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
                   <BreadcrumbsComponent
                     currentPath={location.pathname}
-                    selectedCasTitle={selectedCas ? selectedCas.attributes.titre : ''}
+                    selectedItemTitle={selectedItem ? selectedItem.attributes.test.titre : ''}
                   />
-                  <CasDetailComponent selectedCas={selectedCas} imageUrl={selectedCas?.attributes?.image ? `${server}${selectedCas.attributes.image.data.attributes.url}` : ''} />
+                  {selectedItem.attributes && (
+                    <CasDetailComponent
+                      selectedCas={selectedItem}
+                      imageUrl={selectedItem.attributes.test.image ? selectedItem.attributes.test.image.data.attributes.url : ''}
+                    />
+                  )}
+                  {Array.isArray(selectedItem.attributes.test.test) && selectedItem.attributes.test.test.length > 0 && (
+                    <div>
+                      {selectedItem.attributes.test.test.map((testItem) => (
+                        <div key={testItem.id}>
+                          <h3>{testItem.titre}</h3>
+                          <p>{testItem.enonce}</p>
+                          {testItem.image && (
+                            <img src={testItem.image.url} alt={testItem.titre} />
+                          )}
+                          {Array.isArray(testItem.test) && testItem.test.length > 0 && testItem.test.map((nestedTestItem) => (
+                            <div key={nestedTestItem.id}>
+                              <p>Question: {nestedTestItem.question}</p>
+                              <p>Correction: {nestedTestItem.correction}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </article>
-                {selectedCas && (
+                {selectedItem && (
                   <PaginationComponent
                     prevItem={prevItem ? { ...prevItem } : null}
                     nextItem={nextItem ? { ...nextItem } : null}
-                    onNavigate={handleSelection}
+                    onNavigatePrev={handleNavigatePrev}
+                    onNavigateNext={handleNavigateNext}
                   />
                 )}
               </div>
@@ -91,7 +133,7 @@ const CasCliniquesComponent = () => {
               <div className="docItemContainer_RhpI">
                 <BreadcrumbsComponent
                   currentPath={location.pathname}
-                  selectedCas={selectedCas}
+                  selectedItem={selectedItem}
                 />
                 {isLoading ? (
                   <CustomToothLoader />

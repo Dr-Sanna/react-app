@@ -11,7 +11,7 @@ const CoursPagination = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext })
     window.scrollTo(0, 0);
   };
 
-  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.titre : "Retour aux cours";
+  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.test.titre : "Retour aux cours";
 
   return (
     <nav className="pagination-nav docusaurus-mt-lg" aria-label="Pages de documentation">
@@ -32,7 +32,7 @@ const CoursPagination = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext })
           onClick={(e) => handleClick(nextItem, e, false)}
         >
           <div className="pagination-nav__sublabel">Suivant</div>
-          <div className="pagination-nav__label">{nextItem.attributes.titre}</div>
+          <div className="pagination-nav__label">{nextItem.attributes.test.titre}</div>
         </a>
       )}
     </nav>

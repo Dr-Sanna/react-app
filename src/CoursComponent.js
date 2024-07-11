@@ -7,19 +7,19 @@ import CasCardComponent from "./CasCardComponent";
 import CoursDetailComponent from "./CoursDetailComponent";
 import PartieDetailComponent from "./PartieDetailComponent";
 import QuestionsComponent from "./QuestionsComponent";
+import QuestionsPartiesComponent from "./QuestionsPartiesComponent";
 import { toUrlFriendly } from "./config";
 import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { useToggle } from './ToggleContext';
 import { fetchSousMatiereByPath, fetchCoursData, fetchPartiesData } from "./api";
 import { preloadImage } from './utils';
-import { server } from './config';
 
 const CoursComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
-  const [selectedCours, setSelectedCours] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [selectedPartie, setSelectedPartie] = useState(null);
   const [parties, setParties] = useState({});
   const { isSidebarVisible } = useSidebarContext();
@@ -28,7 +28,8 @@ const CoursComponent = () => {
   const [initialLoading, setInitialLoading] = useState(true);
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  const sousMatierePath = pathSegments.length >= 2 ? pathSegments[1] : "";
+  const matierePath = pathSegments[0];
+  const sousMatierePath = pathSegments[1];
   const coursTitre = pathSegments.length >= 3 ? pathSegments[2] : "";
   const partieTitre = pathSegments.length === 4 ? pathSegments[3] : "";
 
@@ -58,12 +59,12 @@ const CoursComponent = () => {
       try {
         const coursData = await fetchCoursData(selectedSousMatiere.path);
         await Promise.all(coursData.map(async (cour) => {
-          const imageUrls = cour.attributes.images ? cour.attributes.images.map(img => `${server}${img.url}`) : [];
+          const imageUrls = cour.attributes.test?.images ? cour.attributes.test.images.map(img => `${img.url}`) : [];
           await Promise.all(imageUrls.map(preloadImage));
         }));
         setCours(coursData);
         const partsPromises = coursData.map(async (cour) => {
-          if (cour.attributes.hasParts) {
+          if (cour.attributes.test?.hasParts) {
             const partiesData = await fetchPartiesData(cour.id);
             return { [cour.id]: partiesData };
           }
@@ -86,11 +87,11 @@ const CoursComponent = () => {
 
   useEffect(() => {
     if (!initialLoading && cours.length > 0) {
-      const foundCours = cours.find(c => toUrlFriendly(c.attributes.titre) === coursTitre);
-      setSelectedCours(foundCours || null);
+      const foundCours = cours.find(c => toUrlFriendly(c.attributes.test?.titre) === coursTitre);
+      setSelectedItem(foundCours || null);
 
-      if (foundCours && foundCours.attributes.hasParts) {
-        const foundPartie = (parties[foundCours.id] || []).find(p => toUrlFriendly(p.attributes.titre) === partieTitre);
+      if (foundCours && foundCours.attributes.test?.hasParts) {
+        const foundPartie = (parties[foundCours.id] || []).find(p => toUrlFriendly(p.attributes.test?.titre) === partieTitre);
         setSelectedPartie(foundPartie || null);
       } else {
         setSelectedPartie(null);
@@ -98,110 +99,50 @@ const CoursComponent = () => {
     }
   }, [cours, parties, initialLoading, coursTitre, partieTitre]);
 
-  const currentIndex = cours.findIndex(c => c.id === selectedCours?.id);
-  const prevItem = currentIndex > 0 ? { ...cours[currentIndex - 1], label: cours[currentIndex - 1]?.attributes?.titre } : null;
-  const nextItem = currentIndex < cours.length - 1 ? { ...cours[currentIndex + 1], label: cours[currentIndex + 1]?.attributes?.titre } : null;
-
-  const handleSelection = (cours) => {
-    setSelectedPartie(null);
-    const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(cours.attributes.titre)}`;
-    if (location.pathname !== newPath) {
-      navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-      setSelectedCours(cours);
-    }
+  const handleSelectionChange = (selectedCoursTitle, selectedPartieTitle, replace = false) => {
+    const newCours = cours.find(c => toUrlFriendly(c.attributes.test?.titre) === toUrlFriendly(selectedCoursTitle));
+    const newPartie = newCours ? (parties[newCours.id] || []).find(p => toUrlFriendly(p.attributes.test?.titre) === toUrlFriendly(selectedPartieTitle)) : null;
+    setSelectedItem(newCours);
+    setSelectedPartie(newPartie);
+    const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(selectedCoursTitle)}${selectedPartieTitle ? `/${toUrlFriendly(selectedPartieTitle)}` : ''}`;
+    navigate(newPath, { replace });
   };
 
-  const handleNavigatePartie = (partie, parentCoursLabel) => {
-    const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(parentCoursLabel)}/${toUrlFriendly(partie.attributes.titre)}`;
-    if (location.pathname !== newPath) {
-      navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-      setSelectedPartie(partie);
-    }
-  };
+  const currentIndex = cours.findIndex(c => c.id === selectedItem?.id);
+  const prevPartieIndex = selectedItem && selectedPartie ? (parties[selectedItem.id] || []).findIndex(p => p.id === selectedPartie.id) - 1 : -1;
+  const nextPartieIndex = selectedItem && selectedPartie ? (parties[selectedItem.id] || []).findIndex(p => p.id === selectedPartie.id) + 1 : -1;
+  const prevPartie = selectedItem && prevPartieIndex >= 0 ? (parties[selectedItem.id] || [])[prevPartieIndex] : null;
+  const nextPartie = selectedItem && nextPartieIndex < (parties[selectedItem.id] || []).length ? (parties[selectedItem.id] || [])[nextPartieIndex] : null;
 
-  const handleNavigateCours = (item) => {
-    setSelectedPartie(null);
-    const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(item.attributes.titre)}`;
-    if (location.pathname !== newPath) {
-      navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-      setSelectedCours(item);
-    }
-  };
-
-  const handleNavigatePrev = (item) => {
-    if (selectedPartie) {
-      const currentPartieIndex = parties[selectedCours.id].findIndex(p => p.id === selectedPartie.id);
-      if (currentPartieIndex > 0) {
-        const prevPartie = parties[selectedCours.id][currentPartieIndex - 1];
-        const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(selectedCours.attributes.titre)}/${toUrlFriendly(prevPartie.attributes.titre)}`;
-        if (location.pathname !== newPath) {
-          navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-          setSelectedPartie(prevPartie);
-        }
-      } else {
-        setSelectedPartie(null);
-        handleNavigateCours(selectedCours);
-      }
-    } else {
-      const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(item.attributes.titre)}`;
-      if (location.pathname !== newPath) {
-        navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-        setSelectedCours(item);
-        setSelectedPartie(null);
-      }
-    }
-  };
-
-  const handleNavigateNext = (item) => {
-    if (selectedPartie) {
-      const currentPartieIndex = parties[selectedCours.id].findIndex(p => p.id === selectedPartie.id);
-      if (currentPartieIndex < parties[selectedCours.id].length - 1) {
-        const nextPartie = parties[selectedCours.id][currentPartieIndex + 1];
-        const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(selectedCours.attributes.titre)}/${toUrlFriendly(nextPartie.attributes.titre)}`;
-        if (location.pathname !== newPath) {
-          navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-          setSelectedPartie(nextPartie);
-        }
-      } else {
-        setSelectedPartie(null);
-        const nextIndex = currentIndex + 1;
-        if (nextIndex < cours.length) {
-          const nextCours = cours[nextIndex];
-          const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(nextCours.attributes.titre)}`;
-          if (location.pathname !== newPath) {
-            navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-            setSelectedCours(nextCours);
-          }
-        }
-      }
-    } else {
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < cours.length) {
-        const nextCours = cours[nextIndex];
-        const newPath = `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(nextCours.attributes.titre)}`;
-        if (location.pathname !== newPath) {
-          navigate(newPath, { state: { sousMatiereId: sousMatierePath } });
-          setSelectedCours(nextCours);
-        }
-      }
-    }
-  };
+  const prevItem = currentIndex > 0 ? cours[currentIndex - 1] : null;
+  const nextItem = currentIndex < cours.length - 1 ? cours[currentIndex + 1] : null;
 
   const menuItems = cours.map(c => ({
     key: c.id.toString(),
-    label: c.attributes?.titre || '',
-    url: `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(c.attributes.titre)}`,
-    onClick: () => handleSelection(c),
-    hasParts: c.attributes.hasParts
+    label: c.attributes?.test?.titre || '',
+    url: `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(c.attributes?.test?.titre || '')}`,
+    hasParts: c.attributes?.test?.hasParts
   }));
+
+  const handleNavigatePrev = (item) => {
+    handleSelectionChange(item.attributes.test?.titre, null);
+  };
+
+  const handleNavigateNext = (item) => {
+    handleSelectionChange(item.attributes.test?.titre, null);
+  };
+
+  const handleNavigatePartie = (partie, isPrev) => {
+    if (isPrev) {
+      handleSelectionChange(selectedItem?.attributes?.test?.titre, partie.attributes.test?.titre);
+    } else {
+      handleSelectionChange(selectedItem?.attributes?.test?.titre, partie.attributes.test?.titre);
+    }
+  };
 
   if (initialLoading) {
     return <CustomToothLoader />;
   }
-
-  const currentPartieIndex = selectedPartie ? parties[selectedCours?.id]?.findIndex(p => p.id === selectedPartie.id) : -1;
-  const prevPartie = currentPartieIndex > 0 ? parties[selectedCours?.id][currentPartieIndex - 1] : null;
-  const nextPartie = currentPartieIndex < parties[selectedCours?.id]?.length - 1 ? parties[selectedCours?.id][currentPartieIndex + 1] : null;
 
   return (
     <div className="docsWrapper_lLmf">
@@ -213,60 +154,73 @@ const CoursComponent = () => {
       <div className="docRoot_kBZ6">
         <LeftMenu
           menuItems={menuItems}
-          selectedKey={selectedCours?.id?.toString() || ""}
-          selectedCours={selectedCours}
+          selectedKey={selectedItem?.id?.toString() || ""}
           parties={parties}
-          onPartieClick={(partie, parentCoursLabel) => handleNavigatePartie(partie, parentCoursLabel)}
+          onSelectionChange={(selectedCoursTitle, selectedPartieTitle) => handleSelectionChange(selectedCoursTitle, selectedPartieTitle, true)}
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             <BreadcrumbsComponent
               currentPath={location.pathname}
-              selectedCasTitle={selectedCours ? selectedCours.attributes.titre : ''}
-              selectedPartieTitle={selectedPartie ? selectedPartie.attributes.titre : ''}
+              selectedCasTitle={selectedItem?.attributes?.test?.titre || ''}
+              selectedPartieTitle={selectedPartie?.attributes?.test?.titre || ''}
               sousMatiereId={sousMatierePath}
             />
-            {selectedCours && !selectedPartie ? (
+            {selectedItem && !selectedPartie ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
                   {showQuestions ? (
                     <QuestionsComponent 
-                      questions={selectedCours.attributes.question} 
-                      corrections={selectedCours.attributes.correction}
-                      title={selectedCours.attributes.titre}
+                      questions={selectedItem?.attributes?.test?.nestedTestItem?.question} 
+                      corrections={selectedItem?.attributes?.test?.nestedTestItem?.correction}
+                      title={selectedItem?.attributes?.test?.titre}
                     />
                   ) : (
                     <CoursDetailComponent
-                      key={selectedCours.id}
-                      selectedCas={selectedCours}
-                      parties={parties[selectedCours?.id] || []}
+                      key={selectedItem.id}
+                      selectedItem={selectedItem}
+                      parties={parties[selectedItem?.id] || []}
                       selectedPartie={selectedPartie}
                       setSelectedPartie={setSelectedPartie}
-                      onNavigatePartie={(partie) => handleNavigatePartie(partie, selectedCours.attributes.titre)}
+                      onNavigatePartie={(partie) => handleSelectionChange(selectedItem?.attributes?.test?.titre, partie.attributes.test?.titre)}
                       prevItem={prevItem}
                       nextItem={nextItem}
-                      onNavigate={handleSelection}
                       onNavigatePrev={handleNavigatePrev}
                       onNavigateNext={handleNavigateNext}
+                      imageUrl={selectedItem?.attributes?.test?.image?.data?.attributes?.url || ''}
                     />
                   )}
                 </article>
               </div>
             ) : selectedPartie ? (
-              <PartieDetailComponent 
-                selectedPartie={selectedPartie}
-                prevPartie={prevPartie}
-                nextPartie={nextPartie}
-                onNavigatePartie={(partie) => handleNavigatePartie(partie, selectedCours.attributes.titre)}
-                onNavigateCours={handleNavigateCours}
-                parentCours={selectedCours}
-                onNavigatePrev={handleNavigatePrev}
-                onNavigateNext={handleNavigateNext}
-              />
+              <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
+                <article>
+                  {showQuestions ? (
+                    <QuestionsPartiesComponent
+                      questions={selectedPartie?.attributes?.test?.question}
+                      corrections={selectedPartie?.attributes?.test?.correction}
+                      title={selectedPartie?.attributes?.test?.titre}
+                    />
+                  ) : (
+                    <PartieDetailComponent 
+                      key={selectedPartie.id}
+                      selectedPartie={selectedPartie}
+                      parentCours={selectedItem}
+                      prevPartie={prevPartie}
+                      nextPartie={nextPartie}
+                      onNavigatePartie={(partie) => handleNavigatePartie(partie, false)}
+                      onNavigatePrev={(partie) => handleNavigatePartie(partie, true)}
+                      matierePath={matierePath}
+                      sousMatierePath={sousMatierePath}
+                      imageUrl={selectedPartie?.attributes?.test?.image?.data?.attributes?.url || ''}
+                    />
+                  )}
+                </article>
+              </div>
             ) : (
               <CasCardComponent
                 items={cours}
-                onSelection={handleSelection}
+                onSelection={(cour) => handleSelectionChange(cour.attributes?.test?.titre, null)}
               />
             )}
           </div>

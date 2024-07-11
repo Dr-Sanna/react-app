@@ -2,7 +2,7 @@ import React from 'react';
 import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
 
-const QuestionsComponent = ({ questions, corrections, title }) => {
+const QuestionsPartiesComponent = ({ questions, corrections, title }) => {
   const imgStyle = {
     maxHeight: '60vh',
     width: 'auto',
@@ -33,4 +33,4 @@ const QuestionsComponent = ({ questions, corrections, title }) => {
   );
 };
 
-export default QuestionsComponent;
+export default QuestionsPartiesComponent;

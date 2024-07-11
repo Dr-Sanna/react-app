@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
-import { server, toUrlFriendly } from './config';
+import { toUrlFriendly } from './config';
 import { useLocation } from 'react-router-dom';
-import './CasCardComponent.css'; // Import the CSS for opacity
+import './CasCardComponent.css'; // Assurez-vous que ce fichier existe
 
 const CasCardContainer = styled.div`
   display: grid;
@@ -29,7 +29,7 @@ const CasCardContainer = styled.div`
   }
 `;
 
-const CasCardComponent = ({ items, onSelection }) => {
+const CasCardComponent = ({ items = [], onSelection }) => {
   const location = useLocation();
   const pathSegments = location.pathname.split('/').filter(Boolean);
   const matiere = pathSegments[0];
@@ -38,6 +38,10 @@ const CasCardComponent = ({ items, onSelection }) => {
   const [imageLoadedStates, setImageLoadedStates] = useState(
     new Array(items.length).fill(false)
   );
+
+  useEffect(() => {
+    console.log('Items:', items); // Debugging line
+  }, [items]);
 
   const handleImageLoad = (index) => {
     setImageLoadedStates((prevStates) => {
@@ -51,10 +55,11 @@ const CasCardComponent = ({ items, onSelection }) => {
     <div>
       <CasCardContainer>
         {items.map((item, index) => {
-          const imageUrl = item?.attributes?.image?.data?.attributes?.url
-            ? `${server}${item.attributes.image.data.attributes.url}`
+          console.log('Rendering item:', item); // Debugging line
+          const imageUrl = item?.attributes?.test?.image?.data?.attributes?.url
+            ? item.attributes.test.image.data.attributes.url
             : '/defaultImage.jpg';
-          const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.attributes.titre)}`;
+          const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.attributes.test.titre)}`;
 
           return (
             <motion.div
@@ -84,7 +89,7 @@ const CasCardComponent = ({ items, onSelection }) => {
                       <CardMedia
                         component="img"
                         image={imageUrl}
-                        alt={item?.attributes?.titre || 'Titre inconnu'}
+                        alt={item?.attributes?.test?.titre || 'Titre inconnu'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
                         onLoad={() => handleImageLoad(index)}
                       />
@@ -107,7 +112,7 @@ const CasCardComponent = ({ items, onSelection }) => {
                         overflow: 'hidden',
                         whiteSpace: 'normal',
                       }}>
-                        {item?.attributes?.titre || 'Titre inconnu'}
+                        {item?.attributes?.test?.titre || 'Titre inconnu'}
                       </h6>
                     </CardContent>
                   </Card>

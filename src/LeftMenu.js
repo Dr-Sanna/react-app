@@ -4,8 +4,7 @@ import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
-  const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme'));
+const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
   const [expandedItems, setExpandedItems] = useState({});
   const { isSidebarVisible, setIsSidebarVisible } = useSidebarContext();
   const location = useLocation();
@@ -21,32 +20,23 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
-  useEffect(() => {
-    const themeObserver = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'data-theme') {
-          setTheme(document.documentElement.getAttribute('data-theme'));
-        }
-      });
-    });
-
-    themeObserver.observe(document.documentElement, { attributes: true });
-
-    return () => {
-      themeObserver.disconnect();
-    };
-  }, []);
-
   const handleMenuItemClick = (item, event) => {
     event.preventDefault();
-    navigate(`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`);
+    const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`;
+    if (location.pathname !== newPath) {
+      navigate(newPath);
+      onSelectionChange(item.label, null);  // Mise à jour des props avec le cours sélectionné
+    }
     window.scrollTo(0, 0);
   };
 
   const handlePartieClick = (partie, parentCoursLabel, event) => {
     event.preventDefault();
-    navigate(`/${matiere}/${sousMatiere}/${toUrlFriendly(parentCoursLabel)}/${toUrlFriendly(partie.attributes.titre)}`);
-    onPartieClick(partie, parentCoursLabel);
+    const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(parentCoursLabel)}/${toUrlFriendly(partie.attributes.titre)}`;
+    if (location.pathname !== newPath) {
+      navigate(newPath);
+      onSelectionChange(parentCoursLabel, partie.attributes.test.titre);  // Mise à jour des props avec le cours et la partie sélectionnée
+    }
     window.scrollTo(0, 0);
   };
 
@@ -65,7 +55,7 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
 
   const isSelectedCoursOrPartie = (item) => {
     const itemKey = toUrlFriendly(item.label);
-    return selectedKey === item.key || cours === itemKey;
+    return selectedKey === item.key || (cours === itemKey && !partie);
   };
 
   const isExpanded = (key) => !!expandedItems[key];
@@ -87,7 +77,7 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
             <img 
               src="/logo.svg" 
               alt="Sanna Logo" 
-              className={`themedComponent_bJGS ${theme === 'dark' ? 'themedComponent--dark_jnGk' : 'themedComponent--light_LEkC'}`}
+              className="themedComponent_bJGS"
               height="32" width="32" 
             />
             <b>Dr Sanna</b>
@@ -124,19 +114,19 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onPartieClick }) => {
                     {item.hasParts && isItemExpanded && parties[item.key] && (
                       <ul className="menu__list" style={{ display: 'block', overflow: 'visible', height: 'auto' }}>
                         {parties[item.key].map((partie) => {
-                          const isPartieSelectedFlag = isPartieSelected(partie.attributes.titre);
+                          const isPartieSelectedFlag = isPartieSelected(partie.attributes.test.titre);
                           return (
                             <li
                               key={partie.id}
                               className={`theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
                             >
                               <a
-                                href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(partie.attributes.titre)}`}
+                                href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(partie.attributes.test.titre)}`}
                                 className={`menu__link ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
                                 onClick={(event) => handlePartieClick(partie, item.label, event)}
                                 aria-current={isPartieSelectedFlag ? 'page' : undefined}
                               >
-                                {partie.attributes.titre}
+                                {partie.attributes.test.titre}
                               </a>
                             </li>
                           );

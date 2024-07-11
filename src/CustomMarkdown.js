@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import { visit } from 'unist-util-visit';
@@ -9,6 +9,10 @@ import ReactDOMServer from 'react-dom/server';
 import { IconDanger, IconInfo, IconAttention, IconAstuce, IconRemarque } from './IconComponents';
 
 function preprocessMarkdown(markdownText) {
+  if (!markdownText) {
+    return '';
+  }
+
   const processedText = markdownText
     .replace(/:::danger(?:\\\[([^\\\]]*?)\\\])?/g, (match, title) => {
       const finalTitle = title ? title : 'Danger';
@@ -88,7 +92,7 @@ function removePTagsAroundImages() {
 
 const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages }) => {
   console.log('Rendering CustomMarkdown');
-  const processedText = preprocessMarkdown(markdownText);
+  const processedText = useMemo(() => preprocessMarkdown(markdownText), [markdownText]);
 
   return (
     <ReactMarkdown

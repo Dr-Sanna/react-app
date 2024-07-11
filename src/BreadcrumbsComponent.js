@@ -4,7 +4,7 @@ import { HomeIcon } from './IconComponents';
 import { DataContext } from './DataContext';
 import { toUrlFriendly } from "./config";
 
-const generateBreadcrumbs = (currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours) => {
+const generateBreadcrumbs = (currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques) => {
   const pathSegments = currentPath.split('/').filter(Boolean);
   let pathAccum = '';
   const breadcrumbs = pathSegments.map((segment, index) => {
@@ -19,11 +19,13 @@ const generateBreadcrumbs = (currentPath, selectedCasTitle, selectedPartieTitle,
     } else {
       const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === segment);
       const sousMatiere = sousMatieres.find(sm => toUrlFriendly(sm.attributes.titre) === segment);
-      const cour = cours.find(c => toUrlFriendly(c.attributes.titre) === segment);
+      const cour = cours.find(c => toUrlFriendly(c.attributes.test.titre) === segment);
+      const casClinique = casCliniques.find(cc => toUrlFriendly(cc.attributes.test.titre) === segment);
 
       title = matiere ? matiere.attributes.titre :
               sousMatiere ? sousMatiere.attributes.titre :
-              cour ? cour.attributes.titre :
+              cour ? cour.attributes.test.titre :
+              casClinique ? casClinique.attributes.test.titre :
               segment;
     }
 
@@ -59,8 +61,8 @@ const GenericBreadcrumbs = React.memo(({ breadcrumbs }) => (
 ));
 
 const BreadcrumbsComponent = ({ currentPath, selectedCasTitle, selectedPartieTitle }) => {
-  const { sousMatieres, matieres, cours } = useContext(DataContext);
-  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours), [currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours]);
+  const { sousMatieres, matieres, cours, casCliniques } = useContext(DataContext);
+  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques), [currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques]);
   return <GenericBreadcrumbs breadcrumbs={breadcrumbs} />;
 };
 

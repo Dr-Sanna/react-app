@@ -6,7 +6,8 @@ const sousMatierePathToIdMap = {
   "risque-hemorragique": 11,
   "therapeutiques-pulpaires-des-dt": 10,
   "medecine-orale": 9,
-  "occlusion-et-manducation": 12,
+  "occlusion-et-manducation": 7,
+  // "occlusion-et-fonctions" retiré car il s'agit d'une matière
   // Ajoutez d'autres mappages si nécessaire
 };
 
@@ -21,8 +22,13 @@ export const fetchSousMatieres = async () => {
 };
 
 export const fetchCasCliniques = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate=*`);
-  return response.data.data;
+  try {
+    const response = await axios.get('http://localhost:1337/api/cas-cliniques?populate[test][populate]=image,test,test.image');
+    return response.data.data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cas cliniques:', error);
+    throw error;
+  }
 };
 
 export const fetchCoursData = async (pathname) => {
@@ -44,10 +50,10 @@ export const fetchCoursData = async (pathname) => {
       url += `&filters[sous_matiere][id][$eq]=11`;
     }
   } else if (pathname.includes('occlusion-et-fonction')) {
-    url = `${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonctions?populate=*`;
+    url = `${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image`;
     if (pathname.includes('occlusion-et-manducation')) {
-      url += `&filters[sous_matiere][id][$eq]=12`;
-    } 
+      url += `&filters[test][sous_matiere][id][$eq]=7`;
+    }
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
     url = `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
   }
@@ -66,18 +72,7 @@ export const fetchSousMatiereByPath = async (path) => {
   return response.data.data;
 };
 
-export const fetchPartiesData = async (coursId) => {
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonction-parties`, {
-    params: {
-      populate: '*',
-      filters: {
-        occlusion_et_fonction: {
-          id: {
-            $eq: coursId
-          }
-        }
-      }
-    }
-  });
+export const fetchPartiesData = async () => {
+  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonction-parties?populate[test][populate]=sous_matiere,image,test,test.image`);
   return response.data.data;
 };

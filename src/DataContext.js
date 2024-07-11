@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { fetchMatieres, fetchSousMatieres, fetchCasCliniques } from './api';
+import { fetchMatieres, fetchSousMatieres, fetchCasCliniques, fetchCoursData } from './api';
 import { preloadImage } from './utils';
-import { server } from './config';
 
 export const DataContext = createContext();
 
@@ -24,11 +23,34 @@ export const DataProvider = ({ children }) => {
       setMatieres(matieresData);
       setSousMatieres(sousMatieresData);
 
+      console.log('Cas Cliniques Data:', casCliniquesData);
+
       // Précharger les images des cas cliniques
-      await Promise.all(casCliniquesData.map(async (cas) => {
-        const imageUrl = cas.attributes.image ? `${server}${cas.attributes.image.data.attributes.url}` : '';
-        await preloadImage(imageUrl);
+      await Promise.all(casCliniquesData.map(async (item) => {
+        const imageUrl = item.attributes.image ? item.attributes.image.data.attributes.url : '';
+        if (imageUrl) {
+          await preloadImage(imageUrl);
+        }
+
+        // Preload images in the nested test components
+        if (item.attributes.test) {
+          const testImageUrl = item.attributes.test.image ? item.attributes.test.image.data.attributes.url : '';
+          if (testImageUrl) {
+            await preloadImage(testImageUrl);
+          }
+
+          // Preload images in the nested test of test components
+          if (Array.isArray(item.attributes.test.test)) {
+            await Promise.all(item.attributes.test.test.map(async (nestedTestItem) => {
+              const deeperNestedImageUrl = nestedTestItem.image ? nestedTestItem.image.data.attributes.url : '';
+              if (deeperNestedImageUrl) {
+                await preloadImage(deeperNestedImageUrl);
+              }
+            }));
+          }
+        }
       }));
+
       setCasCliniques(casCliniquesData);
 
     } catch (error) {
@@ -38,13 +60,52 @@ export const DataProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchCours = useCallback(async (pathname) => {
+    setIsCoursLoading(true);
+    try {
+      const coursData = await fetchCoursData(pathname);
+
+      // Précharger les images des cours
+      await Promise.all(coursData.map(async (item) => {
+        const imageUrl = item.attributes.image ? item.attributes.image.data.attributes.url : '';
+        if (imageUrl) {
+          await preloadImage(imageUrl);
+        }
+
+        // Preload images in the nested test components
+        if (item.attributes.test) {
+          const testImageUrl = item.attributes.test.image ? item.attributes.test.image.data.attributes.url : '';
+          if (testImageUrl) {
+            await preloadImage(testImageUrl);
+          }
+
+          // Preload images in the nested test of test components
+          if (Array.isArray(item.attributes.test.test)) {
+            await Promise.all(item.attributes.test.test.map(async (nestedTestItem) => {
+              const deeperNestedImageUrl = nestedTestItem.image ? nestedTestItem.image.data.attributes.url : '';
+              if (deeperNestedImageUrl) {
+                await preloadImage(deeperNestedImageUrl);
+              }
+            }));
+          }
+        }
+      }));
+
+      setCours(coursData);
+    } catch (error) {
+      console.error("Erreur de récupération des données des cours:", error);
+    } finally {
+      setIsCoursLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   return (
     <DataContext.Provider value={{
-      matieres, sousMatieres, casCliniques, cours, isLoading, isCoursLoading, setCours, setIsLoading, setIsCoursLoading
+      matieres, sousMatieres, casCliniques, cours, isLoading, isCoursLoading, setCours, setIsLoading, setIsCoursLoading, fetchCours
     }}>
       {children}
     </DataContext.Provider>

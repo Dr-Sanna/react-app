@@ -46,3 +46,9 @@
 .modal-close-button:hover {
   background: #ff2f2f;
 }
+
+.modal-image-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}

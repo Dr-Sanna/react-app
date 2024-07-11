@@ -1,34 +1,19 @@
 import React, { useRef, useEffect } from 'react';
 import CustomMarkdown from './CustomMarkdown';
-import VoiceReader from './VoiceReader';
 import { useToggle } from './ToggleContext';
 import CoursPagination from './CoursPagination';
-import './CoursDetailComponent.css'; // Assurez-vous d'inclure votre feuille de style
+import QuestionsComponent from './QuestionsComponent';
+import './CoursDetailComponent.css';
 
-const CoursDetailComponent = ({ selectedCas, parties, selectedPartie, setSelectedPartie, onNavigatePartie, prevItem, nextItem, onNavigate, onNavigatePrev, onNavigateNext }) => {
+const CoursDetailComponent = ({ selectedItem, parties, selectedPartie, setSelectedPartie, onNavigatePartie, prevItem, nextItem, onNavigatePrev, onNavigateNext }) => {
   const contentRef = useRef(null);
-  const { showVoiceReader } = useToggle();
+  const { showQuestions } = useToggle();
 
   useEffect(() => {
-    const cleanUp = () => {
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
-      }
-      if (contentRef.current) {
-        const elements = contentRef.current.querySelectorAll('p, li');
-        elements.forEach((el) => {
-          if (el.parentNode) {
-            const newElement = el.cloneNode(true);
-            el.parentNode.replaceChild(newElement, el);
-          }
-        });
-      }
-    };
-
-    cleanUp(); // Clean up on component mount
-
-    return cleanUp(); // Clean up on component unmount
-  }, [selectedCas]);
+    console.log("CoursDetailComponent - selectedItem:", selectedItem);
+    console.log("CoursDetailComponent - parties:", parties);
+    console.log("CoursDetailComponent - selectedPartie:", selectedPartie);
+  }, [selectedItem, parties, selectedPartie]);
 
   const handlePartieClick = (partie) => {
     setSelectedPartie(partie);
@@ -36,36 +21,43 @@ const CoursDetailComponent = ({ selectedCas, parties, selectedPartie, setSelecte
     console.log("Navigating to partie:", partie);
   };
 
-  const firstPartie = parties.length > 0 ? parties[0] : null;
-  const nextItemWithParts = nextItem && nextItem.attributes.hasParts ? nextItem : null;
+  const firstPartie = parties && parties.length > 0 ? parties[0] : null;
 
   return (
     <div className="markdown">
-      <h1>{selectedCas.attributes.titre}</h1>
-      {!selectedCas.attributes.hasParts && showVoiceReader && <VoiceReader contentRef={contentRef} />}
-      <div ref={contentRef}>
-        <CustomMarkdown
-          markdownText={selectedCas.attributes.enonce}
-          imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
-          carouselImages={selectedCas.attributes.carousel}
+      <h1>{selectedItem?.attributes?.test?.titre}</h1>
+      {showQuestions ? (
+        <QuestionsComponent
+          questions={selectedItem?.attributes?.test?.nestedItem?.question}
+          corrections={selectedItem?.attributes?.test?.nestedItem?.correction}
+          title={selectedItem?.attributes?.test?.titre}
         />
-        {parties.length > 0 && (
-          <div className="cards-container">
-            {parties.map(partie => (
-              <a key={partie.id} className="card padding--lg cardContainer_Uewx" onClick={() => handlePartieClick(partie)}>
-                <h2 className="text--truncate cardTitle_dwRT" title={partie.attributes.titre}>{partie.attributes.titre}</h2>
-                <p className="text--truncate cardDescription_mCBT" title={partie.attributes.enonce}>{partie.attributes.enonce}</p>
-              </a>
-            ))}
+      ) : (
+        <>
+          <div ref={contentRef}>
+            <CustomMarkdown
+              markdownText={selectedItem?.attributes?.test?.enonce}
+              imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+              carouselImages={selectedItem?.attributes?.test?.carousel}
+            />
+            {parties && parties.length > 0 && (
+              <div className="cards-container">
+                {parties.map(partie => (
+                  <a key={partie.id} className="card padding--lg cardContainer_Uewx" onClick={() => handlePartieClick(partie)}>
+                    <h2 className="cardTitle_dwRT">{partie?.attributes?.test?.titre}</h2>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <CoursPagination 
-        prevItem={prevItem} 
-        nextItem={firstPartie || nextItemWithParts || nextItem} // Utiliser la première partie si le cours a des parties
-        onNavigatePrev={onNavigatePrev}
-        onNavigateNext={firstPartie ? handlePartieClick : onNavigateNext} // Naviguer vers la première partie si elle existe
-      />
+          <CoursPagination 
+            prevItem={prevItem} 
+            nextItem={firstPartie || nextItem}
+            onNavigatePrev={() => prevItem && onNavigatePrev(prevItem)}
+            onNavigateNext={() => firstPartie ? handlePartieClick(firstPartie) : nextItem && onNavigateNext(nextItem)}
+          />
+        </>
+      )}
     </div>
   );
 };

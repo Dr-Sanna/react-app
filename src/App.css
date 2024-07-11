@@ -150,22 +150,7 @@ td:last-child {
   border-right: none !important;
 }
 
-.image-container {
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
 
-.image-blur {
-  transition: filter 0.5s, opacity 0.5s;
-  filter: blur(10px);
-  opacity: 0;
-}
-
-.image-blur.visible {
-  filter: blur(0px);
-  opacity: 1;
-}
 td h3 {
   margin: 0;
   font-size: 110% !important;

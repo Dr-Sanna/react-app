@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, onNavigateNext, parentCours }) => {
+const PaginationComponent = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext, parentCours }) => {
   const handleClick = (item, e, isPrev) => {
     e.preventDefault();
     if (isPrev) {
@@ -11,7 +11,7 @@ const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, o
     window.scrollTo(0, 0);
   };
 
-  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.titre : (parentCours && parentCours.attributes ? parentCours.attributes.titre : "Retour aux cours");
+  const prevLabel = prevItem && prevItem.attributes ? prevItem.attributes.test.titre : (parentCours && parentCours.attributes ? parentCours.attributes.titre : "Retour aux cours");
 
   return (
     <nav className="pagination-nav docusaurus-mt-lg" aria-label="Pages de documentation">
@@ -41,7 +41,7 @@ const PaginationComponent = ({ prevItem, nextItem, onNavigate, onNavigatePrev, o
           onClick={(e) => handleClick(nextItem, e, false)}
         >
           <div className="pagination-nav__sublabel">Suivant</div>
-          <div className="pagination-nav__label">{nextItem.label || nextItem.attributes.titre}</div>
+          <div className="pagination-nav__label">{nextItem.label || nextItem.attributes.test.titre}</div>
         </a>
       )}
     </nav>

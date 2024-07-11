@@ -30,3 +30,17 @@
   color: #555;
   margin-top: 0.5rem;
 }
+
+/* Styles pour le mode sombre */
+[data-theme="dark"] .cardContainer_Uewx {
+  background: #333;
+  border: 1px solid #555;
+}
+
+[data-theme="dark"] .cardTitle_dwRT {
+  color: #fff;
+}
+
+[data-theme="dark"] .cardDescription_mCBT {
+  color: #ccc;
+}
