@@ -41,7 +41,11 @@ const HomePage = () => {
         <Route
           path="/"
           element={
-            <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
+            matieres ? (
+              <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
+            ) : (
+              <div>Loading...</div>
+            )
           }
         />
         <Route
@@ -52,7 +56,7 @@ const HomePage = () => {
           path="/ressources-utiles/:lienUtileTitle"
           element={<LiensUtilesWithData />}
         />
-        {sousMatieres.map((sousMatiere) => {
+        {sousMatieres && sousMatieres.map((sousMatiere) => {
           const Component = getComponentByActionType(sousMatiere.attributes.actionType);
           const matiereTitleUrl = toUrlFriendly(sousMatiere.attributes.matiere.data.attributes.titre);
           const sousMatiereTitleUrl = toUrlFriendly(sousMatiere.attributes.titre);
