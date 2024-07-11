@@ -23,7 +23,7 @@ export const fetchSousMatieres = async () => {
 
 export const fetchCasCliniques = async () => {
   try {
-    const response = await axios.get('http://localhost:1337/api/cas-cliniques?populate[test][populate]=image,test,test.image');
+    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate[test][populate]=image,test,test.image`);
     return response.data.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des cas cliniques:', error);
