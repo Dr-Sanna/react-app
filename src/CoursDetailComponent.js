@@ -43,7 +43,7 @@ const CoursDetailComponent = ({ selectedItem, parties, selectedPartie, setSelect
             {parties && parties.length > 0 && (
               <div className="cards-container">
                 {parties.map(partie => (
-                  <a key={partie.id} className="card padding--lg cardContainer_Uewx" onClick={() => handlePartieClick(partie)}>
+                  <a key={partie.id} href={`/partie/${partie.id}`} className="card padding--lg cardContainer_Uewx" onClick={(e) => { e.preventDefault(); handlePartieClick(partie); }}>
                     <h2 className="cardTitle_dwRT">{partie?.attributes?.test?.titre}</h2>
                   </a>
                 ))}

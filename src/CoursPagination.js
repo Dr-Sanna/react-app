@@ -17,7 +17,7 @@ const CoursPagination = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext })
     <nav className="pagination-nav docusaurus-mt-lg" aria-label="Pages de documentation">
       {prevItem && (
         <a 
-          href="#" 
+          href={`/cours/${prevItem.id}`} 
           className="pagination-nav__link pagination-nav__link--prev" 
           onClick={(e) => handleClick(prevItem, e, true)}
         >
@@ -27,7 +27,7 @@ const CoursPagination = ({ prevItem, nextItem, onNavigatePrev, onNavigateNext })
       )}
       {nextItem && (
         <a 
-          href="#" 
+          href={`/cours/${nextItem.id}`} 
           className="pagination-nav__link pagination-nav__link--next" 
           onClick={(e) => handleClick(nextItem, e, false)}
         >
