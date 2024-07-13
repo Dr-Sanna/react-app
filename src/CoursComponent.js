@@ -37,7 +37,7 @@ const CoursComponent = () => {
     const updateSousMatiere = async () => {
       if (!sousMatierePath) return;
       try {
-        const response = await fetchSousMatiereByPath(sousMatierePath);
+        const response = await fetchSousMatiereByPath(location.pathname);
         if (response) {
           setSelectedSousMatiere({ id: response.id, path: location.pathname });
         }
@@ -171,9 +171,12 @@ const CoursComponent = () => {
                 <article>
                   {showQuestions ? (
                     <QuestionsComponent 
-                      questions={selectedItem?.attributes?.test?.nestedTestItem?.question} 
-                      corrections={selectedItem?.attributes?.test?.nestedTestItem?.correction}
-                      title={selectedItem?.attributes?.test?.titre}
+                      testItems={selectedItem.attributes.test.test || []} 
+                      title={selectedItem.attributes.test.titre}
+                      prevItem={prevItem}
+                      nextItem={nextItem}
+                      onNavigatePrev={handleNavigatePrev}
+                      onNavigateNext={handleNavigateNext}
                     />
                   ) : (
                     <CoursDetailComponent
@@ -197,9 +200,14 @@ const CoursComponent = () => {
                 <article>
                   {showQuestions ? (
                     <QuestionsPartiesComponent
-                      questions={selectedPartie?.attributes?.test?.question}
-                      corrections={selectedPartie?.attributes?.test?.correction}
-                      title={selectedPartie?.attributes?.test?.titre}
+                      questions={selectedPartie.attributes.test.question}
+                      corrections={selectedPartie.attributes.test.correction}
+                      title={selectedPartie.attributes.test.titre}
+                      prevPartie={prevPartie}
+                      nextPartie={nextPartie}
+                      onNavigatePrev={handleNavigatePrev}
+                      onNavigatePartie={handleNavigatePartie}
+                      parentCours={selectedItem}
                     />
                   ) : (
                     <PartieDetailComponent 

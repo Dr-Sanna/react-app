@@ -74,7 +74,7 @@ const DisplayItems = ({ items, onClickItem }) => {
             key={item.id}
             onClick={() => onClickItem(item)}
           >
-            <div className="circle-icon" style={{ position: 'relative', width: '100%', height: 'auto' }}>
+            <div className="circle-icon" style={{ position: 'relative', width: '100%', height: '100px' }}>
               {item.attributes.image && item.attributes.image.data && (
                 <img
                   src={item.attributes.image.data.attributes.url}

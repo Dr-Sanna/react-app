@@ -1,30 +1,29 @@
 import axios from 'axios';
+import { toUrlFriendly } from './config';
 
-const sousMatierePathToIdMap = {
-  "bilans-sanguins": 4,
-  "risque-infectieux": 5,
-  "risque-hemorragique": 11,
-  "therapeutiques-pulpaires-des-dt": 10,
-  "medecine-orale": 9,
-  "occlusion-et-manducation": 7,
-  // "occlusion-et-fonctions" retiré car il s'agit d'une matière
-  // Ajoutez d'autres mappages si nécessaire
+const API_URL = process.env.REACT_APP_STRAPI_URL;
+const cache = {};
+
+const fetchWithCache = async (url) => {
+  if (cache[url]) {
+    return cache[url];
+  }
+  const response = await axios.get(url);
+  cache[url] = response.data.data;
+  return cache[url];
 };
 
 export const fetchMatieres = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/matieres?populate=*`);
-  return response.data.data;
+  return fetchWithCache(`${API_URL}/api/matieres?populate=*`);
 };
 
 export const fetchSousMatieres = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/sous-matieres?populate=*`);
-  return response.data.data;
+  return fetchWithCache(`${API_URL}/api/sous-matieres?populate=*`);
 };
 
 export const fetchCasCliniques = async () => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/cas-cliniques?populate[test][populate]=image,test,test.image`);
-    return response.data.data;
+    return fetchWithCache(`${API_URL}/api/cas-cliniques?populate[test][populate]=image,test,test.image`);
   } catch (error) {
     console.error('Erreur lors de la récupération des cas cliniques:', error);
     throw error;
@@ -34,45 +33,52 @@ export const fetchCasCliniques = async () => {
 export const fetchCoursData = async (pathname) => {
   if (!pathname) throw new Error("Pathname is undefined");
 
+  const sousMatieres = await fetchSousMatieres();
+  console.log("Fetched sousMatieres:", sousMatieres);
+
+  const sousMatiere = sousMatieres.find(sousMatiere => pathname.includes(toUrlFriendly(sousMatiere.attributes.titre)));
+  if (!sousMatiere) throw new Error(`No sous-matiere found for path: ${pathname}`);
+  
+  const sousMatiereId = sousMatiere.id;
+
   let url = '';
   if (pathname.includes('odontologie-pediatrique')) {
-    url = `${process.env.REACT_APP_STRAPI_URL}/api/odontologie-pediatriques?populate=*`;
+    url = `${API_URL}/api/odontologie-pediatriques?populate=*`;
     if (pathname.includes('therapeutiques-pulpaires-des-dt')) {
-      url += `&filters[sous_matiere][id][$eq]=10`;
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
-  } else if (pathname.includes('guide-clinique-d-odontologie')) {
-    url = `${process.env.REACT_APP_STRAPI_URL}/api/guide-cliniques?populate=*`;
+  } else if (pathname.includes('risques-medicaux')) {
+    url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image`;
     if (pathname.includes('bilans-sanguins')) {
-      url += `&filters[sous_matiere][id][$eq]=4`;
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } else if (pathname.includes('risque-infectieux')) {
-      url += `&filters[sous_matiere][id][$eq]=5`;
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } else if (pathname.includes('risque-hemorragique')) {
-      url += `&filters[sous_matiere][id][$eq]=11`;
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('occlusion-et-fonction')) {
-    url = `${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image`;
+    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image`;
     if (pathname.includes('occlusion-et-manducation')) {
-      url += `&filters[test][sous_matiere][id][$eq]=7`;
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
-    url = `${process.env.REACT_APP_STRAPI_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=9`;
+    url = `${API_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=${sousMatiereId}`;
   }
   if (!url) return [];
 
-  const response = await axios.get(url);
-  return response.data.data;
+  return fetchWithCache(url);
 };
 
 export const fetchSousMatiereByPath = async (path) => {
-  const id = sousMatierePathToIdMap[path];
-  console.log(`Fetching sous-matiere for path: ${path}, resolved ID: ${id}`);
-  if (!id) throw new Error(`No ID found for path: ${path}`);
+  const sousMatieres = await fetchSousMatieres();
+  console.log("Sous-matières récupérées :", sousMatieres);
 
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/sous-matieres/${id}`);
-  return response.data.data;
+  const sousMatiere = sousMatieres.find(sousMatiere => path.includes(toUrlFriendly(sousMatiere.attributes.titre)));
+  if (!sousMatiere) throw new Error(`No ID found for path: ${path}`);
+  
+  return fetchWithCache(`${API_URL}/api/sous-matieres/${sousMatiere.id}`);
 };
 
 export const fetchPartiesData = async () => {
-  const response = await axios.get(`${process.env.REACT_APP_STRAPI_URL}/api/occlusion-et-fonction-parties?populate[test][populate]=sous_matiere,image,test,test.image`);
-  return response.data.data;
+  return fetchWithCache(`${API_URL}/api/occlusion-et-fonction-parties?populate[test][populate]=sous_matiere,image,test,test.image`);
 };

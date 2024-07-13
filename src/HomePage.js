@@ -9,7 +9,7 @@ import CoursComponent from "./CoursComponent";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
-import CoursDetailLoader from './CoursDetailLoader'; // Importez ce composant pour gérer le chargement des détails des cours
+import CoursDetailLoader from './CoursDetailLoader';
 
 const HomePage = () => {
   const { matieres, sousMatieres } = useContext(DataContext);
@@ -36,7 +36,6 @@ const HomePage = () => {
   return (
     <div id="__docusaurus_skipToContent_fallback" className="main-wrapper mainWrapper_PEsc">
       <CustomNavbar />
-
       <Routes>
         <Route
           path="/"
@@ -77,4 +76,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default React.memo(HomePage);

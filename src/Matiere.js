@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DataContext } from './DataContext';
 import DisplayItems from './DisplayItems';
@@ -39,7 +39,9 @@ const Matiere = () => {
     }
   };
 
-  return <DisplayItems items={filteredSousMatieres} onClickItem={handleSousMatiereClick} />;
+  const sortedSousMatieres = useMemo(() => filteredSousMatieres.sort((a, b) => a.attributes.order - b.attributes.order), [filteredSousMatieres]);
+
+  return <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} />;
 };
 
-export default Matiere;
+export default React.memo(Matiere);

@@ -1,8 +1,8 @@
-// LiensUtilesWithData.js : Composant pour charger et afficher les liens utiles
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import LiensUtilesComponent from './LiensUtilesComponent';
+import { CustomToothLoader } from './CustomToothLoader';
 
 const LiensUtilesWithData = () => {
     const [liens, setLiens] = useState(null);
@@ -21,10 +21,9 @@ const LiensUtilesWithData = () => {
                 console.error("Erreur lors du chargement des liens utiles:", error);
             });
     }, [lienUtileTitle]);
-    
 
     if (!liens) {
-        return <div>Chargement des liens utiles...</div>;
+        return <CustomToothLoader />;
     }
 
     return <LiensUtilesComponent liens={liens} />;

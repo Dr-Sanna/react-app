@@ -1,8 +1,9 @@
 import React from 'react';
 import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
+import PartiePagination from './PartiePagination';
 
-const QuestionsPartiesComponent = ({ questions, corrections, title }) => {
+const QuestionsPartiesComponent = ({ questions, corrections, title, prevPartie, nextPartie, onNavigatePartie, onNavigatePrev, parentCours }) => {
   const imgStyle = {
     maxHeight: '60vh',
     width: 'auto',
@@ -29,6 +30,13 @@ const QuestionsPartiesComponent = ({ questions, corrections, title }) => {
       ) : (
         <p>Pas de questions disponibles.</p>
       )}
+      <PartiePagination
+        prevPartie={prevPartie}
+        nextPartie={nextPartie}
+        onNavigatePartie={onNavigatePartie}
+        onNavigatePrev={onNavigatePrev}
+        parentCours={parentCours}
+      />
     </div>
   );
 };
