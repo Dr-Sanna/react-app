@@ -1,11 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import CustomMarkdown from './CustomMarkdown';
 import QuestionsPartiesComponent from './QuestionsPartiesComponent';
 import { useToggle } from './ToggleContext';
 import PartiePagination from './PartiePagination';
 
 const PartieDetailComponent = ({ selectedPartie, prevPartie, nextPartie, onNavigatePartie, onNavigatePrev, parentCours, matierePath, sousMatierePath }) => {
-  const contentRef = useRef(null);
   const { showQuestions } = useToggle();
 
   useEffect(() => {

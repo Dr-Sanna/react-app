@@ -1,9 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import CustomMarkdown from './CustomMarkdown';
+import React, { useEffect } from 'react';
 import { useToggle } from './ToggleContext';
-import CoursPagination from './CoursPagination';
 import QuestionsComponent from './QuestionsComponent';
-import './CoursDetailComponent.css';
+import CustomMarkdown from './CustomMarkdown';
+import CoursPagination from './CoursPagination';
 
 const CoursDetailComponent = ({
   selectedItem,
@@ -16,7 +15,6 @@ const CoursDetailComponent = ({
   onNavigatePrev,
   onNavigateNext
 }) => {
-  const contentRef = useRef(null);
   const { showQuestions } = useToggle();
 
   useEffect(() => {
