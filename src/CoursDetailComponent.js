@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import CustomMarkdown from './CustomMarkdown';
 import { useToggle } from './ToggleContext';
 import CoursPagination from './CoursPagination';
