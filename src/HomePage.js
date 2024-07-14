@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { DataContext } from './DataContext';
 import "./HomePage.css";
 import DisplayItems from "./DisplayItems";
@@ -10,10 +10,12 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
 import CoursDetailLoader from './CoursDetailLoader';
+import { CustomToothLoader } from './CustomToothLoader'; // Importation nommée
 
 const HomePage = () => {
-  const { matieres, sousMatieres } = useContext(DataContext);
+  const { matieres, sousMatieres, isLoading } = useContext(DataContext); // Assurez-vous que isLoading est dans le contexte
   const navigate = useNavigate();
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const handleMatiereClick = (matiere) => {
     const matiereTitleUrl = toUrlFriendly(matiere.attributes.titre);
@@ -33,6 +35,12 @@ const HomePage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (matieres && matieres.length > 0) {
+      setInitialLoad(false);
+    }
+  }, [matieres]);
+
   return (
     <div id="__docusaurus_skipToContent_fallback" className="main-wrapper mainWrapper_PEsc">
       <CustomNavbar />
@@ -40,10 +48,14 @@ const HomePage = () => {
         <Route
           path="/"
           element={
-            matieres ? (
-              <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
+            initialLoad ? (
+              <CustomToothLoader />
             ) : (
-              <div>Loading...</div>
+              matieres ? (
+                <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
+              ) : (
+                <div>Loading...</div>
+              )
             )
           }
         />

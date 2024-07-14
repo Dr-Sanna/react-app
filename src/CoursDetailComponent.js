@@ -5,7 +5,17 @@ import CoursPagination from './CoursPagination';
 import QuestionsComponent from './QuestionsComponent';
 import './CoursDetailComponent.css';
 
-const CoursDetailComponent = ({ selectedItem, parties, selectedPartie, setSelectedPartie, onNavigatePartie, prevItem, nextItem, onNavigatePrev, onNavigateNext }) => {
+const CoursDetailComponent = ({
+  selectedItem,
+  parties,
+  selectedPartie,
+  setSelectedPartie,
+  onNavigatePartie,
+  prevItem,
+  nextItem,
+  onNavigatePrev,
+  onNavigateNext
+}) => {
   const contentRef = useRef(null);
   const { showQuestions } = useToggle();
 
@@ -24,7 +34,7 @@ const CoursDetailComponent = ({ selectedItem, parties, selectedPartie, setSelect
   const firstPartie = parties && parties.length > 0 ? parties[0] : null;
 
   return (
-    <div className="markdown">
+    <div className="theme-doc-markdown markdown">
       <h1>{selectedItem?.attributes?.test?.titre}</h1>
       {showQuestions ? (
         <QuestionsComponent
@@ -34,22 +44,20 @@ const CoursDetailComponent = ({ selectedItem, parties, selectedPartie, setSelect
         />
       ) : (
         <>
-          <div ref={contentRef}>
-            <CustomMarkdown
-              markdownText={selectedItem?.attributes?.test?.enonce}
-              imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
-              carouselImages={selectedItem?.attributes?.test?.carousel}
-            />
-            {parties && parties.length > 0 && (
-              <div className="cards-container">
-                {parties.map(partie => (
-                  <a key={partie.id} href={`/partie/${partie.id}`} className="card padding--lg cardContainer_Uewx" onClick={(e) => { e.preventDefault(); handlePartieClick(partie); }}>
-                    <h2 className="cardTitle_dwRT">{partie?.attributes?.test?.titre}</h2>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+          <CustomMarkdown
+            markdownText={selectedItem?.attributes?.test?.enonce}
+            imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+            carouselImages={selectedItem?.attributes?.test?.carousel}
+          />
+          {parties && parties.length > 0 && (
+            <div className="cards-container">
+              {parties.map(partie => (
+                <a key={partie.id} href={`/partie/${partie.id}`} className="card padding--lg cardContainer_Uewx" onClick={(e) => { e.preventDefault(); handlePartieClick(partie); }}>
+                  <h2 className="cardTitle_dwRT">{partie?.attributes?.test?.titre}</h2>
+                </a>
+              ))}
+            </div>
+          )}
           <CoursPagination 
             prevItem={prevItem} 
             nextItem={firstPartie || nextItem}

@@ -88,17 +88,17 @@ border-radius: 5px;
 td h4 {
   margin: 0;
   font-size: 100% !important;
-  font-weight: 500;
+  font-weight: bold;
   text-transform: uppercase !important;
   text-align: center;
-}
-td:has(h4) {
-  background-color: #eef9fd !important; /* Couleur de fond pour les cellules contenant un h4 */
+  
 }
 
 [data-theme="dark"] td:has(h4) {
-  background-color: #193c47 !important; /* Couleur de fond sombre pour les cellules contenant un h4 */
-  color: #ffffff !important; /* Couleur du texte en blanc pour plus de contraste */
+  background-color: #193c47 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+}
+td:has(h4) {
+  background-color: #eef9fd !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 
 td p:last-child,
@@ -125,47 +125,24 @@ td ul li {
 td {
   font-size: 85%; /* Réduit la taille du texte de 20% */
   padding: 7px !important;
-  border: 1.5px solid #4cb3d4 !important;
+  border: 1px solid #4cb3d4 !important;
   
 }
-
-
-
-
-
-
-td {
-  border-left: none !important; /* Supprime la bordure droite pour les colonnes impaires */
-  border-top: none !important;
-}
-
-
-
-/* Supprimer la bordure en bas pour la dernière ligne */
-tr:last-child td {
-  border-bottom: none !important;
-}
-
-td:last-child {
-  border-right: none !important;
-}
-
-
-td h3 {
-  margin: 0;
-  font-size: 110% !important;
-  text-transform: uppercase !important;
+[data-theme="dark"] td:has(h3) {
+  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 td:has(h3) {
-  background-color: #eef9fd !important; /* Couleur de fond pour les cellules contenant un h4 */
+  background-color: #d4effb !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 
-[data-theme="dark"] td:has(h3) {
-  background-color: #193c47 !important; /* Couleur de fond sombre pour les cellules contenant un h4 */
-  color: #ffffff !important; /* Couleur du texte en blanc pour plus de contraste */
+td h3 {
+
+  margin: 0 !important;
+  font-size: 120% !important;
+  text-align: center;
+  font-weight: bold;
 }
 
-th {
-  border-bottom: 1.5px solid #4cb3d4 !important;
-  
-}
+
+
+

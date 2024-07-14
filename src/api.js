@@ -34,14 +34,12 @@ export const fetchCoursData = async (pathname) => {
   if (!pathname) throw new Error("Pathname is undefined");
 
   const sousMatieres = await fetchSousMatieres();
-  console.log("Fetched sousMatieres:", sousMatieres);
-
   const sousMatiere = sousMatieres.find(sousMatiere => pathname.includes(toUrlFriendly(sousMatiere.attributes.titre)));
   if (!sousMatiere) throw new Error(`No sous-matiere found for path: ${pathname}`);
   
   const sousMatiereId = sousMatiere.id;
-
   let url = '';
+
   if (pathname.includes('odontologie-pediatrique')) {
     url = `${API_URL}/api/odontologie-pediatriques?populate=*`;
     if (pathname.includes('therapeutiques-pulpaires-des-dt')) {
@@ -51,9 +49,7 @@ export const fetchCoursData = async (pathname) => {
     url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image`;
     if (pathname.includes('bilans-sanguins')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    } else if (pathname.includes('risque-infectieux')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    } else if (pathname.includes('risque-hemorragique')) {
+    } else if (pathname.includes('risque-infectieux') || pathname.includes('risque-hemorragique')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('occlusion-et-fonction')) {
@@ -71,8 +67,6 @@ export const fetchCoursData = async (pathname) => {
 
 export const fetchSousMatiereByPath = async (path) => {
   const sousMatieres = await fetchSousMatieres();
-  console.log("Sous-matières récupérées :", sousMatieres);
-
   const sousMatiere = sousMatieres.find(sousMatiere => path.includes(toUrlFriendly(sousMatiere.attributes.titre)));
   if (!sousMatiere) throw new Error(`No ID found for path: ${path}`);
   

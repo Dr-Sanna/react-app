@@ -23,7 +23,7 @@ const PartieDetailComponent = ({ selectedPartie, prevPartie, nextPartie, onNavig
   };
 
   return (
-    <div className="markdown">
+    <div className="theme-doc-markdown markdown">
       <h1>{selectedPartie.attributes.test.titre}</h1>
       {showQuestions ? (
         <QuestionsPartiesComponent
@@ -33,12 +33,10 @@ const PartieDetailComponent = ({ selectedPartie, prevPartie, nextPartie, onNavig
         />
       ) : (
         <>
-          <div ref={contentRef}>
-            <CustomMarkdown
-              markdownText={selectedPartie.attributes.test.enonce}
-              imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
-            />
-          </div>
+          <CustomMarkdown
+            markdownText={selectedPartie.attributes.test.enonce}
+            imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+          />
           <PartiePagination
             prevPartie={prevPartie}
             nextPartie={nextPartie}
