@@ -108,16 +108,20 @@ const CoursComponent = () => {
     navigate(newPath, { replace });
   };
 
-  const currentIndex = cours.findIndex(c => c.id === selectedItem?.id);
-  const prevPartieIndex = selectedItem && selectedPartie ? (parties[selectedItem.id] || []).findIndex(p => p.id === selectedPartie.id) - 1 : -1;
-  const nextPartieIndex = selectedItem && selectedPartie ? (parties[selectedItem.id] || []).findIndex(p => p.id === selectedPartie.id) + 1 : -1;
-  const prevPartie = selectedItem && prevPartieIndex >= 0 ? (parties[selectedItem.id] || [])[prevPartieIndex] : null;
-  const nextPartie = selectedItem && nextPartieIndex < (parties[selectedItem.id] || []).length ? (parties[selectedItem.id] || [])[nextPartieIndex] : null;
+  // Trier les cours par id
+  const sortedCours = cours ? [...cours].sort((a, b) => a.id - b.id) : [];
+  const sortedParties = selectedItem ? (parties[selectedItem.id] || []).sort((a, b) => a.id - b.id) : [];
 
-  const prevItem = currentIndex > 0 ? cours[currentIndex - 1] : null;
-  const nextItem = currentIndex < cours.length - 1 ? cours[currentIndex + 1] : null;
+  const currentIndex = sortedCours.findIndex(c => c.id === selectedItem?.id);
+  const prevPartieIndex = selectedItem && selectedPartie ? sortedParties.findIndex(p => p.id === selectedPartie.id) - 1 : -1;
+  const nextPartieIndex = selectedItem && selectedPartie ? sortedParties.findIndex(p => p.id === selectedPartie.id) + 1 : -1;
+  const prevPartie = selectedItem && prevPartieIndex >= 0 ? sortedParties[prevPartieIndex] : null;
+  const nextPartie = selectedItem && nextPartieIndex < sortedParties.length ? sortedParties[nextPartieIndex] : null;
 
-  const menuItems = cours.map(c => ({
+  const prevItem = currentIndex > 0 ? sortedCours[currentIndex - 1] : null;
+  const nextItem = currentIndex < sortedCours.length - 1 ? sortedCours[currentIndex + 1] : null;
+
+  const menuItems = sortedCours.map(c => ({
     key: c.id.toString(),
     label: c.attributes?.test?.titre || '',
     url: `/${pathSegments.slice(0, 2).join('/')}/${toUrlFriendly(c.attributes?.test?.titre || '')}`,
@@ -182,7 +186,7 @@ const CoursComponent = () => {
                     <CoursDetailComponent
                       key={selectedItem.id}
                       selectedItem={selectedItem}
-                      parties={parties[selectedItem?.id] || []}
+                      parties={sortedParties}
                       selectedPartie={selectedPartie}
                       setSelectedPartie={setSelectedPartie}
                       onNavigatePartie={(partie) => handleSelectionChange(selectedItem?.attributes?.test?.titre, partie.attributes.test?.titre)}
@@ -227,7 +231,7 @@ const CoursComponent = () => {
               </div>
             ) : (
               <CasCardComponent
-                items={cours}
+                items={sortedCours}
                 onSelection={(cour) => handleSelectionChange(cour.attributes?.test?.titre, null)}
               />
             )}
