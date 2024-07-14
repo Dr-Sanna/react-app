@@ -10,10 +10,10 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
 import CoursDetailLoader from './CoursDetailLoader';
-import { CustomToothLoader } from './CustomToothLoader';
+import { CustomToothLoader } from './CustomToothLoader'; // Importation nommée
 
 const HomePage = () => {
-  const { matieres, sousMatieres } = useContext(DataContext); // Supprimez `isLoading` ici
+  const { matieres, sousMatieres } = useContext(DataContext); // Assurez-vous que isLoading est dans le contexte
   const navigate = useNavigate();
   const [initialLoad, setInitialLoad] = useState(true);
 
