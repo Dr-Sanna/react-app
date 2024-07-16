@@ -1,22 +1,22 @@
 import React from 'react';
 import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
-import CoursPagination from './CoursPagination';
 
-const QuestionsComponent = ({ testItems, title, prevItem, nextItem, onNavigatePrev, onNavigateNext }) => {
+const QuestionsComponent = ({ courseQuestions, partQuestions, title, isPart }) => {
   const imgStyle = {
     maxHeight: '60vh',
     width: 'auto',
     marginBottom: 'var(--ifm-leading)',
   };
 
+  const questions = isPart ? partQuestions : courseQuestions;
+
   return (
-    <div className="markdown">
-      <h1>{title}</h1>
+    <>
       <h2>Questions</h2>
-      {Array.isArray(testItems) && testItems.length > 0 ? (
+      {Array.isArray(questions) && questions.length > 0 ? (
         <>
-          {testItems.map((item, index) => (
+          {questions.map((item, index) => (
             <Accordion
               key={index}
               title={<p><strong>{item.question}</strong></p>}
@@ -32,13 +32,7 @@ const QuestionsComponent = ({ testItems, title, prevItem, nextItem, onNavigatePr
       ) : (
         <p>Pas de questions disponibles.</p>
       )}
-      <CoursPagination 
-        prevItem={prevItem} 
-        nextItem={nextItem}
-        onNavigatePrev={onNavigatePrev}
-        onNavigateNext={onNavigateNext}
-      />
-    </div>
+    </>
   );
 };
 

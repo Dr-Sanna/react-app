@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { DataContext } from "./DataContext";
 import LeftMenu from "./LeftMenu";
-import BreadcrumbsComponent from "./BreadcrumbsComponent";
+import BreadcrumbsCC from "./BreadcrumbsCC";
 import CasCardComponent from "./CasCardComponent";
 import CasDetailComponent from "./CasDetailComponent";
 import { CustomToothLoader } from "./CustomToothLoader";
@@ -90,7 +90,7 @@ const CasCliniquesComponent = () => {
             {selectedItem ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
-                  <BreadcrumbsComponent
+                  <BreadcrumbsCC
                     currentPath={location.pathname}
                     selectedItemTitle={selectedItem ? selectedItem.attributes.test.titre : ''}
                   />
@@ -131,7 +131,7 @@ const CasCliniquesComponent = () => {
               </div>
             ) : (
               <div className="docItemContainer_RhpI">
-                <BreadcrumbsComponent
+                <BreadcrumbsCC
                   currentPath={location.pathname}
                   selectedItem={selectedItem}
                 />

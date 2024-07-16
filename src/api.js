@@ -53,8 +53,13 @@ export const fetchCoursData = async (pathname) => {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('occlusion-et-fonction')) {
-    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image`;
+    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate][sous_matiere][fields][0]=titre&populate[test][populate][image][fields][0]=url&populate[test][populate][image][fields][1]=name&populate[test][populate][image][fields][2]=size&populate=test,test.image&populate[occlusion_et_fonction_parties][populate]=test`;
     if (pathname.includes('occlusion-et-manducation')) {
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+    }
+  } else if (pathname.includes('essai-matiere')) {
+    url = `${API_URL}/api/essais?populate[test][populate]=sous_matiere,image,test,test.image&populate[essai_parties][populate][test][populate]=*`;
+    if (pathname.includes('essai-sous-matiere')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
@@ -71,8 +76,4 @@ export const fetchSousMatiereByPath = async (path) => {
   if (!sousMatiere) throw new Error(`No ID found for path: ${path}`);
   
   return fetchWithCache(`${API_URL}/api/sous-matieres/${sousMatiere.id}`);
-};
-
-export const fetchPartiesData = async () => {
-  return fetchWithCache(`${API_URL}/api/occlusion-et-fonction-parties?populate[test][populate]=sous_matiere,image,test,test.image`);
 };

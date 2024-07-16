@@ -1,46 +1,63 @@
 import React, { useMemo, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { HomeIcon } from './IconComponents';
 import { DataContext } from './DataContext';
 import { toUrlFriendly } from "./config";
 
-const generateBreadcrumbs = (currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques) => {
+// Fonction de mapping pour récupérer les titres originaux
+const getOriginalTitle = (segment, matieres = [], sousMatieres = [], cours = [], casCliniques = [], parts = []) => {
+  const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === segment);
+  if (matiere) return matiere.attributes.titre;
+
+  const sousMatiere = sousMatieres.find(sm => toUrlFriendly(sm.attributes.titre) === segment);
+  if (sousMatiere) return sousMatiere.attributes.titre;
+
+  const cour = cours.find(c => toUrlFriendly(c.attributes.test.titre) === segment);
+  if (cour) return cour.attributes.test.titre;
+
+  const casClinique = casCliniques.find(cc => toUrlFriendly(cc.attributes.test.titre) === segment);
+  if (casClinique) return casClinique.attributes.test.titre;
+
+  const part = parts.find(p => toUrlFriendly(p.titre) === segment);
+  if (part) return part.titre;
+
+  // Recherche des titres des parties dans les cours
+  for (const cour of cours) {
+    const partsRelationName = Object.keys(cour.attributes).find(key => key.endsWith('_parties'));
+    if (partsRelationName) {
+      const partsRelation = cour.attributes[partsRelationName]?.data;
+      if (partsRelation) {
+        const foundPart = partsRelation.find(p => toUrlFriendly(p.attributes.test.titre) === segment);
+        if (foundPart) return foundPart.attributes.test.titre;
+      }
+    }
+  }
+
+  return segment.replace(/-/g, ' '); // Si aucun titre n'est trouvé, retourner le segment avec les tirets remplacés par des espaces
+};
+
+// Fonction pour générer les breadcrumbs à partir de l'URL
+const generateBreadcrumbsFromUrl = (currentPath, matieres = [], sousMatieres = [], cours = [], casCliniques = [], parts = []) => {
   const pathSegments = currentPath.split('/').filter(Boolean);
   let pathAccum = '';
   const breadcrumbs = pathSegments.map((segment, index) => {
     pathAccum += `/${segment}`;
-    let title;
     const isLast = index === pathSegments.length - 1;
 
-    if (isLast && selectedPartieTitle) {
-      title = selectedPartieTitle;
-    } else if (isLast && selectedCasTitle) {
-      title = selectedCasTitle;
-    } else {
-      const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === segment);
-      const sousMatiere = sousMatieres.find(sm => toUrlFriendly(sm.attributes.titre) === segment);
-      const cour = cours.find(c => toUrlFriendly(c.attributes.test.titre) === segment);
-      const casClinique = casCliniques.find(cc => toUrlFriendly(cc.attributes.test.titre) === segment);
+    const title = getOriginalTitle(segment, matieres, sousMatieres, cours, casCliniques, parts);
 
-      title = matiere ? matiere.attributes.titre :
-              sousMatiere ? sousMatiere.attributes.titre :
-              cour ? cour.attributes.test.titre :
-              casClinique ? casClinique.attributes.test.titre :
-              segment;
-    }
-
-    const isHome = pathAccum === '/';
     return {
       title,
       link: !isLast ? pathAccum : null,
       active: isLast,
-      isHome,
+      isHome: false,
     };
   });
 
   return [{ title: 'Home', link: '/', active: false, isHome: true }, ...breadcrumbs];
 };
 
+// Composant générique pour afficher les breadcrumbs
 const GenericBreadcrumbs = React.memo(({ breadcrumbs }) => (
   <nav aria-label="Fil d'Ariane" className="theme-doc-breadcrumbs breadcrumbsContainer_Wvrh">
     <ul className="breadcrumbs" itemScope itemType="https://schema.org/BreadcrumbList">
@@ -60,9 +77,11 @@ const GenericBreadcrumbs = React.memo(({ breadcrumbs }) => (
   </nav>
 ));
 
+// Composant principal des breadcrumbs
 const BreadcrumbsComponent = ({ currentPath, selectedCasTitle, selectedPartieTitle }) => {
-  const { sousMatieres, matieres, cours, casCliniques } = useContext(DataContext);
-  const breadcrumbs = useMemo(() => generateBreadcrumbs(currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques), [currentPath, selectedCasTitle, selectedPartieTitle, sousMatieres, matieres, cours, casCliniques]);
+  const location = useLocation();
+  const { sousMatieres = [], matieres = [], cours = [], casCliniques = [], parts = [] } = useContext(DataContext);
+  const breadcrumbs = useMemo(() => generateBreadcrumbsFromUrl(currentPath || location.pathname, matieres, sousMatieres, cours, casCliniques, parts), [currentPath, location.pathname, matieres, sousMatieres, cours, casCliniques, parts]);
   return <GenericBreadcrumbs breadcrumbs={breadcrumbs} />;
 };
 

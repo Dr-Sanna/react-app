@@ -12,12 +12,11 @@ const PartiePagination = ({ prevPartie, nextPartie, onNavigatePartie, onNavigate
     window.scrollTo(0, 0);
   };
 
-  const prevLabel = prevPartie && prevPartie.attributes ? prevPartie.attributes.test.titre : (parentCours && parentCours.attributes ? parentCours.attributes.test.titre : "Retour aux cours");
-
   useEffect(() => {
-    console.log("Matiere Path in Pagination:", matierePath);
-    console.log("Sous Matiere Path in Pagination:", sousMatierePath);
-  }, [matierePath, sousMatierePath]);
+    console.log("PartiePagination props:", { prevPartie, nextPartie, parentCours, matierePath, sousMatierePath });
+  }, [prevPartie, nextPartie, parentCours, matierePath, sousMatierePath]);
+
+  const prevLabel = prevPartie && prevPartie.attributes ? prevPartie.attributes.test.titre : (parentCours && parentCours.attributes ? parentCours.attributes.test.titre : "Retour aux cours");
 
   const prevHref = prevPartie 
     ? `/${matierePath}/${sousMatierePath}/${toUrlFriendly(parentCours.attributes.test.titre)}/${toUrlFriendly(prevPartie.attributes.test.titre)}`

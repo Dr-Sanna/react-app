@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CollapseIcon, ExpandIcon } from "./IconComponents";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { BottomExpandIcon, BottomCollapseIcon } from './IconComponents';
 
-const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
+const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
   const [expandedItems, setExpandedItems] = useState({});
   const { isSidebarVisible, setIsSidebarVisible } = useSidebarContext();
   const location = useLocation();
@@ -14,7 +14,6 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
   const cours = pathSegments[2];
-  const partie = pathSegments[3];
 
   const toggleSidebarVisibility = () => {
     setIsSidebarVisible(!isSidebarVisible);
@@ -25,17 +24,16 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
     const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`;
     if (location.pathname !== newPath) {
       navigate(newPath);
-      onSelectionChange(item.label, null);  // Mise à jour des props avec le cours sélectionné
+      onSelectionChange(item.label, null); // Mise à jour des props avec le cours sélectionné
     }
     window.scrollTo(0, 0);
   };
 
-  const handlePartieClick = (partie, parentCoursLabel, event) => {
+  const handlePartClick = (part, item, event) => {
     event.preventDefault();
-    const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(parentCoursLabel)}/${toUrlFriendly(partie.attributes.titre)}`;
+    const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(part)}`;
     if (location.pathname !== newPath) {
       navigate(newPath);
-      onSelectionChange(parentCoursLabel, partie.attributes.test.titre);  // Mise à jour des props avec le cours et la partie sélectionnée
     }
     window.scrollTo(0, 0);
   };
@@ -49,16 +47,15 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
     }));
   };
 
-  const isPartieSelected = (partieTitre) => {
-    return partie === toUrlFriendly(partieTitre);
-  };
-
   const isSelectedCoursOrPartie = (item) => {
     const itemKey = toUrlFriendly(item.label);
-    return selectedKey === item.key || (cours === itemKey && !partie);
+    return selectedKey === item.key || cours === itemKey;
   };
 
-  const isExpanded = (key) => !!expandedItems[key];
+  const isSelectedPart = (part) => {
+    const partKey = toUrlFriendly(part);
+    return pathSegments.length > 3 && pathSegments[3] === partKey;
+  };
 
   useEffect(() => {
     if (selectedKey) {
@@ -86,13 +83,15 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
             <ul className="theme-doc-sidebar-menu menu__list">
               {menuItems.map((item) => {
                 const isItemSelected = isSelectedCoursOrPartie(item);
-                const isItemExpanded = isExpanded(item.key);
+                const isItemExpanded = expandedItems[item.key];
+                const partsTitles = item.partsTitles || [];
+
                 return (
                   <li
                     key={item.key}
-                    className={`theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item`}
+                    className={`theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item`}
                   >
-                    <div className={`menu__list-item-collapsible ${isItemExpanded ? 'menu__list-item-collapsible' : ''} ${isItemSelected ? 'menu__list-item-collapsible--active' : ''}`}>
+                    <div className={`menu__list-item-collapsible ${isItemSelected ? 'menu__list-item-collapsible--active' : ''}`}>
                       <a 
                         href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`}
                         className={`menu__link ${isItemSelected ? 'menu__link--active' : ''}`}
@@ -101,36 +100,35 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
                       >
                         {item.label}
                       </a>
-                      {item.hasParts && (
+                      {partsTitles.length > 0 && (
                         <button
                           aria-label={`Toggle ${item.label}`}
                           aria-expanded={isItemExpanded}
                           type="button"
                           className="clean-btn menu__caret"
                           onClick={(e) => toggleExpand(item.key, e)}
-                        />
+                        >
+                          <span className={`menu__caret-icon ${isItemExpanded ? 'expanded' : 'collapsed'}`} />
+                        </button>
                       )}
                     </div>
-                    {item.hasParts && isItemExpanded && parties[item.key] && (
-                      <ul className="menu__list" style={{ display: 'block', overflow: 'visible', height: 'auto' }}>
-                        {parties[item.key].map((partie) => {
-                          const isPartieSelectedFlag = isPartieSelected(partie.attributes.test.titre);
-                          return (
-                            <li
-                              key={partie.id}
-                              className={`theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
+                    {isItemExpanded && partsTitles.length > 0 && (
+                      <ul className="menu__list" style={{ display: isItemExpanded ? 'block' : 'none' }}>
+                        {partsTitles.map((part, index) => (
+                          <li
+                            key={`${item.key}-${index}`}
+                            className="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"
+                          >
+                            <a 
+                              href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(part)}`}
+                              className={`menu__link ${isSelectedPart(part) ? 'menu__link--active' : ''}`}
+                              onClick={(event) => handlePartClick(part, item, event)}
+                              aria-current={isSelectedPart(part) ? 'page' : undefined}
                             >
-                              <a
-                                href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(partie.attributes.test.titre)}`}
-                                className={`menu__link ${isPartieSelectedFlag ? 'menu__link--active' : ''}`}
-                                onClick={(event) => handlePartieClick(partie, item.label, event)}
-                                aria-current={isPartieSelectedFlag ? 'page' : undefined}
-                              >
-                                {partie.attributes.test.titre}
-                              </a>
-                            </li>
-                          );
-                        })}
+                              {part}
+                            </a>
+                          </li>
+                        ))}
                       </ul>
                     )}
                   </li>
@@ -145,7 +143,7 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
             className="button button--secondary button--outline collapseSidebarButton_PUyN"
             onClick={toggleSidebarVisibility}
           >
-            {isSidebarVisible ? <CollapseIcon /> : <ExpandIcon />}
+            {isSidebarVisible ? <BottomCollapseIcon /> : <BottomExpandIcon />}
           </button>
         </div>
       
@@ -158,7 +156,7 @@ const LeftMenu = ({ menuItems, selectedKey, parties, onSelectionChange }) => {
             role="button"
             onClick={toggleSidebarVisibility}
           >
-            <ExpandIcon />
+            <BottomExpandIcon />
           </div>
         )}
       </div>

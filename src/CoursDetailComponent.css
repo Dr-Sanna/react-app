@@ -16,7 +16,7 @@
 }
 
 .cardContainer_Uewx:hover {
-  transform: translateY(-4px);
+
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -44,3 +44,4 @@
 [data-theme="dark"] .cardDescription_mCBT {
   color: #ccc;
 }
+

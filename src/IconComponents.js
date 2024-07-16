@@ -19,7 +19,7 @@ export const HomeIcon = () => (
   </svg>
 );
 
-export const CollapseIcon = () => (
+export const BottomCollapseIcon = () => (
   <svg
     width="20"
     height="20"
@@ -43,7 +43,7 @@ export const InfoIcon = () => (
   <svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg>
 );
 
-export const ExpandIcon = () => (
+export const BottomExpandIcon = () => (
 <svg width="20" height="20" aria-hidden="true" className="expandButtonIcon_H1n0">
   <g fill="#7a7a7a">
     <path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path>
