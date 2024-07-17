@@ -21,7 +21,7 @@ const CoursComponent = () => {
   const [initialLoading, setInitialLoading] = useState(true);
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  const matierePath = pathSegments[0];
+  //const matierePath = pathSegments[0];//
   const sousMatierePath = pathSegments[1];
   const coursTitre = pathSegments.length >= 3 ? pathSegments[2] : "";
   const partieTitre = pathSegments.length >= 4 ? pathSegments[3] : "";

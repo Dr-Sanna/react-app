@@ -32,7 +32,6 @@ function transformYoutubeLinks() {
           const startTime = match[2] ? `?start=${match[2]}` : '';
           const iframeSrc = `https://www.youtube.com/embed/${videoId}${startTime}`;
 
-          // Remove parent <p> if it contains only this link
           if (parent.tagName === 'p' && parent.children && parent.children.length === 1) {
             parent.tagName = 'div';
             parent.properties.className = ['video-button-container'];
@@ -78,6 +77,8 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
   const contentRef = useRef(null);
 
   useEffect(() => {
+    const currentRef = contentRef.current;
+
     const handleButtonClick = (event) => {
       if (event.target && event.target.classList.contains('video-button')) {
         const button = event.target;
@@ -99,20 +100,21 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
       }
     };
 
-    if (contentRef.current) {
-      contentRef.current.addEventListener('click', handleButtonClick);
+    if (currentRef) {
+      currentRef.addEventListener('click', handleButtonClick);
     }
 
     return () => {
-      if (contentRef.current) {
-        contentRef.current.removeEventListener('click', handleButtonClick);
+      if (currentRef) {
+        currentRef.removeEventListener('click', handleButtonClick);
       }
     };
   }, []);
 
   useEffect(() => {
-    if (contentRef.current) {
-      const tables = contentRef.current.querySelectorAll('table, td');
+    const currentRef = contentRef.current;
+    if (currentRef) {
+      const tables = currentRef.querySelectorAll('table, td');
       tables.forEach(table => {
         const style = table.getAttribute('style');
         if (style && style.includes('border-style: solid')) {
