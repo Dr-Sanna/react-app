@@ -165,7 +165,7 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
                     <a
                       key={index}
                       className="card padding--lg cardContainer_Uewx"
-                      href="#"
+                      href={`/matiere/sous/matiere/${toUrlFriendly(part.titre)}`}
                       onClick={(event) => handleCardClick(part, event)}
                     >
                       <h2 className="cardTitle_dwRT" title={part.titre}>📄️ {part.titre}</h2>
@@ -180,25 +180,25 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
       <nav className="pagination-nav docusaurus-mt-lg" aria-label="Navigation">
         <div className="pagination-nav__links">
           {showPrevCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href="#" onClick={(event) => { event.preventDefault(); handleNavigatePrevCourse(); }}>
+            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${prevCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigatePrevCourse(); }}>
               <div className="pagination-nav__sublabel">Précédent</div>
               <div className="pagination-nav__label">{prevCourseTitle}</div>
             </a>
           )}
           {showBackToCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href="#" onClick={(event) => { event.preventDefault(); handleBackToCourse(); }}>
+            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${selectedItem?.attributes?.test?.titre}`} onClick={(event) => { event.preventDefault(); handleBackToCourse(); }}>
               <div className="pagination-nav__sublabel">Précédent</div>
               <div className="pagination-nav__label">{selectedItem?.attributes?.test?.titre}</div>
             </a>
           )}
           {prevPartTitle && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href="#" onClick={(event) => { event.preventDefault(); handleNavigatePrevPart(); }}>
+            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${prevPartTitle}`} onClick={(event) => { event.preventDefault(); handleNavigatePrevPart(); }}>
               <div className="pagination-nav__sublabel">Précédent</div>
               <div className="pagination-nav__label">{prevPartTitle}</div>
             </a>
           )}
           {showLastPartPrevCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href="#" onClick={(event) => { event.preventDefault(); handleNavigateToLastPartPrevCourse(); }}>
+            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${lastPartPrevCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateToLastPartPrevCourse(); }}>
               <div className="pagination-nav__sublabel">Précédent</div>
               <div className="pagination-nav__label">{lastPartPrevCourseTitle}</div>
             </a>
@@ -206,13 +206,13 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
         </div>
         <div className="pagination-nav__links">
           {showNextCourse && (
-            <a className="pagination-nav__link pagination-nav__link--next" href="#" onClick={(event) => { event.preventDefault(); handleNavigateNextCourse(); }}>
+            <a className="pagination-nav__link pagination-nav__link--next" href={`/matiere/sous/matiere/${nextCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateNextCourse(); }}>
               <div className="pagination-nav__sublabel">Suivant</div>
               <div className="pagination-nav__label">{nextCourseTitle}</div>
             </a>
           )}
           {nextPartTitle && (
-            <a className="pagination-nav__link pagination-nav__link--next" href="#" onClick={(event) => { event.preventDefault(); handleNavigateNextPart(); }}>
+            <a className="pagination-nav__link pagination-nav__link--next" href={`/matiere/sous/matiere/${nextPartTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateNextPart(); }}>
               <div className="pagination-nav__sublabel">Suivant</div>
               <div className="pagination-nav__label">{nextPartTitle}</div>
             </a>
@@ -221,6 +221,6 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
       </nav>
     </>
   );
-}  
+};
 
 export default React.memo(CoursDetailComponent);

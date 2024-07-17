@@ -150,7 +150,7 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
             <p {...props} />
           ),
           a: ({ node, ...props }) => (
-            <a {...props} />
+            <a {...props}>{props.children}</a>
           ),
           // Ajoutez d'autres composants personnalisés ici si nécessaire
         }}
