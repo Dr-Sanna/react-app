@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toUrlFriendly } from './config';
 
 const CoursPagination = ({
@@ -14,8 +13,7 @@ const CoursPagination = ({
   handleNavigateToLastPartPrevCourse,
   handleBackToCourse
 }) => {
-  const navigate = useNavigate();
-  
+    
   const currentPartIndex = partsTitles.findIndex(part => toUrlFriendly(part.titre) === pathSegments[3]);
   const currentIndex = allItems.findIndex(item => item.id === selectedItem.id);
 
