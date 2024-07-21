@@ -53,17 +53,22 @@ export const fetchCoursData = async (pathname) => {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('occlusion-et-fonction')) {
-    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate][sous_matiere][fields][0]=titre&populate[test][populate][image][fields][0]=url&populate[test][populate][image][fields][1]=name&populate[test][populate][image][fields][2]=size&populate=test,test.image&populate[occlusion_et_fonction_parties][populate]=test`;
+    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image&populate[occlusion_et_fonction_parties][populate][test][populate]=*`;
     if (pathname.includes('occlusion-et-manducation')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('essai-matiere')) {
-    url = `${API_URL}/api/essais?populate[test][populate]=sous_matiere,image,test,test.image&populate[essai_parties][populate][test][populate]=*`;
+    url = `${API_URL}/api/essais?populate[test][populate]=sous_matiere,image,test,test.image&populate[essai_parties][populate][test][populate]=*&populate[QCM][populate]=proposition`;
     if (pathname.includes('essai-sous-matiere')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
+  } else if (pathname.includes('anatomie-tete-et-cou')) {
+    url = `${API_URL}/api/anatomie-tete-et-cous?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition`;
+    if (pathname.includes('vaisseaux-et-nerfs')) {
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+    }  
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
-    url = `${API_URL}/api/medecine-orales?populate=*&filters[sous_matiere][id][$eq]=${sousMatiereId}`;
+    url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
   }
   if (!url) return [];
 

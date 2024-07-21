@@ -3,10 +3,10 @@ import { IconDanger, IconInfo, IconAttention, IconAstuce, IconRemarque } from '.
 
 const admonitionTypes = {
   danger: { className: 'danger', icon: <IconDanger />, defaultTitle: 'Danger' },
-  info: { className: 'info', icon: <IconInfo />, defaultTitle: 'Info' },
+  info: { className: 'info', icon: <IconInfo />, defaultTitle: 'Info' }, //bleu
   attention: { className: 'warning', icon: <IconAttention />, defaultTitle: 'Attention' },
   astuce: { className: 'tip', icon: <IconAstuce />, defaultTitle: 'Astuce' },
-  remarque: { className: 'note', icon: <IconRemarque />, defaultTitle: 'Remarque' },
+  remarque: { className: 'note', icon: <IconRemarque />, defaultTitle: 'Remarque' }, //gris
   accordion: { className: 'info', defaultTitle: 'Remarque', isAccordion: true },
 };
 

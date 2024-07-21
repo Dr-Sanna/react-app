@@ -4,6 +4,7 @@ import CustomMarkdown from './CustomMarkdown';
 import { useToggle } from './ToggleContext';
 import { toUrlFriendly } from './config';
 import QuestionsComponent from './QuestionsComponent';
+import CoursPagination from './CoursPagination'; // Importez le nouveau composant
 import './CoursDetailComponent.css';
 
 const CoursDetailComponent = ({ selectedItem, allItems }) => {
@@ -22,7 +23,8 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
         ? partsRelation.map(part => ({
             titre: part.attributes.test.titre,
             enonce: part.attributes.test.enonce,
-            questions: part.attributes.test.test || []
+            questions: part.attributes.test.test || [],
+            qcms: part.attributes.QCM || [] // Ajoutez les QCM ici
           }))
         : [];
       setPartsTitles(titles);
@@ -102,27 +104,6 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
   const selectedPartTitle = pathSegments.length > 3 ? pathSegments[3] : null;
   const selectedPart = partsTitles.find(part => toUrlFriendly(part.titre) === selectedPartTitle);
 
-  const currentPartIndex = partsTitles.findIndex(part => toUrlFriendly(part.titre) === pathSegments[3]);
-  const currentIndex = allItems.findIndex(item => item.id === selectedItem.id);
-
-  const prevItemHasParts = currentIndex > 0 && (() => {
-    const prevItem = allItems[currentIndex - 1];
-    const partsRelationName = Object.keys(prevItem.attributes).find(key => key.endsWith('_parties'));
-    const partsRelation = prevItem.attributes[partsRelationName]?.data;
-    return partsRelation && partsRelation.length > 0;
-  })();
-
-  const showBackToCourse = currentPartIndex === 0;
-  const showPrevCourse = currentIndex > 0 && !showBackToCourse && currentPartIndex <= 0 && !prevItemHasParts;
-  const showNextCourse = (currentIndex < allItems.length - 1) && (partsTitles.length === 0 || currentPartIndex === partsTitles.length - 1);
-  const showLastPartPrevCourse = prevItemHasParts && !showBackToCourse;
-
-  const nextCourseTitle = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1].attributes.test.titre : null;
-  const prevCourseTitle = currentIndex > 0 ? allItems[currentIndex - 1].attributes.test.titre : null;
-  const nextPartTitle = currentPartIndex < partsTitles.length - 1 ? partsTitles[currentPartIndex + 1].titre : null;
-  const prevPartTitle = currentPartIndex > 0 ? partsTitles[currentPartIndex - 1].titre : null;
-  const lastPartPrevCourseTitle = prevItemHasParts ? allItems[currentIndex - 1].attributes[Object.keys(allItems[currentIndex - 1].attributes).find(key => key.endsWith('_parties'))]?.data.slice(-1)[0]?.attributes.test.titre : null;
-
   return (
     <>
       <article>
@@ -133,6 +114,7 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
               {showQuestions ? (
                 <QuestionsComponent
                   partQuestions={selectedPart.questions}
+                  qcms={selectedPart.qcms} // Passez les QCM ici
                   title={selectedPart.titre}
                   isPart={true}
                 />
@@ -149,6 +131,7 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
               {showQuestions ? (
                 <QuestionsComponent
                   courseQuestions={selectedItem?.attributes?.test?.test}
+                  qcms={selectedItem?.attributes?.QCM} // Passez les QCM ici
                   title={selectedItem?.attributes?.test?.titre}
                   isPart={false}
                 />
@@ -168,7 +151,7 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
                       href={`/matiere/sous/matiere/${toUrlFriendly(part.titre)}`}
                       onClick={(event) => handleCardClick(part, event)}
                     >
-                      <h2 className="cardTitle_dwRT" title={part.titre}>📄️ {part.titre}</h2>
+                      <h2 className="cardTitle_dwRT" title={part.titre}>{part.titre}</h2>
                     </a>
                   ))}
                 </div>
@@ -177,48 +160,18 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
           )}
         </div>
       </article>
-      <nav className="pagination-nav docusaurus-mt-lg" aria-label="Navigation">
-        <div className="pagination-nav__links">
-          {showPrevCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${prevCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigatePrevCourse(); }}>
-              <div className="pagination-nav__sublabel">Précédent</div>
-              <div className="pagination-nav__label">{prevCourseTitle}</div>
-            </a>
-          )}
-          {showBackToCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${selectedItem?.attributes?.test?.titre}`} onClick={(event) => { event.preventDefault(); handleBackToCourse(); }}>
-              <div className="pagination-nav__sublabel">Précédent</div>
-              <div className="pagination-nav__label">{selectedItem?.attributes?.test?.titre}</div>
-            </a>
-          )}
-          {prevPartTitle && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${prevPartTitle}`} onClick={(event) => { event.preventDefault(); handleNavigatePrevPart(); }}>
-              <div className="pagination-nav__sublabel">Précédent</div>
-              <div className="pagination-nav__label">{prevPartTitle}</div>
-            </a>
-          )}
-          {showLastPartPrevCourse && (
-            <a className="pagination-nav__link pagination-nav__link--prev" href={`/matiere/sous/matiere/${lastPartPrevCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateToLastPartPrevCourse(); }}>
-              <div className="pagination-nav__sublabel">Précédent</div>
-              <div className="pagination-nav__label">{lastPartPrevCourseTitle}</div>
-            </a>
-          )}
-        </div>
-        <div className="pagination-nav__links">
-          {showNextCourse && (
-            <a className="pagination-nav__link pagination-nav__link--next" href={`/matiere/sous/matiere/${nextCourseTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateNextCourse(); }}>
-              <div className="pagination-nav__sublabel">Suivant</div>
-              <div className="pagination-nav__label">{nextCourseTitle}</div>
-            </a>
-          )}
-          {nextPartTitle && (
-            <a className="pagination-nav__link pagination-nav__link--next" href={`/matiere/sous/matiere/${nextPartTitle}`} onClick={(event) => { event.preventDefault(); handleNavigateNextPart(); }}>
-              <div className="pagination-nav__sublabel">Suivant</div>
-              <div className="pagination-nav__label">{nextPartTitle}</div>
-            </a>
-          )}
-        </div>
-      </nav>
+      <CoursPagination
+        pathSegments={pathSegments}
+        selectedItem={selectedItem}
+        allItems={allItems}
+        partsTitles={partsTitles}
+        handleNavigatePrevCourse={handleNavigatePrevCourse}
+        handleNavigateNextCourse={handleNavigateNextCourse}
+        handleNavigatePrevPart={handleNavigatePrevPart}
+        handleNavigateNextPart={handleNavigateNextPart}
+        handleNavigateToLastPartPrevCourse={handleNavigateToLastPartPrevCourse}
+        handleBackToCourse={handleBackToCourse}
+      />
     </>
   );
 };

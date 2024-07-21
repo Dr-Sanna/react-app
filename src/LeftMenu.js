@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -10,6 +10,8 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const pathSegments = location.pathname.split('/').filter(Boolean);
+  const listRef = useRef({});
+  const [heights, setHeights] = useState({});
 
   const matiere = pathSegments[0];
   const sousMatiere = pathSegments[1];
@@ -41,10 +43,17 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
   const toggleExpand = (key, event) => {
     event.stopPropagation();
     event.preventDefault();
-    setExpandedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setExpandedItems((prev) => {
+      const newExpandedItems = { ...prev, [key]: !prev[key] };
+      if (newExpandedItems[key]) {
+        const listElement = listRef.current[key];
+        setHeights((prevHeights) => ({
+          ...prevHeights,
+          [key]: listElement.scrollHeight,
+        }));
+      }
+      return newExpandedItems;
+    });
   };
 
   const isSelectedCoursOrPartie = (item) => {
@@ -66,6 +75,19 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
     }
   }, [selectedKey]);
 
+  useEffect(() => {
+    // Set the height for the expanded items based on selection
+    Object.keys(expandedItems).forEach(key => {
+      const listElement = listRef.current[key];
+      if (expandedItems[key] && listElement) {
+        setHeights((prevHeights) => ({
+          ...prevHeights,
+          [key]: listElement.scrollHeight,
+        }));
+      }
+    });
+  }, [expandedItems, selectedKey]);
+
   return (
     <aside className={`theme-doc-sidebar-container docSidebarContainer_S51O ${isSidebarVisible ? '' : 'docSidebarContainerHidden_gbDM'}`}>
       <div className={"sidebarViewport_K3q9"}>
@@ -74,7 +96,6 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
             <img 
               src="/logo.svg" 
               alt="Sanna Logo" 
-              className="themedComponent_bJGS"
               height="32" width="32" 
             />
             <b>Dr Sanna</b>
@@ -85,11 +106,12 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
                 const isItemSelected = isSelectedCoursOrPartie(item);
                 const isItemExpanded = expandedItems[item.key];
                 const partsTitles = item.partsTitles || [];
+                const height = heights[item.key] || 0;
 
                 return (
                   <li
                     key={item.key}
-                    className={`theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item`}
+                    className={`theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item ${isItemExpanded ? 'menu__list-item--expanded' : 'menu__list-item--collapsed'}`}
                   >
                     <div className={`menu__list-item-collapsible ${isItemSelected ? 'menu__list-item-collapsible--active' : ''}`}>
                       <a 
@@ -103,7 +125,7 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
                       {partsTitles.length > 0 && (
                         <button
                           aria-label={`Toggle ${item.label}`}
-                          aria-expanded={isItemExpanded}
+                          aria-expanded={isItemExpanded ? 'true' : 'false'}
                           type="button"
                           className="clean-btn menu__caret"
                           onClick={(e) => toggleExpand(item.key, e)}
@@ -112,8 +134,17 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
                         </button>
                       )}
                     </div>
-                    {isItemExpanded && partsTitles.length > 0 && (
-                      <ul className="menu__list" style={{ display: isItemExpanded ? 'block' : 'none' }}>
+                    {partsTitles.length > 0 && (
+                      <ul
+                        className="menu__list"
+                        ref={(el) => (listRef.current[item.key] = el)}
+                        style={{
+                          height: isItemExpanded ? `${height}px` : '0',
+                          overflow: 'hidden',
+                          willChange: 'height',
+                          transition: 'height 357ms ease-in-out',
+                        }}
+                      >
                         {partsTitles.map((part, index) => (
                           <li
                             key={`${item.key}-${index}`}

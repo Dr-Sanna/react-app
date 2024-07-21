@@ -74,11 +74,12 @@ body {
 table {
   width: fit-content !important; /* Ajuste la largeur au contenu */
   box-shadow: 5px 5px gainsboro !important; /* Ombre nette en bas et à droite */
-border-radius: 5px;
-  border: 1.5px solid #dadde1 ;
+
+  border: 1px solid lightgray;
   display: block; /* Pour ajuster la largeur au contenu */
   border-spacing: 0px !important;
   border-collapse: separate !important;
+  margin-top: 20px;
 }
 [data-theme="dark"] table {
   box-shadow: none !important; /* Ombre nette en bas et à droite */
@@ -114,14 +115,19 @@ td ul {
   padding-left: 0; /* Supprime le padding par défaut de la liste */
 }
 
-td ul li::before {
-  content: "- "; /* Ajoute un tiret avant chaque élément de la liste */
-  margin-right: 8px; /* Ajoute un espace après le tiret pour la lisibilité */
+td ul li {
+  margin-top: 0px !important; /* Supprime le margin-top si nécessaire */
+  padding-left: 15px; /* Ajoute un padding pour laisser de la place pour le tiret */
+  position: relative; /* Position relative pour le pseudo-élément */
 }
 
-td ul li {
-  margin-top: 0px !important; /* Ajoute un espace après le tiret pour la lisibilité */
+td ul li::before {
+  content: "- "; /* Ajoute un tiret avant chaque élément de la liste */
+  position: absolute; /* Position absolue pour placer le tiret */
+  left: 0; /* Place le tiret à gauche */
 }
+
+
 td {
   font-size: 85%; /* Réduit la taille du texte de 20% */
   padding: 7px !important;
@@ -130,11 +136,11 @@ td {
 }
 [data-theme="dark"] td:has(h3) {
   background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-  border-bottom: 1.5px solid #606770 !important;
+  
 }
 td:has(h3) {
-  background-color: #d4effb !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-  border-bottom: 1.5px solid #dadde1 !important;
+  background-color: #c4eafb !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  border-bottom: 1px solid lightgray !important;
 }
 
 td h3 {
@@ -143,7 +149,7 @@ td h3 {
   font-size: 120% !important;
   text-align: center;
   font-weight: bold;
-  
+ 
 }
 
 
@@ -172,24 +178,14 @@ td figure.image > div {
 .admonitionContent_Knsx > :last-child {
   margin-bottom: 0 !important;
 }
-.menu__list-item-collapsible {
-  position: relative;
+
+body {
+  counter-reset: h2counter;
+}
+h2 {
+  counter-increment: h2counter;
+}
+h2::before {
+  content: counter(h2counter) ". ";
 }
 
-.menu__caret {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.menu__list-item-collapsible--active .menu__list {
-  display: block;
-}
-
-.menu__list-item-collapsible .menu__list {
-  display: none;
-}

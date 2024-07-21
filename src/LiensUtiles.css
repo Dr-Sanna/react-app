@@ -1,33 +1,60 @@
 .liens-utiles-container {
   display: flex;
   justify-content: center;
+  padding: 20px; /* Ajout de marges autour des bords de l'écran */
 }
 
 .liens-utiles-list {
-  list-style: none;
-  width: 75%; /* Limite la largeur à 75% de l'écran */
-  padding: 0; /* Supprime le padding par défaut */
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+  margin: 0; /* Remise à zéro des marges */
 }
 
 .liens-utiles-item {
-  background-color: #f8f9fa; /* Couleur de fond légère */
-  margin-bottom: 10px; /* Marge entre les éléments */
-  padding: 10px; /* Espace autour du contenu */
-  border: 1px solid #dee2e6; /* Bordure subtile */
-  border-radius: 5px; /* Coins arrondis */
+  flex: 0 1 calc(50% - 20px); /* Ajustement des marges pour un meilleur espacement */
+  box-sizing: border-box;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Transition pour un effet de survol plus doux */
 }
 
 .liens-utiles-link {
-  display: block; /* Transforme le lien en bloc pour remplir tout l'élément li */
-  text-decoration: none;
+  text-decoration: none; /* Supprimer le soulignement du texte */
   color: inherit;
-  padding: 10px; /* Espace autour du contenu */
+  display: block; /* Rendre le lien block pour qu'il remplisse l'élément parent */
 }
 
-.liens-utiles-link:hover {
+.liens-utiles-link h4, .liens-utiles-link p {
+  margin: 0;
+}
+
+.liens-utiles-link h4 {
+  font-size: 1.2em;
+}
+
+.liens-utiles-link p {
+  margin: 0.5em 0 0;
+  font-size: 1em;
+}
+
+.liens-utiles-item:hover {
   background-color: #e9ecef; /* Changement de couleur au survol */
-  border-radius: 5px; /* Coins arrondis pour l'effet de survol */
-  text-decoration: none;
+  border-color: #28a745; /* Changement de la couleur de bordure au survol (vert) */
+  color: #000; /* Couleur du texte au survol */
+}
+
+.liens-utiles-item:hover .liens-utiles-link {
+  color: inherit; /* Assurer que la couleur du lien reste héritée */
+  text-decoration: none; /* Assurer qu'il n'y a pas de soulignement au survol */
+}
+
+.liens-utiles-item:hover .liens-utiles-link h4, 
+.liens-utiles-item:hover .liens-utiles-link p {
+  color: inherit; /* Assurer que la couleur du texte reste héritée */
 }
 
 /* Styles pour le mode sombre */
@@ -37,7 +64,8 @@
   border-color: #495057; /* Bordure plus foncée pour le mode sombre */
 }
 
-[data-theme="dark"] .liens-utiles-link:hover {
-  background-color: #495057; /* Fond de surv
-ol légèrement différent pour le mode sombre */
+[data-theme="dark"] .liens-utiles-item:hover {
+  background-color: #495057; /* Fond de survol légèrement différent pour le mode sombre */
+  border-color: #28a745; /* Changement de la couleur de bordure au survol pour le mode sombre (vert) */
+  color: #f8f9fa; /* Couleur du texte au survol pour le mode sombre */
 }

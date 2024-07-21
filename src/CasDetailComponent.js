@@ -25,7 +25,7 @@ const CasDetailComponent = ({ selectedCas }) => {
       
       {questions && questions.length > 0 && (
         <>
-          <h2>Questions</h2>
+          <h3>Questions</h3>
           {questions.map((q, index) => (
             <Accordion 
               key={index}

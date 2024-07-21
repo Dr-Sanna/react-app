@@ -45,3 +45,23 @@
   color: #ccc;
 }
 
+.cardTitle_dwRT::before {
+  content: "📄️"; /* Emoji de feuille */
+  margin-right: 5px; /* Espace entre l'emoji et le numéro */
+}
+.cardContainer_Uewx {
+  display: block;
+  overflow: hidden;
+  max-height: 9em; /* Three lines with line-height of 1.5em */
+  line-height: 1.5em; /* Line height to calculate the max-height for three lines */
+}
+
+.cardTitle_dwRT {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
