@@ -80,6 +80,8 @@ table {
   border-spacing: 0px !important;
   border-collapse: separate !important;
   margin-top: 20px;
+  margin-bottom: 25px !important;
+
 }
 [data-theme="dark"] table {
   box-shadow: none !important; /* Ombre nette en bas et à droite */

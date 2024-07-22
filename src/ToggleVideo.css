@@ -1,0 +1,7 @@
+.iframe-container {
+  display: none;
+}
+
+.iframe-container.show {
+  display: block;
+}

@@ -1,36 +1,20 @@
 .video-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .video-button {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 10px;
+  font-size: 1rem;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 0.25rem;
   transition: background-color 0.3s ease;
-  margin-top: 10px;
-  margin-bottom: 10px; /* Pour espacer le bouton de l'iframe */
-
 }
 
 .video-button:hover {
   background-color: #0056b3;
-}
-
-.video-button:focus {
-  outline: none;
-}
-
-.video-container iframe {
-  display: block;
-  width: 100%;
-  max-width: 560px;
-  height: 315px;
 }
