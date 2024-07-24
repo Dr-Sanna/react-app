@@ -10,10 +10,10 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
 import CustomNavbar from "./CustomNavbar";
 import CoursDetailLoader from './CoursDetailLoader';
-import { CustomToothLoader } from './CustomToothLoader'; // Importation nommée
+import { CustomToothLoader } from './CustomToothLoader';
 
 const HomePage = () => {
-  const { matieres, sousMatieres } = useContext(DataContext); // Assurez-vous que isLoading est dans le contexte
+  const { matieres, sousMatieres, isLoading } = useContext(DataContext);
   const navigate = useNavigate();
   const [initialLoad, setInitialLoad] = useState(true);
 
@@ -36,10 +36,10 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (matieres && matieres.length > 0) {
+    if (!isLoading && matieres.length > 0) {
       setInitialLoad(false);
     }
-  }, [matieres]);
+  }, [isLoading, matieres]);
 
   return (
     <div id="__docusaurus_skipToContent_fallback" className="main-wrapper mainWrapper_PEsc">

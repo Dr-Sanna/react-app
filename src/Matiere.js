@@ -41,7 +41,6 @@ const Matiere = () => {
 
   const sortedSousMatieres = useMemo(() => filteredSousMatieres.sort((a, b) => a.attributes.order - b.attributes.order), [filteredSousMatieres]);
 
-  // Si les sous-matières sont disponibles, rendre DisplayItems
   return (
     <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} />
   );

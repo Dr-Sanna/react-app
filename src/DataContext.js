@@ -9,7 +9,7 @@ export const DataProvider = ({ children }) => {
   const [sousMatieres, setSousMatieres] = useState([]);
   const [casCliniques, setCasCliniques] = useState([]);
   const [cours, setCours] = useState([]);
-  const [parts, setParts] = useState([]);  // Ajout de l'état parts
+  const [parts, setParts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCoursLoading, setIsCoursLoading] = useState(false);
 
@@ -22,35 +22,17 @@ export const DataProvider = ({ children }) => {
         fetchCasCliniques()
       ]);
 
-      setMatieres(matieresData);
-      setSousMatieres(sousMatieresData);
-      setCasCliniques(casCliniquesData);
-
-      // Précharger les images des cas cliniques
-      await Promise.all(casCliniquesData.map(async (item) => {
+      // Précharger les images des matières et sous-matières
+      await Promise.all([...matieresData, ...sousMatieresData].map(async (item) => {
         const imageUrl = item.attributes.image?.data?.attributes.url;
         if (imageUrl) {
           await preloadImage(imageUrl);
         }
-
-        // Preload images in the nested test components
-        if (item.attributes.test) {
-          const testImageUrl = item.attributes.test.image?.data?.attributes.url;
-          if (testImageUrl) {
-            await preloadImage(testImageUrl);
-          }
-
-          // Preload images in the nested test of test components
-          if (Array.isArray(item.attributes.test.test)) {
-            await Promise.all(item.attributes.test.test.map(async (nestedTestItem) => {
-              const deeperNestedImageUrl = nestedTestItem.image?.data?.attributes.url;
-              if (deeperNestedImageUrl) {
-                await preloadImage(deeperNestedImageUrl);
-              }
-            }));
-          }
-        }
       }));
+
+      setMatieres(matieresData);
+      setSousMatieres(sousMatieresData);
+      setCasCliniques(casCliniquesData);
 
     } catch (error) {
       console.error("Erreur de récupération des données:", error);
@@ -69,24 +51,6 @@ export const DataProvider = ({ children }) => {
         const imageUrl = item.attributes.image?.data?.attributes.url;
         if (imageUrl) {
           await preloadImage(imageUrl);
-        }
-
-        // Preload images in the nested test components
-        if (item.attributes.test) {
-          const testImageUrl = item.attributes.test.image?.data?.attributes.url;
-          if (testImageUrl) {
-            await preloadImage(testImageUrl);
-          }
-
-          // Preload images in the nested test of test components
-          if (Array.isArray(item.attributes.test.test)) {
-            await Promise.all(item.attributes.test.test.map(async (nestedTestItem) => {
-              const deeperNestedImageUrl = nestedTestItem.image?.data?.attributes.url;
-              if (deeperNestedImageUrl) {
-                await preloadImage(deeperNestedImageUrl);
-              }
-            }));
-          }
         }
       }));
 

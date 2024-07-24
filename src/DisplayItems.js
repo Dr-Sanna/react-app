@@ -5,7 +5,6 @@ const DisplayItems = ({ items, onClickItem }) => {
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
-  // Trier les matières en fonction de la propriété 'order'
   const sortedItems = items.sort((a, b) => a.attributes.order - b.attributes.order);
 
   const getItemStyle = () => {
