@@ -68,7 +68,7 @@ export const fetchCoursData = async (pathname) => {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }  
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
-    url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+    url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&populate[medecine_orale_parties][populate][test][populate]=*&populate[QCM][populate]=proposition&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
   }
   if (!url) return [];
 
