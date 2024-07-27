@@ -81,7 +81,8 @@ table {
   border-collapse: separate !important;
   margin-top: 20px;
   margin-bottom: 25px !important;
-
+  /*margin-left: auto;*/
+  /*margin-right: auto;*/
 }
 [data-theme="dark"] table {
   box-shadow: none !important; /* Ombre nette en bas et à droite */
@@ -106,7 +107,7 @@ td:has(h4) {
 
 td p:last-child,
 td ul:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 td p:has(+ ul) {
   margin-bottom: 0;
@@ -191,3 +192,15 @@ h2::before {
   content: counter(h2counter) ". ";
 }
 
+ul {
+  margin-bottom: 20px !important;
+}
+
+/* Ignore les ul imbriqués */
+ul ul {
+  margin-bottom: 0 !important;
+}
+
+ul ul ul {
+  margin-bottom: 0 !important;
+}
