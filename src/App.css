@@ -204,3 +204,12 @@ ul ul {
 ul ul ul {
   margin-bottom: 0 !important;
 }
+.docItemContainerEnhanced {
+  margin-left: 20px !important;
+  margin-right: 20px !important;
+}
+
+.docMainContainerEnhanced_r8nV .docItemWrapperEnhanced_nA1F {
+  margin-left: 20px;
+  margin-right: 20px;
+}
