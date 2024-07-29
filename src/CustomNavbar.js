@@ -4,17 +4,26 @@ import { DarkModeIcon, LightModeIcon } from "./IconComponents";
 import Search from "./Search";
 import { useToggle } from "./ToggleContext";
 
-const CustomNavbar = () => {
+const CustomNavbar = ({ setFontSize }) => {
   const [logoUrl] = useState("/logo.svg");
   const [isNavbarExpanded, setIsNavbarExpanded] = useState(false);
   const [navbarClass, setNavbarClass] = useState("navbar navbar--fixed-top navbarHideable_uAgx");
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("darkMode") === "true");
+  const [sliderValue, setSliderValue] = useState(() => {
+    const savedFontSize = localStorage.getItem("fontSize");
+    return savedFontSize ? parseInt(savedFontSize, 10) : 100;
+  });
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false); // État pour la visibilité du menu déroulant
 
   const { showQuestions, setShowQuestions } = useToggle();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
+
+  useEffect(() => {
+    setFontSize(sliderValue);
+  }, [sliderValue, setFontSize]);
 
   const lastScrollY = useRef(window.scrollY);
 
@@ -48,6 +57,17 @@ const CustomNavbar = () => {
 
   const toggleQuestions = () => setShowQuestions(prev => !prev);
 
+  const handleSliderChange = (e) => {
+    const newValue = parseInt(e.target.value, 10);
+    setSliderValue(newValue);
+    setFontSize(newValue);
+    localStorage.setItem("fontSize", newValue); // Enregistre la taille du texte dans localStorage
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownVisible(!isDropdownVisible);
+  };
+
   return (
     <nav aria-label="Principale" className={navbarClass}>
       <div className="navbar__inner">
@@ -79,6 +99,26 @@ const CustomNavbar = () => {
                 </>
               )}
             </button>
+          </div>
+          <div className="settings-container" style={{ position: 'relative', marginLeft: 'auto' }}>
+            <button onClick={toggleDropdown} className="clean-btn settings-button" title="Paramètres">
+              <span role="img" aria-label="Settings" className="gear-icon">⚙️</span>
+            </button>
+            {isDropdownVisible && (
+              <div className="dropdown-menu">
+                <label htmlFor="font-size-slider" className="dropdown-label">Taille du texte:</label>
+                <input 
+                  id="font-size-slider" 
+                  type="range" 
+                  min="80" 
+                  max="100" 
+                  step="10" 
+                  value={sliderValue} 
+                  onChange={handleSliderChange} 
+                />
+                <span>{sliderValue}%</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="navbar__items navbar__items--right">

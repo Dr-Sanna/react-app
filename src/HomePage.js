@@ -8,11 +8,10 @@ import CasCliniquesComponent from "./CasCliniquesComponent";
 import CoursComponent from "./CoursComponent";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { toUrlFriendly } from "./config";
-import CustomNavbar from "./CustomNavbar";
 import CoursDetailLoader from './CoursDetailLoader';
 import { CustomToothLoader } from './CustomToothLoader';
 
-const HomePage = () => {
+const HomePage = ({ fontSize }) => {
   const { matieres, sousMatieres, isLoading } = useContext(DataContext);
   const navigate = useNavigate();
   const [initialLoad, setInitialLoad] = useState(true);
@@ -43,7 +42,6 @@ const HomePage = () => {
 
   return (
     <div id="__docusaurus_skipToContent_fallback" className="main-wrapper mainWrapper_PEsc">
-      <CustomNavbar />
       <Routes>
         <Route
           path="/"
@@ -75,7 +73,7 @@ const HomePage = () => {
             <Route
               key={sousMatiere.id}
               path={`/${matiereTitleUrl}/${sousMatiereTitleUrl}/*`}
-              element={<Component />}
+              element={<Component fontSize={fontSize} />}
             />
           );
         })}

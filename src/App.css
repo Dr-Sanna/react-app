@@ -213,3 +213,56 @@ ul ul ul {
   margin-left: 20px;
   margin-right: 20px;
 }
+.settings-dropdown {
+  position: relative;
+}
+
+.settings-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px; /* Ajustez cette valeur si nécessaire */
+}
+
+.gear-icon {
+  display: inline-block;
+  font-size: 2em; /* Agrandir l'emoji */
+  transition: transform 0.3s ease;
+}
+
+.settings-button:hover .gear-icon {
+  transform: rotate(360deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 40px; /* Ajustez cette valeur pour positionner le menu en dessous de l'icône */
+  left: 0; /* Aligne le coin supérieur gauche du menu avec le début de l'icône */
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+[data-theme="dark"] .dropdown-menu {
+  background: black;
+}
+.dropdown-label {
+  display: block;
+  white-space: nowrap; /* Empêche le retour à la ligne */
+}
+
+.dropdown-menu input[type="range"] {
+  width: 100%;
+  margin-top: 5px; /* Ajoute un peu d'espace au-dessus du slider */
+}
+
+.dropdown-menu span {
+  display: block;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.theme-doc-sidebar-container.docSidebarContainer_S51O {
+  min-height: 100vh;
+}

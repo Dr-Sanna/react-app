@@ -10,7 +10,7 @@ import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
 
-const CasCliniquesComponent = () => {
+const CasCliniquesComponent = ({ fontSize }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { casCliniques, isLoading } = useContext(DataContext);
@@ -85,7 +85,7 @@ const CasCliniquesComponent = () => {
           selectedKey={selectedItem?.id?.toString() || ""}
           onSelectionChange={handleSelectionChange}
         />
-        <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
+        <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`} style={{ fontSize: `${fontSize}%` }}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             {selectedItem ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>

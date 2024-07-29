@@ -11,7 +11,7 @@ import { useSidebarContext } from './SidebarContext';
 import { fetchSousMatiereByPath, fetchCoursData } from "./api";
 import { preloadImage } from './utils';
 
-const CoursComponent = () => {
+const CoursComponent = ({ fontSize }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { cours, setCours, setIsCoursLoading } = useContext(DataContext);
@@ -21,7 +21,6 @@ const CoursComponent = () => {
   const [initialLoading, setInitialLoading] = useState(true);
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  //const matierePath = pathSegments[0];//
   const sousMatierePath = pathSegments[1];
   const coursTitre = pathSegments.length >= 3 ? pathSegments[2] : "";
   const partieTitre = pathSegments.length >= 4 ? pathSegments[3] : "";
@@ -142,7 +141,7 @@ const CoursComponent = () => {
           selectedKey={selectedItem?.id?.toString() || ""}
           onSelectionChange={(selectedCoursTitle) => handleSelectionChange(selectedCoursTitle, true)}
         />
-        <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`}>
+        <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`} style={{ fontSize: `${fontSize}%` }}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
             <BreadcrumbsComponent
               currentPath={location.pathname}
