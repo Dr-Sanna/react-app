@@ -961,10 +961,7 @@ table thead tr {
     border-bottom: 2px solid var(--ifm-table-border-color)
 }
 
-table thead,
-table tr:nth-child(2n+1) {
-    background-color: var(--ifm-table-stripe-background)
-}
+
 
 table tr {
     background-color: var(--ifm-table-background);
