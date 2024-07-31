@@ -72,26 +72,7 @@ body {
 /* CSS pour supprimer l'espace après les titres h4 dans un tableau */
 
 
-[data-theme="dark"] table {
-  box-shadow: none !important; /* Ombre nette en bas et à droite */
 
-}
-
-td h4 {
-  margin: 0;
-  font-size: 100% !important;
-  font-weight: bold;
-  text-transform: uppercase !important;
-  text-align: center;
-  
-}
-
-[data-theme="dark"] td:has(h4) {
-  background-color: #193c47 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-}
-td:has(h4) {
-  background-color: #e6f6fc !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-}
 
 td p:last-child,
 td ul:last-child {
@@ -119,24 +100,7 @@ td ul li::before {
 }
 
 
-td {
-  font-size: 85%; /* Réduit la taille du texte de 20% */
-  padding: 7px !important;
 
-}
-
-[data-theme="dark"] td:has(h3) {
-  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-}
-
-
-
-td h3 {
-  margin: 0 !important;
-  font-size: 120% !important;
-  text-align: center;
-  font-weight: bold;
-}
 
 
 figure.image {
@@ -252,11 +216,20 @@ ul ul ul {
 
 table {
   width: fit-content !important; /* Ajuste la largeur au contenu */
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 
+  1px 1px 2px rgba(0, 0, 0, 0.15), /* Ombre externe légère */
+  inset 0 0 0 1px #ccc; /* Ombre interne simulant une bordure */
   overflow: hidden; /* Assure que les bords du contenu sont coupés pour s'adapter aux coins arrondis */
   display: block; /* Pour ajuster la largeur au contenu */
   margin-top: 20px;
   margin-bottom: 25px !important;
+  border-collapse: separate !important;
+  border-spacing: 2px !important;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  background: white;
 }
 
 
@@ -265,7 +238,7 @@ table tr:nth-child(2n) {
 }
 
 table tr:nth-child(2n+1) {
-  background-color: rgb(243, 243, 243); /* Blanc pour les lignes paires */
+  background-color: rgb(241, 241, 241); /* Blanc pour les lignes paires */
 }
 
 [data-theme="dark"] table tr:nth-child(2n+1) {
@@ -275,46 +248,59 @@ table tr:nth-child(2n+1) {
 [data-theme="dark"] table tr:nth-child(2n) {
   background-color: #1a1a1a; /* Plus sombre pour les lignes paires */
 }
-table {
-  border-collapse: separate !important;
-  border-spacing: 3px !important;
-  border: 1px solid #ccc !important;
-  border-top-left-radius: 8px !important;
-  border-top-right-radius: 8px !important;
-  overflow: hidden !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  background: white;
-}
 
 table tr:first-child td:first-child {
-  border-top-left-radius: 8px !important;
+  border-top-left-radius: 7px !important;
 }
 
 table tr:first-child td:last-child {
-  border-top-right-radius: 8px !important;
+  border-top-right-radius: 7px !important;
 }
 
-table  td {
+td {
+  font-size: 85%; /* Réduit la taille du texte de 20% */
+  padding: 7px !important;
   border: 1px solid transparent !important; 
+}
+
+td h3 {
+  margin: 0 !important;
+  font-size: 120% !important;
+  text-align: center;
+  font-weight: bold;
 }
 
 td:has(h3) {
   background-color: #c4eafb !important; /* Ou la couleur de fond souhaitée pour ces cellules */
   border: 1px solid transparent !important;
-  box-shadow: 0 0 0 0.5px white !important;
 }
+
+[data-theme="dark"] td:has(h3) {
+  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+}
+
+td h4 {
+  margin: 0;
+  font-size: 100% !important;
+  font-weight: bold;
+  text-transform: uppercase !important;
+  text-align: center;
+  
+}
+
 td:has(h4) {
+  background-color: #e6f6fc !important; /* Ou la couleur de fond souhaitée pour ces cellules */
   border: 1px solid transparent !important;
-  box-shadow: 0 0 0 1.5px white !important;
 }
-[data-theme="dark"] table, td:has(h3), td:has(h4)  {
-  border: 1px solid white; 
-  background: none;
-  box-shadow: none !important;
+
+[data-theme="dark"] td:has(h4) {
+  background-color: #193c47 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
-[data-theme="dark"] table td, table th  {
-  border: 1px solid transparent !important; 
-  background: none;
-  box-shadow: none !important;
+
+[data-theme="dark"] td {
+  border: 1px solid transparent !important;
+}
+
+[data-theme="dark"] table {
+  background: black !important;
 }
