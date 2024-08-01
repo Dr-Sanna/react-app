@@ -233,13 +233,14 @@ table {
 }
 
 
-table tr:nth-child(2n) {
-  background-color: #f3f3f37e; /* Gris clair pour les lignes impaires */
+table td {
+  background-color: #eeeaea7e; /* Gris clair pour les lignes impaires */
+}
+[data-theme="dark"] table td {
+  background-color: #2a2a2a; /* Gris clair pour les lignes impaires */
 }
 
-table tr:nth-child(2n+1) {
-  background-color: rgb(241, 241, 241); /* Blanc pour les lignes paires */
-}
+
 
 [data-theme="dark"] table tr:nth-child(2n+1) {
   background-color: #2a2a2a; /* Gris foncé pour les lignes impaires */
@@ -271,7 +272,7 @@ td h3 {
 }
 
 td:has(h3) {
-  background-color: #c4eafb !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  background-color: #bae7fd !important; /* Ou la couleur de fond souhaitée pour ces cellules */
   border: 1px solid transparent !important;
 }
 
@@ -289,7 +290,7 @@ td h4 {
 }
 
 td:has(h4) {
-  background-color: #e6f6fc !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  background-color: #def4fc !important; /* Ou la couleur de fond souhaitée pour ces cellules */
   border: 1px solid transparent !important;
 }
 

@@ -52,7 +52,7 @@
 .cardContainer_Uewx {
   display: block;
   overflow: hidden;
-  max-height: 9em; /* Three lines with line-height of 1.5em */
+  max-height: 11em; /* Three lines with line-height of 1.5em */
   line-height: 1.5em; /* Line height to calculate the max-height for three lines */
 }
 
