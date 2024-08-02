@@ -223,45 +223,18 @@ table {
   display: block; /* Pour ajuster la largeur au contenu */
   margin-top: 20px;
   margin-bottom: 25px !important;
-  border-collapse: separate !important;
+  border-collapse: collapse !important;
   border-spacing: 2px !important;
-  border-top-left-radius: 8px !important;
-  border-top-right-radius: 8px !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+border-radius: 8px;
   background: white;
 }
 
 
-table td {
-  background-color: #eeeaea7e; /* Gris clair pour les lignes impaires */
-}
-[data-theme="dark"] table td {
-  background-color: #2a2a2a; /* Gris clair pour les lignes impaires */
-}
-
-
-
-[data-theme="dark"] table tr:nth-child(2n+1) {
-  background-color: #2a2a2a; /* Gris foncé pour les lignes impaires */
-}
-
-[data-theme="dark"] table tr:nth-child(2n) {
-  background-color: #1a1a1a; /* Plus sombre pour les lignes paires */
-}
-
-table tr:first-child td:first-child {
-  border-top-left-radius: 7px !important;
-}
-
-table tr:first-child td:last-child {
-  border-top-right-radius: 7px !important;
-}
-
 td {
   font-size: 85%; /* Réduit la taille du texte de 20% */
   padding: 7px !important;
-  border: 1px solid transparent !important; 
+  background-color: #f7f7f7; /* Gris clair pour les lignes impaires */
+
 }
 
 td h3 {
@@ -269,31 +242,57 @@ td h3 {
   font-size: 120% !important;
   text-align: center;
   font-weight: bold;
-}
-
-td:has(h3) {
-  background-color: #bae7fd !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-  border: 1px solid transparent !important;
-}
-
-[data-theme="dark"] td:has(h3) {
-  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  color: whitesmoke;
 }
 
 td h4 {
   margin: 0;
-  font-size: 100% !important;
+  font-size: 95% !important;
   font-weight: bold;
   text-transform: uppercase !important;
   text-align: center;
-  
+  color:#1a1a1ae4;
+}
+
+td h1 {
+  margin: 0 !important;
+  font-size: 95% !important;
+  font-weight: bold;
+
+  text-align: center;
+
+}
+
+td:has(h1) {
+  background-color: rgb(236, 234, 234) !important; /* Bleu très pâle mais distinct pour les sous-titres */
+}
+
+td:has(h3) {
+  background-color: var(--ifm-color-primary) !important; /* Bleu clair avec un contraste modéré */
+  border: 1px solid whitesmoke !important;
 }
 
 td:has(h4) {
-  background-color: #def4fc !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-  border: 1px solid transparent !important;
+  background-color: var(--ifm-color-secondary-dark) !important; /* Bleu très pâle mais distinct pour les sous-titres */
+  border: 1px solid rgb(237, 237, 237) !important;
 }
 
+[data-theme="dark"] table td {
+  background-color: #2a2a2a; /* Gris clair pour les lignes impaires */
+  border: 1px solid black !important;
+}
+
+[data-theme="dark"] td:has(h1) {
+  background-color: #193c47 !important; /* Bleu très pâle mais distinct pour les sous-titres */
+}
+
+[data-theme="dark"] td h4 {
+  color: white !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+}
+[data-theme="dark"] td:has(h3) {
+  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  border: 1px solid black !important;
+}
 [data-theme="dark"] td:has(h4) {
   background-color: #193c47 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
