@@ -130,14 +130,17 @@ td figure.image > div {
 }
 
 body {
-  counter-reset: h2counter;
+  counter-reset: h2counter; /* Initialise le compteur h2 */
 }
+
 h2 {
-  counter-increment: h2counter;
+  counter-increment: h2counter; /* Incrémente le compteur h2 */
 }
+
 h2::before {
-  content: counter(h2counter) ". ";
+  content: counter(h2counter) ". "; /* Affiche le compteur h2 avant le h2 */
 }
+
 
 ul {
   margin-bottom: 20px !important;
@@ -215,34 +218,32 @@ ul ul ul {
 }
 
 table {
-  width: fit-content !important; /* Ajuste la largeur au contenu */
+  width: fit-content !important;
   box-shadow: 
-  1px 1px 2px rgba(0, 0, 0, 0.15), /* Ombre externe légère */
-  inset 0 0 0 1px #ccc; /* Ombre interne simulant une bordure */
-  overflow: hidden; /* Assure que les bords du contenu sont coupés pour s'adapter aux coins arrondis */
-  display: block; /* Pour ajuster la largeur au contenu */
+    1px 1px 2px rgba(0, 0, 0, 0.1), /* Ombre externe adoucie */
+    inset 0 0 0 1px #dcdcdc; /* Ombre interne plus douce simulant une bordure */
+  overflow: hidden;
+  display: block;
   margin-top: 20px;
   margin-bottom: 25px !important;
   border-collapse: collapse !important;
   border-spacing: 2px !important;
-border-radius: 8px;
+  border-radius: 8px;
   background: white;
 }
 
-
 td {
-  font-size: 85%; /* Réduit la taille du texte de 20% */
+  font-size: 85%;
   padding: 7px !important;
-  background-color: #f7f7f7; /* Gris clair pour les lignes impaires */
-
+  background-color: white;
 }
 
 td h3 {
-  margin: 0 !important;
+  margin: 2px !important;
   font-size: 120% !important;
   text-align: center;
   font-weight: bold;
-  color: whitesmoke;
+  color: #374151; /* Gris foncé doux */
 }
 
 td h4 {
@@ -251,43 +252,44 @@ td h4 {
   font-weight: bold;
   text-transform: uppercase !important;
   text-align: center;
-  color:#1a1a1ae4;
-}
-
-
-
-td:has(h3) {
-  background-color: var(--ifm-color-primary) !important; /* Bleu clair avec un contraste modéré */
-  border: 1px solid whitesmoke !important;
-}
-
-td:has(h4) {
-  background-color: var(--ifm-color-secondary-dark) !important; /* Bleu très pâle mais distinct pour les sous-titres */
-  border: 1px solid rgb(237, 237, 237) !important;
+  color: #6B7280; /* Doux gris bleuté */
 }
 
 td h5 {
   margin: 0 !important;
   font-size: 95% !important;
   font-weight: bold;
-
   text-align: center;
+  color: #4B5563; /* Gris légèrement foncé */
+}
 
+td:has(h3) {
+  background-color: #E0E7FF !important; /* Bleu très pâle mais distinct pour les titres principaux */
+}
+
+td:has(h4) {
+  background-color: #F3F4F6 !important; /* Gris très clair pour les sous-titres */
 }
 
 td:has(h5) {
-  background-color: rgb(236, 234, 234) !important; /* Bleu très pâle mais distinct pour les sous-titres */
+  background-color: #F9FAFB !important; /* Gris très clair pour distinction subtile */
 }
+
 
 [data-theme="dark"] table td {
   background-color: #2a2a2a; /* Gris clair pour les lignes impaires */
   border: 1px solid black !important;
 }
 
-
+[data-theme="dark"] td h3 {
+  color: rgb(227, 227, 227) !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+}
 
 [data-theme="dark"] td h4 {
-  color: white !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  color: rgb(227, 227, 227) !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+}
+[data-theme="dark"] td h5 {
+  color: rgb(227, 227, 227) !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 [data-theme="dark"] td:has(h3) {
   background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */

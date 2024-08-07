@@ -66,6 +66,11 @@ export const fetchCoursData = async (pathname) => {
     url = `${API_URL}/api/anatomie-tete-et-cous?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition`;
     if (pathname.includes('vaisseaux-et-nerfs')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+    }
+  } else if (pathname.includes('physiologie-clinique-orofaciale')) {
+    url = `${API_URL}/api/physiologies?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition`;
+    if (pathname.includes('la-sensibilite-parodontale')) {
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }  
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
     url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&populate[medecine_orale_parties][populate][test][populate]=*&populate[QCM][populate]=proposition&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
