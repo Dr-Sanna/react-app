@@ -114,7 +114,7 @@ html {
     --ifm-color-secondary-light: #eef0f2;
     --ifm-color-secondary-lighter: #f1f2f5;
     --ifm-color-secondary-lightest: #f5f6f8;
-    --ifm-color-secondary-contrast-background: #f7f7f7;
+    --ifm-color-secondary-contrast-background: white /*#f7f7f7*/;
     --ifm-color-secondary-contrast-foreground: #474748;
     --ifm-color-success-dark: #009400;
     --ifm-color-success-darker: #008b00;
