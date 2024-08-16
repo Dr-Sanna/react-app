@@ -47,7 +47,7 @@ export const fetchCoursData = async (pathname) => {
     }
   } else if (pathname.includes('risques-medicaux')) {
     url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image`;
-    if (pathname.includes('bilans-sanguins')) {
+    if (pathname.includes('identification-evaluation-et-principes-de-prise-en-charge-des-risques-medicaux-au-cabinet-dentaire')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } else if (pathname.includes('risque-infectieux') || pathname.includes('risque-hemorragique')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
@@ -72,6 +72,11 @@ export const fetchCoursData = async (pathname) => {
     if (pathname.includes('la-sensibilite-parodontale')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }  
+  } else if (pathname.includes('ressources-utiles')) {
+    url = `${API_URL}/api/ressources-utiles?populate[test][populate]=sous_matiere,image,test,test.image`;
+    if (pathname.includes('bilans-sanguins')) {
+      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+    } 
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
     url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&populate[medecine_orale_parties][populate][test][populate]=*&populate[QCM][populate]=proposition&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
   }
