@@ -47,7 +47,7 @@ export const fetchCoursData = async (pathname) => {
     }
   } else if (pathname.includes('risques-medicaux')) {
     url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image`;
-    if (pathname.includes('identification-evaluation-et-principes-de-prise-en-charge-des-risques-medicaux-au-cabinet-dentaire')) {
+    if (pathname.includes('identification-evaluation-et-principes-de-prise-en-charge')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } else if (pathname.includes('risque-infectieux') || pathname.includes('risque-hemorragique')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;

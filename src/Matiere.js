@@ -39,7 +39,9 @@ const Matiere = () => {
     }
   };
 
-  const sortedSousMatieres = useMemo(() => filteredSousMatieres.sort((a, b) => a.attributes.order - b.attributes.order), [filteredSousMatieres]);
+  const sortedSousMatieres = useMemo(() => {
+    return [...filteredSousMatieres].sort((a, b) => a.attributes.order - b.attributes.order);
+  }, [filteredSousMatieres]);
 
   return (
     <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} />
