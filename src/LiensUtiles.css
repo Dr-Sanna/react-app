@@ -13,12 +13,14 @@
 }
 
 .liens-utiles-item {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   flex: 0 1 calc(50% - 20px); /* Ajustement des marges pour un meilleur espacement */
   box-sizing: border-box;
   margin: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid transparent;
   border-radius: 5px;
   padding: 10px;
+  background: rgba(246, 246, 249, 0.75);
   transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Transition pour un effet de survol plus doux */
 }
 
@@ -42,8 +44,7 @@
 }
 
 .liens-utiles-item:hover {
-  background-color: #e9ecef; /* Changement de couleur au survol */
-  border-color: #28a745; /* Changement de la couleur de bordure au survol (vert) */
+  border-color: var(--ifm-color-primary); /* Changement de la couleur de bordure au survol (vert) */
   color: #000; /* Couleur du texte au survol */
 }
 
@@ -66,6 +67,6 @@
 
 [data-theme="dark"] .liens-utiles-item:hover {
   background-color: #495057; /* Fond de survol légèrement différent pour le mode sombre */
-  border-color: #28a745; /* Changement de la couleur de bordure au survol pour le mode sombre (vert) */
+  border-color: var(--ifm-color-primary); /* Changement de la couleur de bordure au survol pour le mode sombre (vert) */
   color: #f8f9fa; /* Couleur du texte au survol pour le mode sombre */
 }
