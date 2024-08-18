@@ -50,7 +50,7 @@ const HomePage = ({ fontSize }) => {
               <CustomToothLoader />
             ) : (
               matieres ? (
-                <DisplayItems items={matieres} onClickItem={handleMatiereClick} />
+                <DisplayItems items={matieres} onClickItem={handleMatiereClick} isMatiere={true} />
               ) : (
                 <div>Loading...</div>
               )

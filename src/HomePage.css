@@ -1,13 +1,13 @@
-
-
 @keyframes shake {
     0%, 100% { transform: rotate(0); }
     25% { transform: rotate(-5deg); }
     50% { transform: rotate(5deg); }
     75% { transform: rotate(-5deg); }
 }
+
+/* Conteneur principal */
 .item-menu-container {
-    background: white;
+    background: rgba(246, 246, 249, 0.65);
     padding: 15px 60px;
     min-width: 100%;
     min-height: 90vh;
@@ -16,28 +16,87 @@
 [data-theme="dark"] .item-menu-container {
     background: rgb(27, 27, 29);
 }
-
-.item-menu {
-    background: rgba(246, 246, 249, 0.75);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+.item-menu-matiere {
+    border: 1px solid transparent;
 }
-[data-theme="dark"] .item-menu {
+/* Effet d'animation pour le menu matière */
+.item-menu-matiere:hover {
+    cursor: pointer;
+
+}
+
+.item-menu-matiere:hover .image-menu-matiere {
+    animation: shake 0.4s ease;
+}
+
+/* Carte sous-matière */
+.item-menu-sous-matiere {
+    background: white;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    transition: 200ms ease-in-out;
+    overflow: hidden; /* Pour s'assurer que l'image ne dépasse pas des bords */
+    position: relative; /* Pour positionner l'image absolument à l'intérieur */
+    text-align: center;
+    margin: 10px;
+    box-sizing: border-box;
+    padding: 0px;
+    border-radius: 5px;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid lightgray;
+}
+
+[data-theme="dark"] .item-menu-sous-matiere {
     background: rgb(36, 36, 39);
 }
 
-.text-menu {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    background: rgb(240, 240, 252);
+.item-menu-sous-matiere:hover {
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+    transition: 200ms ease-in-out;
+    cursor: pointer;
+    
 }
-[data-theme="dark"] .text-menu {
+.item-menu-sous-matiere:hover .image-menu-sous-matiere{
+opacity: 1;
+transition: 200ms ease-in-out;
+}
+[data-theme="dark"] .item-menu-sous-matiere:hover {
     background: rgb(64, 64, 69);
 }
-.item-menu:hover{
-    cursor: pointer;
-    }
 
-    
-    .item-menu:hover .image-menu {
-        animation: shake 0.4s ease;
-    }
+/* Image qui occupe tout l'espace de la carte */
+.image-menu-sous-matiere {
+    width: 100%;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    transition: 200ms ease-in-out;
+}
+.image-menu-matiere {
+    padding: 5px;
+}
+
+.image-menu-sous-matiere img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Assure que l'image couvre toute la carte */
+}
+
+/* Texte de la sous-matière */
+.text-menu-sous-matiere {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    line-height: 1.1;
+    align-items: center;
+    border-top: 1px solid lightgray;
+}
+
+.text-menu-sous-matiere p {
+    margin: 0;
+}

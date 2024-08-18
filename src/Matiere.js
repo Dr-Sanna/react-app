@@ -44,7 +44,7 @@ const Matiere = () => {
   }, [filteredSousMatieres]);
 
   return (
-    <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} />
+    <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} isMatiere={false} />
   );
 };
 

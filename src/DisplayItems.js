@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-const DisplayItems = ({ items, onClickItem }) => {
+const DisplayItems = ({ items, onClickItem, isMatiere }) => {
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
@@ -18,44 +18,43 @@ const DisplayItems = ({ items, onClickItem }) => {
   };
 
   return (
-    <div 
-    className="item-menu-container">
+    <div className="item-menu-container">
       <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'center',
-          margin: '-10px 0', // Assure un espacement uniforme
+          margin: '-10px 0',
         }}
       >
         {sortedItems.map(item => (
           <div
-          className="item-menu"
+            className={`item-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
             style={{
               ...getItemStyle(),
               textAlign: 'center',
-              margin: '10px', // Espacement entre les cases
+              margin: '10px',
               boxSizing: 'border-box',
               padding: '0px',
               borderRadius: '5px',
-              width: '180px', // Taille fixe des cases
-              height: '180px', // Hauteur fixe des cases
+              width: '180px',
+              height: '180px',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between', // Espace entre l'image et le texte
+              justifyContent: 'space-between',
             }}
             key={item.id}
             onClick={() => onClickItem(item)}
           >
             <div
-              className="image-menu"
-              style={{
+            className={`image-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
+            style={{
                 width: '100%',
-                height: '130px',
+                height: '120px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '5px',
+                
               }}
             >
               {item.attributes.image && item.attributes.image.data && (
@@ -70,13 +69,11 @@ const DisplayItems = ({ items, onClickItem }) => {
               )}
             </div>
             <div
-              className="text-menu"
-              style={{
-                flex: 1, // Assure que le texte prend l'espace restant
+            className={`text-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
+            style={{
+                flex: 1,
                 display: 'flex',
-                alignItems: 'center',
                 justifyContent: 'center',
-                lineHeight: '1.1',
                 
               }}
             >
@@ -89,8 +86,6 @@ const DisplayItems = ({ items, onClickItem }) => {
       </div>
     </div>
   );
-  
-  
 };
 
 export default DisplayItems;
