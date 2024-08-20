@@ -7,6 +7,7 @@ import { toUrlFriendly } from './config';
 const Matiere = () => {
   const { matieres, sousMatieres, setCours } = useContext(DataContext);
   const [filteredSousMatieres, setFilteredSousMatieres] = useState([]);
+  const [matiereOriginalTitle, setMatiereOriginalTitle] = useState(''); // Stocker le titre original
   const navigate = useNavigate();
   const { matiereTitle } = useParams();
 
@@ -16,6 +17,7 @@ const Matiere = () => {
     if (matieres.length > 0 && sousMatieres.length > 0) {
       const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === matiereTitle);
       if (matiere) {
+        setMatiereOriginalTitle(matiere.attributes.titre); // Stocker le titre original
         const relatedSousMatieres = sousMatieres.filter(sm => sm.attributes.matiere.data.id === matiere.id);
         setFilteredSousMatieres(relatedSousMatieres);
       }
@@ -44,8 +46,14 @@ const Matiere = () => {
   }, [filteredSousMatieres]);
 
   return (
-    <DisplayItems items={sortedSousMatieres} onClickItem={handleSousMatiereClick} isMatiere={false} />
+    <DisplayItems
+      items={sortedSousMatieres}
+      onClickItem={handleSousMatiereClick}
+      isMatiere={false}
+      sousMatiereTitle={matiereOriginalTitle}  // Passez le titre original ici
+    />
   );
 };
 
 export default React.memo(Matiere);
+

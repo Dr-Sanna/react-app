@@ -7,14 +7,17 @@
 .cardContainer_Uewx {
   display: block;
   width: calc(33.333% - 16px);
-  background: #fff;
+  
   border: 1px solid #eaeaea;
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #e0e7ff84 !important;
 }
-
+.cardContainer_Uewx h2{
+  background: transparent !important;
+}
 .cardContainer_Uewx:hover {
 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -33,7 +36,7 @@
 
 /* Styles pour le mode sombre */
 [data-theme="dark"] .cardContainer_Uewx {
-  background: #333;
+  background: #47484b !important;
   border: 1px solid #555;
 }
 

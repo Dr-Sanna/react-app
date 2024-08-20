@@ -104,7 +104,7 @@ const CasCliniquesComponent = ({ fontSize }) => {
                     <div>
                       {selectedItem.attributes.test.test.map((testItem) => (
                         <div key={testItem.id}>
-                          <h3>{testItem.titre}</h3>
+                          <h4>{testItem.titre}</h4>
                           <p>{testItem.enonce}</p>
                           {testItem.image && (
                             <img src={testItem.image.url} alt={testItem.titre} />

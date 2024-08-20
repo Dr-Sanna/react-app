@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-const DisplayItems = ({ items, onClickItem, isMatiere }) => {
+const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
@@ -9,7 +9,7 @@ const DisplayItems = ({ items, onClickItem, isMatiere }) => {
 
   const getItemStyle = () => {
     if (isDesktop) {
-      return { flex: '1 0 20%', maxWidth: '20%' };
+      return { flex: '1 0 18%', maxWidth: '18%' };
     } else if (isTablet) {
       return { flex: '1 0 33%', maxWidth: '33%' };
     } else {
@@ -19,12 +19,18 @@ const DisplayItems = ({ items, onClickItem, isMatiere }) => {
 
   return (
     <div className="item-menu-container">
+      {/* Titre de la sous-matière */}
+      {sousMatiereTitle && (
+        <h1 style={{  marginBottom: '20px' }}>
+          {sousMatiereTitle}
+        </h1>
+      )}
+      
       <div
+      className={`quadrillage-${isMatiere ? 'matiere' : 'sous-matiere'}`}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'center',
-          margin: '-10px 0',
         }}
       >
         {sortedItems.map(item => (
@@ -33,7 +39,7 @@ const DisplayItems = ({ items, onClickItem, isMatiere }) => {
             style={{
               ...getItemStyle(),
               textAlign: 'center',
-              margin: '10px',
+              
               boxSizing: 'border-box',
               padding: '0px',
               borderRadius: '5px',
@@ -47,14 +53,13 @@ const DisplayItems = ({ items, onClickItem, isMatiere }) => {
             onClick={() => onClickItem(item)}
           >
             <div
-            className={`image-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
-            style={{
+              className={`image-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
+              style={{
                 width: '100%',
                 height: '120px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                
               }}
             >
               {item.attributes.image && item.attributes.image.data && (
@@ -69,12 +74,11 @@ const DisplayItems = ({ items, onClickItem, isMatiere }) => {
               )}
             </div>
             <div
-            className={`text-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
-            style={{
+              className={`text-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
+              style={{
                 flex: 1,
                 display: 'flex',
                 justifyContent: 'center',
-                
               }}
             >
               <p style={{ margin: 0 }}>

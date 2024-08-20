@@ -154,7 +154,7 @@ const CoursComponent = ({ fontSize }) => {
                 onSelection={(cour) => handleSelectionChange(cour.attributes?.test?.titre, null)}
               />
             ) : selectedItem ? (
-              <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
+              <div className="docItemContainer_RhpI">
                 <CoursDetailComponent
                   key={selectedItem.id}
                   selectedItem={selectedItem}
