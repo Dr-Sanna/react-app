@@ -9,7 +9,7 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
 
   const getItemStyle = () => {
     if (isDesktop) {
-      return { flex: '1 0 18%', maxWidth: '18%' };
+      return { flex: '1 0 19%', maxWidth: '19%' };
     } else if (isTablet) {
       return { flex: '1 0 33%', maxWidth: '33%' };
     } else {
@@ -39,12 +39,10 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
             style={{
               ...getItemStyle(),
               textAlign: 'center',
-              
               boxSizing: 'border-box',
               padding: '0px',
               borderRadius: '5px',
-              width: '180px',
-              height: '180px',
+
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -56,7 +54,6 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
               className={`image-menu-${isMatiere ? 'matiere' : 'sous-matiere'}`}
               style={{
                 width: '100%',
-                height: '120px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -81,7 +78,7 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
                 justifyContent: 'center',
               }}
             >
-              <p style={{ margin: 0 }}>
+              <p>
                 {item.attributes.titre}
               </p>
             </div>
