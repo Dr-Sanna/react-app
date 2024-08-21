@@ -74,7 +74,7 @@ export const fetchCoursData = async (pathname) => {
     }  
   } else if (pathname.includes('notions-elementaires')) {
     url = `${API_URL}/api/notions-elementaires?populate[test][populate]=sous_matiere,image,test,test.image`;
-    if (pathname.includes('bilans-sanguins')) {
+    if (pathname.includes('bilans-sanguins') || pathname.includes('histo-embryologie')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } 
   } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
