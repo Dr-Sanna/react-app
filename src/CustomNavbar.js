@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { DarkModeIcon, LightModeIcon } from "./IconComponents";
-import Search from "./Search";
+{/* import Search from "./Search"; */}
 import { useToggle } from "./ToggleContext";
 
 const CustomNavbar = ({ setFontSize }) => {
