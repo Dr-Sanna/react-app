@@ -161,7 +161,10 @@ const CustomNavbar = ({ setFontSize }) => {
           </div>
         </div>
       </div>
-      <Search />
+      <div className="espace-a-enlever">
+      
+    {/* <Search /> */}
+    </div>
     </nav>
   );
 };

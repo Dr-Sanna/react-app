@@ -18,19 +18,15 @@
     
 }
 
-
 .quadrillage-matiere{
     justify-content: center;
 padding-left: 90px;
 padding-right: 90px;
 }
+
 .quadrillage-sous-matiere{
-
 padding-left: 30px;
-
 }
-
-
 
 [data-theme="dark"] .item-menu-container {
     background: rgb(27, 27, 29);
@@ -39,7 +35,7 @@ padding-left: 30px;
     border: 1px solid transparent;
     margin: 10px;
     width: 160px;
-    height: 200px;
+    height: 180px;
 }
 
 .item-menu-matiere:hover {
@@ -50,20 +46,21 @@ padding-left: 30px;
     animation: shake 0.4s ease;
 }
 
-.image-menu-matiere {
-    
-    height: 120px;
+.image-menu-matiere img {
+    height: 110px;
     overflow: hidden;
     transition: opacity 0.3s ease;
-
 }
 
 .text-menu-matiere {
     padding-top:10px;
 }
 
+.text-menu-matiere p {
+    padding: 0;
+}
+
 .item-menu-sous-matiere {
-    
     transition: 200ms ease-in-out;
     overflow: hidden;
     position: relative; /* Assurez-vous que l'image et le texte soient bien positionnés */

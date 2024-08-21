@@ -72,8 +72,8 @@ export const fetchCoursData = async (pathname) => {
     if (pathname.includes('la-sensibilite-parodontale')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }  
-  } else if (pathname.includes('ressources-utiles')) {
-    url = `${API_URL}/api/ressources-utiles?populate[test][populate]=sous_matiere,image,test,test.image`;
+  } else if (pathname.includes('notions-elementaires')) {
+    url = `${API_URL}/api/notions-elementaires?populate[test][populate]=sous_matiere,image,test,test.image`;
     if (pathname.includes('bilans-sanguins')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } 

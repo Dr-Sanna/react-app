@@ -2,7 +2,9 @@
   .docMainContainer_EfwR {
   background: rgba(246, 246, 249, 0.65);
   }
-
+.espace-a-enlever {
+  margin-left: 20px;
+}
 [data-theme="dark"] .docMainContainer_EfwR {
     background: #1D1D1D;
     }
