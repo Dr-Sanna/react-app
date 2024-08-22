@@ -46,7 +46,7 @@ export const fetchCoursData = async (pathname) => {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     }
   } else if (pathname.includes('risques-medicaux')) {
-    url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image`;
+    url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image&populate[risques_medicaux_parties][populate][test][populate]=*`;
     if (pathname.includes('identification-evaluation-et-principes-de-prise-en-charge')) {
       url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
     } else if (pathname.includes('risque-infectieux') || pathname.includes('risque-hemorragique') || pathname.includes('risque-medicamenteux-du-a-une-prescription') || pathname.includes('risque-anesthesique') || pathname.includes('risques-physiologiques') || pathname.includes('risques-dus-a-une-maladie') || pathname.includes('risques-dus-a-un-traitement')) {

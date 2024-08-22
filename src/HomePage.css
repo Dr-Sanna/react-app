@@ -65,9 +65,7 @@ padding-left: 30px;
     overflow: hidden;
     position: relative; /* Assurez-vous que l'image et le texte soient bien positionnés */
     text-align: center;
-    margin: 10px;
     box-sizing: border-box;
-    border-radius: 20px !important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -76,6 +74,7 @@ padding-left: 30px;
         1px 1px 2px rgba(0, 0, 0, 0.1);
     width: 160px;
     height: 160px;
+    
 }
 
 .image-menu-sous-matiere {
@@ -89,7 +88,6 @@ padding-left: 30px;
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s ease;
-    border-radius: 20px !important;
 }
 
 .text-menu-sous-matiere {
@@ -104,7 +102,6 @@ padding-left: 30px;
     backdrop-filter: blur(1.5px); /* Effet de flou */
     bottom: 0; /* Positionne le conteneur en bas de la page */
  line-height: 1.1;
- border-radius: 20px;
  transition: 0.3s ease-in-out;
 }
 
@@ -114,7 +111,6 @@ padding-left: 30px;
 }
 
 .item-menu-sous-matiere:hover .text-menu-sous-matiere {
-    border-radius: 0px;;
     backdrop-filter: blur(3px);
     background-color: rgba(0, 0, 0, 0.5);
     transition: 0.3s ease-in-out;
@@ -122,13 +118,13 @@ padding-left: 30px;
 
 
 [data-theme="dark"] .item-menu-sous-matiere {
-    background: rgb(32, 32, 34);
-    border: 1px solid lightgray;
+    background: rgb(47, 47, 50);
+    border: 1px solid rgba(255, 255, 255, 0);
+
 }
 
 .item-menu-sous-matiere:hover {
     transform: scale(1.05);
-    
     cursor: pointer;
 }
 
@@ -142,10 +138,6 @@ transition: 200ms ease-in-out;
 }
 
 
-
 .item-menu-sous-matiere:hover .image-menu-sous-matiere img {
     transform: scale(1.1);
 }
-
-
-

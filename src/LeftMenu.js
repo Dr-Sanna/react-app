@@ -26,7 +26,7 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
     const newPath = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}`;
     if (location.pathname !== newPath) {
       navigate(newPath);
-      onSelectionChange(item.label, null); // Mise à jour des props avec le cours sélectionné
+      onSelectionChange(item.label, null); // Utilisation du label ici
     }
     window.scrollTo(0, 0);
   };
@@ -58,12 +58,12 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
 
   const isSelectedCoursOrPartie = (item) => {
     const itemKey = toUrlFriendly(item.label);
-    return selectedKey === item.key || cours === itemKey;
+    return selectedKey === item.label || cours === itemKey; // Comparaison avec label
   };
 
-  const isSelectedPart = (part) => {
-    const partKey = toUrlFriendly(part);
-    return pathSegments.length > 3 && pathSegments[3] === partKey;
+  const isSelectedPart = (part, item) => {
+    const partKey = `${toUrlFriendly(item.label)}/${toUrlFriendly(part)}`;
+    return pathSegments.length > 3 && `${pathSegments[2]}/${pathSegments[3]}` === partKey;
   };
 
   useEffect(() => {
@@ -76,7 +76,6 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
   }, [selectedKey]);
 
   useEffect(() => {
-    // Set the height for the expanded items based on selection
     Object.keys(expandedItems).forEach(key => {
       const listElement = listRef.current[key];
       if (expandedItems[key] && listElement) {
@@ -152,9 +151,9 @@ const LeftMenu = ({ menuItems, selectedKey, onSelectionChange }) => {
                           >
                             <a 
                               href={`/${matiere}/${sousMatiere}/${toUrlFriendly(item.label)}/${toUrlFriendly(part)}`}
-                              className={`menu__link ${isSelectedPart(part) ? 'menu__link--active' : ''}`}
+                              className={`menu__link ${isSelectedPart(part, item) ? 'menu__link--active' : ''}`}
                               onClick={(event) => handlePartClick(part, item, event)}
-                              aria-current={isSelectedPart(part) ? 'page' : undefined}
+                              aria-current={isSelectedPart(part, item) ? 'page' : undefined}
                             >
                               {part}
                             </a>

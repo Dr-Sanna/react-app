@@ -41,8 +41,8 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
               textAlign: 'center',
               boxSizing: 'border-box',
               padding: '0px',
-              borderRadius: '5px',
-
+              borderRadius: '20px',
+              margin:'10px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
