@@ -35,7 +35,7 @@ padding-left: 30px;
     border: 1px solid transparent;
     margin: 10px;
     width: 160px;
-    height: 180px;
+    height: 170px;
 }
 
 .item-menu-matiere:hover {
@@ -47,18 +47,73 @@ padding-left: 30px;
 }
 
 .image-menu-matiere img {
-    height: 110px;
+    height: 120px;
     overflow: hidden;
     transition: opacity 0.3s ease;
 }
 
+/* Styles de base pour le conteneur de texte */
 .text-menu-matiere {
-    padding-top:10px;
+    display: inline-flex; /* Utiliser flex pour centrer verticalement */
+    align-items: center; /* Centrer verticalement */
+    padding: 0 1.5em; /* Ajuster l'espace entre les crochets et le texte */
+    font-size: 1rem; /* Ajustez la taille de la police si nécessaire */
+    font-family: "Raleway", Arial, sans-serif;
 }
 
+/* Styles de base pour le texte */
 .text-menu-matiere p {
-    padding: 0;
+    margin: 0; /* Réinitialiser les marges pour éviter les décalages */
+    z-index: 1; /* Assurer que le texte est au-dessus des crochets */
+    transition: color 0.3s ease; /* Transition douce pour la couleur du texte */
+    white-space: nowrap; /* Empêcher le retour à la ligne du texte */
 }
+
+/* Pseudo-éléments pour ajouter les crochets */
+.text-menu-matiere::before,
+.text-menu-matiere::after {
+    content: ''; /* Nécessaire pour les pseudo-éléments */
+    font-size: 1.2rem; /* Taille des crochets, ajustez si nécessaire */
+    color: transparent; /* Rendre les crochets invisibles par défaut */
+    transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease; /* Transition douce pour la couleur, la visibilité et la translation des crochets */
+    opacity: 0; /* Rendre les crochets invisibles par défaut */
+    visibility: hidden; /* Masquer les crochets par défaut */
+    transform: translateX(0); /* Translation initiale pour le mouvement */
+}
+
+/* Ajouter les crochets avant et après le texte */
+.text-menu-matiere::before {
+    content: '['; /* Crochet gauche */
+    margin-right: 0.5em; /* Espacement entre le crochet gauche et le texte */
+    transform: translateX(0); /* Pas de translation initiale */
+}
+
+.text-menu-matiere::after {
+    content: ']'; /* Crochet droit */
+    margin-left: 0.4em; /* Espacement entre le texte et le crochet droit */
+    transform: translateX(0); /* Pas de translation initiale */
+}
+
+/* Styles au survol de .item-menu-matiere */
+.item-menu-matiere:hover .text-menu-matiere::before {
+    color: #ff5733; /* Couleur du crochet gauche au survol */
+    opacity: 1; /* Rendre le crochet gauche visible */
+    visibility: visible; /* Assurer que le crochet gauche est visible */
+    transform: translateX(5px); /* Déplacer le crochet gauche vers la droite */
+}
+
+.item-menu-matiere:hover .text-menu-matiere::after {
+    color: #ff5733; /* Couleur du crochet droit au survol */
+    opacity: 1; /* Rendre le crochet droit visible */
+    visibility: visible; /* Assurer que le crochet droit est visible */
+    transform: translateX(-5px); /* Déplacer le crochet droit vers la gauche */
+}
+
+.item-menu-matiere:hover .text-menu-matiere p {
+    color: #ff5733; /* Couleur du texte au survol */
+}
+
+
 
 .item-menu-sous-matiere {
     transition: 200ms ease-in-out;
