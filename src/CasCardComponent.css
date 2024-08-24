@@ -33,6 +33,11 @@ width: 100%;
   padding: 3px;
 }
 
+.image-loading img {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
 .image-loaded img {
   border-radius: 17px;
   transition: transform 0.3s ease-in-out;
