@@ -96,25 +96,34 @@ padding-left: 30px;
 
 /* Styles au survol de .item-menu-matiere */
 .item-menu-matiere:hover .text-menu-matiere::before {
-    color: #ff5733; /* Couleur du crochet gauche au survol */
+    color: var(--ifm-color-primary); /* Couleur du crochet gauche au survol */
     opacity: 1; /* Rendre le crochet gauche visible */
     visibility: visible; /* Assurer que le crochet gauche est visible */
     transform: translateX(5px); /* Déplacer le crochet gauche vers la droite */
 }
 
 .item-menu-matiere:hover .text-menu-matiere::after {
-    color: #ff5733; /* Couleur du crochet droit au survol */
+    color: var(--ifm-color-primary); /* Couleur du crochet droit au survol */
     opacity: 1; /* Rendre le crochet droit visible */
     visibility: visible; /* Assurer que le crochet droit est visible */
     transform: translateX(-5px); /* Déplacer le crochet droit vers la gauche */
 }
 
 .item-menu-matiere:hover .text-menu-matiere p {
-    color: #ff5733; /* Couleur du texte au survol */
+    color: var(--ifm-color-primary); /* Couleur du texte au survol */
 }
 
+[data-theme="dark"] .item-menu-matiere:hover .text-menu-matiere::before {
+    color: rgb(37, 193, 159); /* Couleur du crochet gauche au survol */
+}
 
+[data-theme="dark"] .item-menu-matiere:hover .text-menu-matiere::after {
+    color: rgb(37, 193, 159); /* Couleur du crochet droit au survol */
+}
 
+[data-theme="dark"] .item-menu-matiere:hover .text-menu-matiere p {
+    color: rgb(37, 193, 159); /* Couleur du texte au survol */
+}
 .item-menu-sous-matiere {
     transition: 200ms ease-in-out;
     overflow: hidden;

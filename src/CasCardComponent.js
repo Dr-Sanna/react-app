@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardMedia } from '@mui/material';
 import styled from 'styled-components';
 import { toUrlFriendly } from './config';
 import { useLocation } from 'react-router-dom';
@@ -9,8 +7,9 @@ import './CasCardComponent.css'; // Assurez-vous que ce fichier existe
 const CasCardContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-  padding-top: 8px;
+  column-gap: 16px;
+  row-gap: 16px;  /* Espace entre les colonnes */
+
 
   @media (min-width: 600px) {
     grid-template-columns: repeat(2, 1fr);
@@ -58,67 +57,33 @@ const CasCardComponent = ({ items = [], onSelection }) => {
           console.log('Rendering item:', item); // Debugging line
           const imageUrl = item?.attributes?.test?.image?.data?.attributes?.url
             ? item.attributes.test.image.data.attributes.url
-            : '/defaultImage.jpg';
+            : 'https://res.cloudinary.com/dvxgbyc6k/image/upload/v1720714800/pas_d_image_2b57135506.svg';
           const urlPourPrevisualisation = `/${matiere}/${sousMatiere}/${toUrlFriendly(item.attributes.test.titre)}`;
 
           return (
-            <motion.div
+            <div
               key={item.id}
-              style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: imageLoadedStates[index] ? 1 : 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="cas-card-container"
+              style={{ opacity: imageLoadedStates[index] ? 1 : 0 }}
             >
-              <motion.div whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
-                <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(item); }}>
-                  <Card sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    height: '0',
-                    paddingTop: '75%',
-                    position: 'relative',
-                    bgcolor: 'white',
-                    borderRadius: '10px',
-                    boxShadow: '0 1px 3px 0 rgba(0,0,0,0.2), 0 3px 4px -2px rgba(0,0,0,0.2)'
-                  }}>
-                    <div
-                      className={`image-container ${imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}`}
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                    >
-                      <CardMedia
-                        component="img"
-                        image={imageUrl}
-                        alt={item?.attributes?.test?.titre || 'Titre inconnu'}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
-                        onLoad={() => handleImageLoad(index)}
-                      />
-                    </div>
-                    <CardContent style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      width: '100%',
-                      height: '60px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                      textAlign: 'center',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '5px',
-                    }}>
-                      <h6 style={{
-                        margin: '0',
-                        width: '100%',
-                        overflow: 'hidden',
-                        whiteSpace: 'normal',
-                      }}>
-                        {item?.attributes?.test?.titre || 'Titre inconnu'}
-                      </h6>
-                    </CardContent>
-                  </Card>
-                </a>
-              </motion.div>
-            </motion.div>
+              <a href={urlPourPrevisualisation} onClick={(e) => { e.preventDefault(); onSelection(item); }}>
+                <div className="cas-card">
+                  <div
+                    className={`image-container ${imageLoadedStates[index] ? 'image-loaded' : 'image-loading'}`}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={item?.attributes?.test?.titre || 'Titre inconnu'}
+                      onLoad={() => handleImageLoad(index)}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div className="card-content">
+                    <h5>{item?.attributes?.test?.titre || 'Titre inconnu'}</h5>
+                  </div>
+                </div>
+              </a>
+            </div>
           );
         })}
       </CasCardContainer>
