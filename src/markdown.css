@@ -15,6 +15,7 @@ body {
     --ifm-h1-vertical-rhythm-top: 3;
     --ifm-h2-vertical-rhythm-top: 2.5;
     --ifm-h3-vertical-rhythm-top: 2.2;
+    --ifm-h4-vertical-rhythm-top: 1.75;
     --ifm-heading-vertical-rhythm-top: 1.5;
     --ifm-h1-vertical-rhythm-bottom: 1.25;
     --ifm-heading-vertical-rhythm-bottom: 1
@@ -57,10 +58,9 @@ h3 {
 }
 h4 {
     --ifm-h4-font-size: 1.25rem;
-    margin-top: calc(var(--ifm-vertical-rhythm-top)*var(--ifm-leading))
+    margin-top: calc(var(--ifm-h4-vertical-rhythm-top)*var(--ifm-leading))
 }
 
-.markdown>h4,
 .markdown>h5,
 .markdown>h6 {
     margin-top: calc(var(--ifm-heading-vertical-rhythm-top)*var(--ifm-leading))
