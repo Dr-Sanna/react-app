@@ -11,7 +11,7 @@
 }
 
 .qcm li:hover {
-  background-color: #f0f0f0; /* Couleur de fond au survol */
+  background-color: #e0e7ff72; /* Couleur de fond au survol */
   border-radius: 5px;
 }
 
@@ -82,7 +82,7 @@
   color: inherit; /* Couleur normale pour les corrections des propositions fausses non cochées */
 }
 .qcm-propositions {
-  background-color: #f9f9f9; /* Couleur de fond pour les propositions */
+  background-color: #e0e7ff63; /* Couleur de fond pour les propositions */
   padding-left: 0.5rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem !important;

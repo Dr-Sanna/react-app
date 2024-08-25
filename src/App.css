@@ -322,7 +322,7 @@ td:has(h5) {
 
 [data-theme="dark"] table td {
   background-color: #2a2a2a; /* Gris clair pour les lignes impaires */
-  border: 1px solid black !important;
+  border: 1px solid rgb(96, 103, 112) !important;
 }
 
 [data-theme="dark"] td h3 {
@@ -336,20 +336,14 @@ td:has(h5) {
   color: rgb(227, 227, 227) !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 [data-theme="dark"] td:has(h3) {
-  background-color: #1b5f73 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
-  border: 1px solid black !important;
+  background-color: #353535e9 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 [data-theme="dark"] td:has(h4) {
-  background-color: #193c47 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
+  background-color: #353535 !important; /* Ou la couleur de fond souhaitée pour ces cellules */
 }
 [data-theme="dark"] td:has(h5) {
-  background-color: #083442 !important; /* Bleu très pâle mais distinct pour les sous-titres */
-}
-[data-theme="dark"] td {
-  border: 1px solid transparent !important;
+  background-color: #353535 !important; /* Bleu très pâle mais distinct pour les sous-titres */
 }
 
-[data-theme="dark"] table {
-  background: black !important;
-}
+
 

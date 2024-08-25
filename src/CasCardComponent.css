@@ -17,8 +17,8 @@ width: 100%;
 
 
 .cas-card-container:hover .image-loaded img {
-  transition: 0.3s ease-in-out;
-  transform: scale(1.2); /* Agrandissement avec effet de rebond */
+  transition: 0.2s ease-in-out;
+  transform: scale(1.1); /* Agrandissement avec effet de rebond */
 }
 
 .image-container {

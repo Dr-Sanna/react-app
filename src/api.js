@@ -4,6 +4,50 @@ import { toUrlFriendly } from './config';
 const API_URL = process.env.REACT_APP_STRAPI_URL;
 const cache = {};
 
+// Liste de configurations pour les chemins et leurs URLs
+const config = [
+  {
+    pathname: 'odontologie-pediatrique',
+    plural: 'odontologie-pediatriques',
+    parts: 'odontologie_pediatrique_parties'
+  },
+  {
+    pathname: 'risques-medicaux',
+    plural: 'risques-medicauxes',
+    parts: 'risques_medicaux_parties'
+  },
+  {
+    pathname: 'occlusion-et-fonction',
+    plural: 'occlusion-et-fonctions',
+    parts: 'occlusion_et_fonction_parties'
+  },
+  {
+    pathname: 'essai-matiere',
+    plural: 'essais',
+    parts: 'essai_parties'
+  },
+  {
+    pathname: 'anatomie-tete-et-cou',
+    plural: 'anatomie-tete-et-cous',
+    parts: 'anatomie_tete_et_cou_parties'
+  },
+  {
+    pathname: 'physiologie-clinique-orofaciale',
+    plural: 'physiologies',
+    parts: 'physiologie_clinique_orofaciale_parties'
+  },
+  {
+    pathname: 'notions-elementaires',
+    plural: 'notions-elementaires',
+    parts: 'notions_elementaires_parties'
+  },
+  {
+    pathname: 'medecine-orale',
+    plural: 'medecine-orales',
+    parts: 'medecine_orale_parties'
+  }
+];
+
 const fetchWithCache = async (url) => {
   if (cache[url]) {
     return cache[url];
@@ -30,57 +74,33 @@ export const fetchCasCliniques = async () => {
   }
 };
 
+// Fonction générique pour construire l'URL
+const buildGenericUrl = (plural, partsSuffix, sousMatiereId) => {
+  const url = `${API_URL}/api/${plural}?populate[test][populate]=sous_matiere,image,test,test.image` +
+              `&populate[${partsSuffix}][populate][test][populate]=*` +
+              `&populate[QCM][populate]=proposition` +
+              `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
+  return url;
+};
+
 export const fetchCoursData = async (pathname) => {
   if (!pathname) throw new Error("Pathname is undefined");
 
   const sousMatieres = await fetchSousMatieres();
   const sousMatiere = sousMatieres.find(sousMatiere => pathname.includes(toUrlFriendly(sousMatiere.attributes.titre)));
   if (!sousMatiere) throw new Error(`No sous-matiere found for path: ${pathname}`);
-  
-  const sousMatiereId = sousMatiere.id;
-  let url = '';
 
-  if (pathname.includes('odontologie-pediatrique')) {
-    url = `${API_URL}/api/odontologie-pediatriques?populate=*`;
-    if (pathname.includes('therapeutiques-pulpaires-des-dt')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }
-  } else if (pathname.includes('risques-medicaux')) {
-    url = `${API_URL}/api/risques-medicauxes?populate[test][populate]=sous_matiere,image,test,test.image&populate[risques_medicaux_parties][populate][test][populate]=*`;
-    if (pathname.includes('identification-evaluation-et-principes-de-prise-en-charge')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    } else if (pathname.includes('risque-infectieux') || pathname.includes('risque-hemorragique') || pathname.includes('risque-medicamenteux-du-a-une-prescription') || pathname.includes('risque-anesthesique') || pathname.includes('risques-physiologiques') || pathname.includes('risques-dus-a-une-maladie') || pathname.includes('risques-dus-a-un-traitement')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }
-  } else if (pathname.includes('occlusion-et-fonction')) {
-    url = `${API_URL}/api/occlusion-et-fonctions?populate[test][populate]=sous_matiere,image,test,test.image&populate[occlusion_et_fonction_parties][populate][test][populate]=*`;
-    if (pathname.includes('occlusion-et-manducation')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }
-  } else if (pathname.includes('essai-matiere')) {
-    url = `${API_URL}/api/essais?populate[test][populate]=sous_matiere,image,test,test.image&populate[essai_parties][populate][test][populate]=*&populate[QCM][populate]=proposition`;
-    if (pathname.includes('essai-sous-matiere')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }
-  } else if (pathname.includes('anatomie-tete-et-cou')) {
-    url = `${API_URL}/api/anatomie-tete-et-cous?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition`;
-    if (pathname.includes('vaisseaux-et-nerfs')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }
-  } else if (pathname.includes('physiologie-clinique-orofaciale')) {
-    url = `${API_URL}/api/physiologies?populate[test][populate]=sous_matiere,image,test,test.image&populate[QCM][populate]=proposition`;
-    if (pathname.includes('la-sensibilite-parodontale')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    }  
-  } else if (pathname.includes('notions-elementaires')) {
-    url = `${API_URL}/api/notions-elementaires?populate[test][populate]=sous_matiere,image,test,test.image`;
-    if (pathname.includes('bilans-sanguins') || pathname.includes('histo-embryologie')) {
-      url += `&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-    } 
-  } else if (pathname.includes('moco') && pathname.includes('medecine-orale')) {
-    url = `${API_URL}/api/medecine-orales?populate[test][populate]=sous_matiere,image,test,test.image&populate[medecine_orale_parties][populate][test][populate]=*&populate[QCM][populate]=proposition&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`;
-  }
-  if (!url) return [];
+  const sousMatiereId = sousMatiere.id;
+
+  // Trouver la configuration correspondante
+  const configItem = config.find(item => pathname.includes(item.pathname));
+  
+  if (!configItem) throw new Error(`No configuration found for pathname: ${pathname}`);
+
+  const { plural, parts } = configItem;
+
+  // Construire l'URL
+  const url = buildGenericUrl(plural, parts, sousMatiereId);
 
   return fetchWithCache(url);
 };
@@ -89,6 +109,6 @@ export const fetchSousMatiereByPath = async (path) => {
   const sousMatieres = await fetchSousMatieres();
   const sousMatiere = sousMatieres.find(sousMatiere => path.includes(toUrlFriendly(sousMatiere.attributes.titre)));
   if (!sousMatiere) throw new Error(`No ID found for path: ${path}`);
-  
+
   return fetchWithCache(`${API_URL}/api/sous-matieres/${sousMatiere.id}`);
 };
