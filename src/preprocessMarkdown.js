@@ -49,7 +49,19 @@ export function preprocessMarkdown(markdownText) {
       return `${before}</div></details>${after}`;
     })
     .replace(/\[carousel\]/g, '<div class="custom-carousel"></div>')
-    .replace(/\\\[carousel\\\]/g, '<div class="custom-carousel"></div>');
+    .replace(/\\\[carousel\\\]/g, '<div class="custom-carousel"></div>')
+        // Cas avec pourcentage spécifié
+        .replace(/\\\[col1-(\d+)\\\]/g, '<div class="custom-columns"><div class="column column-$1">')
+        .replace(/\\\[col2-(\d+)\\\]/g, '</div><div class="column column-$1">')
+        // Cas sans pourcentage (50/50 par défaut)
+        .replace(/\\\[col1\\\]/g, '<div class="custom-columns"><div class="column column-50">')
+        .replace(/\\\[col2\\\]/g, '</div><div class="column column-50">')
+        .replace(/\\\[endcol\\\]/g, '</div></div>')
+    .replace(/\\\[caption\\\]/g, '<div class="caption">')
+    .replace(/\\\[endcaption\\\]/g, '</div>')
+    .replace(/\\\[size40\\\]/g, '<div class="size40">')
+    .replace(/\\\[endsize40\\\]/g, '</div>')
+    ;
 
   return processedText;
 }

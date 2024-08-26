@@ -345,5 +345,62 @@ td:has(h5) {
   background-color: #353535 !important; /* Bleu très pâle mais distinct pour les sous-titres */
 }
 
+.custom-columns {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+}
+
+.column {
+ text-align: justify;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+}
+
+/* Colonnes par défaut 50/50 */
+.column-50 {
+  width: 50%;
+}
+
+/* Colonnes avec largeur personnalisée */
+.column-70 {
+  width: 70%;
+}
+
+.column-30 {
+  width: 30%;
+}
+
+.column-40 {
+  width: 40%;
+}
+
+.column-60 {
+  width: 60%;
+}
+
+/* Ajoutez d'autres combinaisons si nécessaire */
 
 
+.caption {
+  min-width: 50%;
+  background: white;
+  box-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: small;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.caption p {
+margin: 0;
+}
+
+[data-theme="dark"] .caption {
+  background: rgba(255, 255, 255, 0.201);
+}
+
+
+.size40 {
+  width: 40%;
+}
