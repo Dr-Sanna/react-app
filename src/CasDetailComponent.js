@@ -20,7 +20,7 @@ const CasDetailComponent = ({ selectedCas }) => {
   return (
     <div className="markdown">
       <h1>{test.titre}</h1>
-      <CustomMarkdown markdownText={test.enonce} imageStyle={imgStyle} />
+      <CustomMarkdown markdownText={test.enonce} imageClass="custom-image" />
       <div style={{ margin: '20px 0' }}></div>
       
       {questions && questions.length > 0 && (
@@ -34,7 +34,7 @@ const CasDetailComponent = ({ selectedCas }) => {
               content={
                 <CustomMarkdown 
                   markdownText={corrections[index] || 'Pas de correction disponible.'} 
-                  imageStyle={imgStyle}
+                  imageClass="custom-image"
                 />
               }
             />

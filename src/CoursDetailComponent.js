@@ -31,6 +31,33 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
     }
   }, [selectedItem]);
 
+  // Ajoutez la logique pour rendre les td cliquables avec navigate ici
+  useEffect(() => {
+    const handleClick = (event) => {
+      event.preventDefault();
+      navigate(event.currentTarget.getAttribute('href'));
+    };
+
+    const tdElements = document.querySelectorAll('td');
+
+    tdElements.forEach(td => {
+      const link = td.querySelector('a');
+      if (link) {
+        td.style.cursor = 'pointer';
+        td.addEventListener('click', handleClick);
+      }
+    });
+
+    return () => {
+      tdElements.forEach(td => {
+        const link = td.querySelector('a');
+        if (link) {
+          td.removeEventListener('click', handleClick);
+        }
+      });
+    };
+  }, [navigate]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -120,8 +147,8 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
                 />
               ) : (
                 <CustomMarkdown
-                  markdownText={selectedPart.enonce}
-                  imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+                markdownText={selectedPart.enonce}
+                imageClass="custom-image"
                 />
               )}
             </>
@@ -138,7 +165,7 @@ const CoursDetailComponent = ({ selectedItem, allItems }) => {
               ) : (
                 <CustomMarkdown
                   markdownText={selectedItem?.attributes?.test?.enonce}
-                  imageStyle={{ maxHeight: '60vh', width: 'auto', marginBottom: 'var(--ifm-leading)' }}
+                  imageClass="custom-image"
                   carouselImages={selectedItem?.attributes?.test?.carousel}
                 />
               )}

@@ -58,9 +58,14 @@ export function preprocessMarkdown(markdownText) {
         .replace(/\\\[col2\\\]/g, '</div><div class="column column-50">')
         .replace(/\\\[endcol\\\]/g, '</div></div>')
     .replace(/\\\[caption\\\]/g, '<div class="caption">')
+    .replace(/\[tablecaption\]/g, '<div class="caption">')
     .replace(/\\\[endcaption\\\]/g, '</div>')
+    .replace(/\[endtablecaption\]/g, '</div>')
     .replace(/\\\[size40\\\]/g, '<div class="size40">')
     .replace(/\\\[endsize40\\\]/g, '</div>')
+    .replace(/\\\[iframe\s+src="([^"]+)"\s+width="(\d+)"\s+height="(\d+)"\\\]/g, (match, src, width, height) => {
+      return `<iframe src="${src}" width="${width}" height="${height}" frameborder="0" allowfullscreen></iframe>`;
+    });
     ;
 
   return processedText;

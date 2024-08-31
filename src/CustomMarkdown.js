@@ -35,7 +35,7 @@ function removePTagsAroundDivs() {
   };
 }
 
-const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages }) => {
+const CustomMarkdown = React.memo(({ markdownText, imageClass, carouselImages }) => {
   const processedText = useMemo(() => preprocessMarkdown(markdownText), [markdownText]);
   const contentRef = useRef(null);
   const [renderKey, setRenderKey] = useState(0);
@@ -69,11 +69,10 @@ const CustomMarkdown = React.memo(({ markdownText, imageStyle, carouselImages })
         rehypePlugins={[rehypeRaw, removePTagsAroundImages, transformYouTubeLinks, removePTagsAroundDivs]}
         components={{
           img: ({ node, ...props }) => (
-            <div style={{ display: 'flex', justifyContent: 'center', ...imageStyle }}>
+            <div className={imageClass}>
               <ImageModal
                 src={props.src}
                 alt={props.alt}
-                placeholder=""
               />
             </div>
           ),
