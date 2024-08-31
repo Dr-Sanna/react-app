@@ -11,12 +11,6 @@ const CasDetailComponent = ({ selectedCas }) => {
   const corrections = test.test.map(t => t.correction);
   const questions = test.test.map(t => t.question);
 
-  const imgStyle = {
-    maxHeight: '60vh', // 3/4 de la hauteur de l'écran
-    width: 'auto', // Pour conserver le ratio d'aspect
-    marginBottom: 'var(--ifm-leading)',
-  };
-
   return (
     <div className="markdown">
       <h1>{test.titre}</h1>
