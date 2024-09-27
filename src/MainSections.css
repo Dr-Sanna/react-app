@@ -1,0 +1,91 @@
+/* MainSections.css */
+
+.main-sections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+.section-card {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 200px; /* Ajustez si nécessaire */
+  margin: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  position: relative; /* Nécessaire pour positionner la description absolue */
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Retirez overflow: hidden pour éviter de couper la description */
+  /* overflow: hidden; */
+}
+
+.section-card:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.section-card h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.section-description {
+  position: absolute;
+  top: 0; /* Positionnez en haut pour couvrir toute la carte */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15px; /* Ajustez si nécessaire */
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #555;
+  font-size: 1em;
+  opacity: 0; /* Rendre invisible par défaut */
+  transition: opacity 0.3s ease;
+  display: flex; /* Centrer le texte */
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.section-card:hover .section-description {
+  opacity: 1; /* Affiche la description au survol */
+}
+
+/* Media query pour les petits écrans */
+@media (max-height: 800px) {
+  .hero-banner {
+    padding: 30px 20px;
+  }
+
+  .hero-banner h1 {
+    font-size: 1.8em;
+  }
+
+  .hero-banner p {
+    font-size: 1em;
+  }
+
+  .section-card {
+    width: 180px;
+    margin: 8px;
+    padding: 12px;
+  }
+
+  .section-card h2 {
+    font-size: 1em;
+  }
+
+  .section-icon {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 8px;
+  }
+}

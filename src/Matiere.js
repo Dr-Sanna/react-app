@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect, useMemo } from 'react';
+// Matiere.js
+import React, { useContext, useState, useEffect, useMemo } from 'react'; 
 import { useNavigate, useParams } from 'react-router-dom';
 import { DataContext } from './DataContext';
 import DisplayItems from './DisplayItems';
@@ -7,7 +8,7 @@ import { toUrlFriendly } from './config';
 const Matiere = () => {
   const { matieres, sousMatieres, setCours } = useContext(DataContext);
   const [filteredSousMatieres, setFilteredSousMatieres] = useState([]);
-  const [matiereOriginalTitle, setMatiereOriginalTitle] = useState(''); // Stocker le titre original
+  const [matiereOriginalTitle, setMatiereOriginalTitle] = useState('');
   const navigate = useNavigate();
   const { matiereTitle } = useParams();
 
@@ -15,10 +16,14 @@ const Matiere = () => {
     setCours([]); // Réinitialiser les cours au montage du composant
 
     if (matieres.length > 0 && sousMatieres.length > 0) {
-      const matiere = matieres.find(m => toUrlFriendly(m.attributes.titre) === matiereTitle);
+      const matiere = matieres.find(
+        (m) => toUrlFriendly(m.attributes.titre) === matiereTitle
+      );
       if (matiere) {
-        setMatiereOriginalTitle(matiere.attributes.titre); // Stocker le titre original
-        const relatedSousMatieres = sousMatieres.filter(sm => sm.attributes.matiere.data.id === matiere.id);
+        setMatiereOriginalTitle(matiere.attributes.titre);
+        const relatedSousMatieres = sousMatieres.filter(
+          (sm) => sm.attributes.matiere.data.id === matiere.id
+        );
         setFilteredSousMatieres(relatedSousMatieres);
       }
     }
@@ -31,10 +36,16 @@ const Matiere = () => {
     switch (sousMatiere.attributes.actionType) {
       case 'cas_cliniques':
       case 'cours':
-        navigate(`/${matiereTitle}/${titleUrl}`, { state: { sousMatiereId } });
+        navigate(
+          `/${matiereTitle}/${titleUrl}`,
+          { state: { sousMatiereId } }
+        );
         break;
       case 'liens_utiles':
-        navigate(`/ressources-utiles/${titleUrl}`, { state: { lienId: sousMatiere.id } });
+        navigate(
+          `/liens-utiles/${titleUrl}`,
+          { state: { lienId: sousMatiere.id } }
+        );
         break;
       default:
         console.log("Type d'action non reconnu");
@@ -42,7 +53,9 @@ const Matiere = () => {
   };
 
   const sortedSousMatieres = useMemo(() => {
-    return [...filteredSousMatieres].sort((a, b) => a.attributes.order - b.attributes.order);
+    return [...filteredSousMatieres].sort(
+      (a, b) => a.attributes.order - b.attributes.order
+    );
   }, [filteredSousMatieres]);
 
   return (
@@ -50,10 +63,9 @@ const Matiere = () => {
       items={sortedSousMatieres}
       onClickItem={handleSousMatiereClick}
       isMatiere={false}
-      sousMatiereTitle={matiereOriginalTitle}  // Passez le titre original ici
+      sousMatiereTitle={matiereOriginalTitle}
     />
   );
 };
 
 export default React.memo(Matiere);
-
