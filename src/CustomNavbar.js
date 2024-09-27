@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { DarkModeIcon, LightModeIcon } from "./IconComponents";
 import { FaGithub } from "react-icons/fa";  // Import de l'icône GitHub depuis react-icons
-import { useToggle } from "./ToggleContext";
 
 const CustomNavbar = ({ setFontSize }) => {
   const [logoUrl] = useState("/logo.svg");
@@ -14,8 +13,6 @@ const CustomNavbar = ({ setFontSize }) => {
     return savedFontSize ? parseInt(savedFontSize, 10) : 100;
   });
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
-  const { showQuestions, setShowQuestions } = useToggle();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", isDarkMode ? "dark" : "light");
