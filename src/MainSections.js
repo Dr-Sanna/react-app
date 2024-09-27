@@ -9,7 +9,7 @@ const MainSections = () => {
   const sections = [
     {
       title: 'Cas Cliniques',
-      path: '/moco', // Accès direct à MOCO
+      path: '/cas-cliniques', // Accès direct à MOCO
       description: 'Explorez nos cas cliniques détaillés pour enrichir votre expérience pratique.',
       image: '/medical_case.png',
     },
