@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { fetchMatieres, fetchSousMatieres, fetchCasCliniques, fetchCoursData } from './api';
-import { preloadImage } from './utils';
-
+import { fetchMatieres, fetchSousMatieres, fetchCoursData } from './api'; // Supprimer fetchCasCliniques
+// Supprimer preloadImage si non utilisé
 export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
@@ -35,10 +34,8 @@ export const DataProvider = ({ children }) => {
     setIsCoursLoading(true);
     try {
       const coursData = await fetchCoursData(pathname);
-
       setCours(coursData);
 
-      // Extraire et définir les parties
       const partsData = coursData.flatMap(cour => {
         const partsRelationName = Object.keys(cour.attributes).find(key => key.endsWith('_parties'));
         const partsRelation = cour.attributes[partsRelationName]?.data;

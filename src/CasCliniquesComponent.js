@@ -9,7 +9,7 @@ import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
-import { fetchCasCliniques } from './api'; // Importer l'API corrigée
+import { fetchCasCliniques } from './api';
 
 const CasCliniquesComponent = ({ fontSize }) => {
   const navigate = useNavigate();
@@ -17,40 +17,32 @@ const CasCliniquesComponent = ({ fontSize }) => {
   const { sousMatieres, casCliniques, isLoading, setCasCliniques, setIsLoading } = useContext(DataContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
-  
-  // Récupérer sousMatiereId depuis l'état de navigation ou à partir du pathname
-  let sousMatiereId = location.state?.sousMatiereId;
 
-  // Si sousMatiereId est undefined, on le cherche à partir du pathname
+  // Utiliser uniquement le pathname pour déterminer sousMatiereId
   useEffect(() => {
-    if (!sousMatiereId) {
-      const currentPathname = location.pathname.split("/").pop(); // On récupère la dernière partie du pathname
-      const matchingSousMatiere = sousMatieres.find(sousMatiere => toUrlFriendly(sousMatiere.attributes.titre) === currentPathname);
+    const currentPathname = location.pathname.split("/").pop(); // Récupérer la dernière partie du pathname
+    const matchingSousMatiere = sousMatieres.find(sousMatiere => toUrlFriendly(sousMatiere.attributes.titre) === currentPathname);
 
-      if (matchingSousMatiere) {
-        sousMatiereId = matchingSousMatiere.id;
-      }
-    }
-
-    // Si on ne trouve pas sousMatiereId, on log une erreur et on arrête l'exécution
-    if (!sousMatiereId) {
+    if (!matchingSousMatiere) {
       console.error("Impossible de déterminer sousMatiereId depuis pathname.");
       return;
     }
 
-    // Avant de charger les nouveaux cas, on vide la liste des anciens cas
-    setCasCliniques([]); // Vider immédiatement la liste pour éviter l'apparition des anciens cas
+    const sousMatiereId = matchingSousMatiere.id;
+
+    // Vider les anciens cas avant de charger les nouveaux
+    setCasCliniques([]); 
     setIsLoading(true);
 
-    // Appel à fetchCasCliniques avec sousMatiereId
+    // Appel à fetchCasCliniques en utilisant uniquement sousMatiereId basé sur le pathname
     fetchCasCliniques(sousMatiereId).then((data) => {
-      setCasCliniques(data); // Mise à jour des cas cliniques dans le contexte
+      setCasCliniques(data); // Mise à jour des cas cliniques
     }).catch((error) => {
       console.error("Erreur lors de la récupération des cas cliniques :", error);
     }).finally(() => {
-      setIsLoading(false); // Arrêt du chargement une fois les données récupérées
+      setIsLoading(false);
     });
-  }, [location.pathname, sousMatieres, sousMatiereId, setCasCliniques, setIsLoading]);
+  }, [location.pathname, sousMatieres, setCasCliniques, setIsLoading]);
 
   const updateSelectedItem = useCallback(
     (titre, itemList) => {
@@ -78,13 +70,13 @@ const CasCliniquesComponent = ({ fontSize }) => {
   const handleNavigatePrev = (item) => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
-    navigate(newPath, { state: { sousMatiereId } });
+    navigate(newPath);
   };
 
   const handleNavigateNext = (item) => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
-    navigate(newPath, { state: { sousMatiereId } });
+    navigate(newPath);
   };
 
   const currentIndex = casCliniques.findIndex(item => item.id === selectedItem?.id);
@@ -95,7 +87,7 @@ const CasCliniquesComponent = ({ fontSize }) => {
   const handleSelection = (item) => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
-    navigate(newPath, { state: { sousMatiereId } });
+    navigate(newPath);
   };
 
   const menuItems = casCliniques.map(item => ({
@@ -120,7 +112,7 @@ const CasCliniquesComponent = ({ fontSize }) => {
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`} style={{ fontSize: `${fontSize}%` }}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            {isLoading ? ( // Indicateur de chargement pendant que les cas cliniques sont récupérés
+            {isLoading ? ( 
               <CustomToothLoader />
             ) : selectedItem ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
