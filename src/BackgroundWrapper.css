@@ -1,0 +1,8 @@
+/* BackgroundWrapper.css */
+.background-wrapper {
+  background-image: url('/public/background.png'); /* Remplacez par le chemin de votre image */
+  background-size: contain;
+  background-position: top right;
+  background-repeat: no-repeat;
+  height: 90vh; /* Pour couvrir toute la hauteur de la fenêtre */
+}
