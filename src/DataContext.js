@@ -16,23 +16,13 @@ export const DataProvider = ({ children }) => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [matieresData, sousMatieresData, casCliniquesData] = await Promise.all([
+      const [matieresData, sousMatieresData] = await Promise.all([
         fetchMatieres(),
         fetchSousMatieres(),
-        fetchCasCliniques()
       ]);
-
-      // Précharger les images des matières et sous-matières
-      await Promise.all([...matieresData, ...sousMatieresData].map(async (item) => {
-        const imageUrl = item.attributes.image?.data?.attributes.url;
-        if (imageUrl) {
-          await preloadImage(imageUrl);
-        }
-      }));
 
       setMatieres(matieresData);
       setSousMatieres(sousMatieresData);
-      setCasCliniques(casCliniquesData);
 
     } catch (error) {
       console.error("Erreur de récupération des données:", error);
@@ -45,14 +35,6 @@ export const DataProvider = ({ children }) => {
     setIsCoursLoading(true);
     try {
       const coursData = await fetchCoursData(pathname);
-
-      // Précharger les images des cours
-      await Promise.all(coursData.map(async (item) => {
-        const imageUrl = item.attributes.image?.data?.attributes.url;
-        if (imageUrl) {
-          await preloadImage(imageUrl);
-        }
-      }));
 
       setCours(coursData);
 
@@ -77,7 +59,7 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{
-      matieres, sousMatieres, casCliniques, cours, parts, isLoading, isCoursLoading, setCours, setParts, setIsLoading, setIsCoursLoading, fetchCours
+      matieres, sousMatieres, casCliniques, cours, parts, isLoading, isCoursLoading, setCasCliniques, setCours, setParts, setIsLoading, setIsCoursLoading, fetchCours
     }}>
       {children}
     </DataContext.Provider>

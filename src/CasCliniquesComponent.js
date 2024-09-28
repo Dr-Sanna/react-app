@@ -9,14 +9,48 @@ import { CustomToothLoader } from "./CustomToothLoader";
 import { useSidebarContext } from './SidebarContext';
 import { toUrlFriendly } from "./config";
 import PaginationComponent from './PaginationComponent';
+import { fetchCasCliniques } from './api'; // Importer l'API corrigée
 
 const CasCliniquesComponent = ({ fontSize }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { casCliniques, isLoading } = useContext(DataContext);
+  const { sousMatieres, casCliniques, isLoading, setCasCliniques, setIsLoading } = useContext(DataContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
-  const sousMatiereId = location.state?.sousMatiereId;
+  
+  // Récupérer sousMatiereId depuis l'état de navigation ou à partir du pathname
+  let sousMatiereId = location.state?.sousMatiereId;
+
+  // Si sousMatiereId est undefined, on le cherche à partir du pathname
+  useEffect(() => {
+    if (!sousMatiereId) {
+      const currentPathname = location.pathname.split("/").pop(); // On récupère la dernière partie du pathname
+      const matchingSousMatiere = sousMatieres.find(sousMatiere => toUrlFriendly(sousMatiere.attributes.titre) === currentPathname);
+
+      if (matchingSousMatiere) {
+        sousMatiereId = matchingSousMatiere.id;
+      }
+    }
+
+    // Si on ne trouve pas sousMatiereId, on log une erreur et on arrête l'exécution
+    if (!sousMatiereId) {
+      console.error("Impossible de déterminer sousMatiereId depuis pathname.");
+      return;
+    }
+
+    // Avant de charger les nouveaux cas, on vide la liste des anciens cas
+    setCasCliniques([]); // Vider immédiatement la liste pour éviter l'apparition des anciens cas
+    setIsLoading(true);
+
+    // Appel à fetchCasCliniques avec sousMatiereId
+    fetchCasCliniques(sousMatiereId).then((data) => {
+      setCasCliniques(data); // Mise à jour des cas cliniques dans le contexte
+    }).catch((error) => {
+      console.error("Erreur lors de la récupération des cas cliniques :", error);
+    }).finally(() => {
+      setIsLoading(false); // Arrêt du chargement une fois les données récupérées
+    });
+  }, [location.pathname, sousMatieres, sousMatiereId, setCasCliniques, setIsLoading]);
 
   const updateSelectedItem = useCallback(
     (titre, itemList) => {
@@ -39,7 +73,6 @@ const CasCliniquesComponent = ({ fontSize }) => {
 
   const handleSelectionChange = (cours, partie) => {
     console.log(`Selected cours: ${cours}, Selected partie: ${partie}`);
-    // Logique pour gérer la sélection, si nécessaire
   };
 
   const handleNavigatePrev = (item) => {
@@ -87,7 +120,9 @@ const CasCliniquesComponent = ({ fontSize }) => {
         />
         <main className={`docMainContainer_EfwR ${isSidebarVisible ? '' : 'docMainContainerEnhanced_r8nV'}`} style={{ fontSize: `${fontSize}%` }}>
           <div className={`container padding-top--md padding-bottom--lg ${isSidebarVisible ? '' : 'docItemWrapperEnhanced_nA1F'}`}>
-            {selectedItem ? (
+            {isLoading ? ( // Indicateur de chargement pendant que les cas cliniques sont récupérés
+              <CustomToothLoader />
+            ) : selectedItem ? (
               <div className="docItemContainer_RhpI" style={{ marginRight: '10px' }}>
                 <article>
                   <BreadcrumbsCC
@@ -135,14 +170,10 @@ const CasCliniquesComponent = ({ fontSize }) => {
                   currentPath={location.pathname}
                   selectedItem={selectedItem}
                 />
-                {isLoading ? (
-                  <CustomToothLoader />
-                ) : (
-                  <CasCardComponent
-                    items={casCliniques}
-                    onSelection={handleSelection}
-                  />
-                )}
+                <CasCardComponent
+                  items={casCliniques}
+                  onSelection={handleSelection}
+                />
               </div>
             )}
           </div>

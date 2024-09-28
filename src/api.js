@@ -65,14 +65,19 @@ export const fetchSousMatieres = async () => {
   return fetchWithCache(`${API_URL}/api/sous-matieres?populate=*`);
 };
 
-export const fetchCasCliniques = async () => {
+// Correction ici pour accepter l'ID de la sous-matière
+export const fetchCasCliniques = async (sousMatiereId) => {
+  if (!sousMatiereId) {
+    throw new Error("sousMatiereId est nécessaire pour filtrer les cas cliniques.");
+  }
   try {
-    return fetchWithCache(`${API_URL}/api/cas-cliniques?populate[test][populate]=image,test,test.image`);
+    return fetchWithCache(`${API_URL}/api/cas-cliniques?populate[test][populate]=image,test,test.image&filters[test][sous_matiere][id][$eq]=${sousMatiereId}`);
   } catch (error) {
     console.error('Erreur lors de la récupération des cas cliniques:', error);
     throw error;
   }
 };
+
 
 // Fonction générique pour construire l'URL
 const buildGenericUrl = (plural, partsSuffix, sousMatiereId) => {

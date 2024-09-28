@@ -10,7 +10,7 @@ const MainSections = () => {
     {
       title: 'Cas Cliniques',
       path: '/cas-cliniques', // Accès direct à MOCO
-      description: 'Explorez nos cas cliniques détaillés pour enrichir votre expérience pratique.',
+      description: 'Explorez des cas cliniques détaillés pour enrichir votre expérience pratique.',
       image: '/medical_case.png',
     },
     {
@@ -28,7 +28,7 @@ const MainSections = () => {
     {
       title: 'Liens Utiles',
       path: '/liens-utiles',
-      description: 'Trouvez des ressources en ligne utiles pour votre pratique quotidienne.',
+      description: 'Trouvez des ressources en ligne utiles à la pratique quotidienne.',
       image: '/links.png',
     },
   ];
