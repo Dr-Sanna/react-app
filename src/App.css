@@ -165,12 +165,6 @@ h2::before {
   content: "\00a0" counter(h2counter) ". " !important; /* Affiche le compteur h2 avant le h2 */
 }
 
-h3::before {
-  content: "📝 "; 
-}
-td h3::before {
-  content: ""; 
-}
 ul {
   margin-bottom: 20px !important;
 }

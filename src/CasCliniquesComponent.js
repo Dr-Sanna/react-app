@@ -18,30 +18,38 @@ const CasCliniquesComponent = ({ fontSize }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const { isSidebarVisible } = useSidebarContext();
 
-  // Utiliser uniquement le pathname pour déterminer sousMatiereId
+  // Utiliser uniquement le 3ème segment du pathname pour déterminer sousMatiereId
   useEffect(() => {
-    const currentPathname = location.pathname.split("/").pop(); // Récupérer la dernière partie du pathname
+    if (!sousMatieres || sousMatieres.length === 0) {
+      return;
+    }
+
+    // Récupérer le 3ème segment du pathname
+    const pathSegments = location.pathname.split("/");
+    const currentPathname = pathSegments[2]; // 3ème segment (index 2)
+
     const matchingSousMatiere = sousMatieres.find(sousMatiere => toUrlFriendly(sousMatiere.attributes.titre) === currentPathname);
 
     if (!matchingSousMatiere) {
-      console.error("Impossible de déterminer sousMatiereId depuis pathname.");
       return;
     }
 
     const sousMatiereId = matchingSousMatiere.id;
 
     // Vider les anciens cas avant de charger les nouveaux
-    setCasCliniques([]); 
+    setCasCliniques([]);
     setIsLoading(true);
 
-    // Appel à fetchCasCliniques en utilisant uniquement sousMatiereId basé sur le pathname
-    fetchCasCliniques(sousMatiereId).then((data) => {
-      setCasCliniques(data); // Mise à jour des cas cliniques
-    }).catch((error) => {
-      console.error("Erreur lors de la récupération des cas cliniques :", error);
-    }).finally(() => {
-      setIsLoading(false);
-    });
+    fetchCasCliniques(sousMatiereId)
+      .then((data) => {
+        setCasCliniques(data);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des cas cliniques :", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, [location.pathname, sousMatieres, setCasCliniques, setIsLoading]);
 
   const updateSelectedItem = useCallback(
@@ -51,8 +59,6 @@ const CasCliniquesComponent = ({ fontSize }) => {
           (c) => c.attributes.test && toUrlFriendly(c.attributes.test.titre) === titre
         );
         setSelectedItem(foundItem || null);
-      } else {
-        console.error("itemList n'est pas un tableau:", itemList);
       }
     },
     []
