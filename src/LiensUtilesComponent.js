@@ -3,6 +3,7 @@ import './LiensUtiles.css';
 
 const LiensUtilesComponent = ({ liens }) => {
     return (
+        <div className="item-menu-container">
         <div className="liens-utiles-container">
             <ul className="liens-utiles-list">
                 {liens.map(lien => (
@@ -17,6 +18,7 @@ const LiensUtilesComponent = ({ liens }) => {
                     </li>
                 ))}
             </ul>
+        </div>
         </div>
     );
 };

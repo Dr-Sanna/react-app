@@ -21,6 +21,9 @@
   /* Retirez overflow: hidden pour éviter de couper la description */
   /* overflow: hidden; */
 }
+[data-theme="dark"] .section-card {
+  background-color: rgb(36, 37, 38);
+}
 
 .section-card:hover {
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
@@ -66,10 +69,15 @@
   justify-content: center;
   text-align: center;
   margin: 0;
+  border-radius: 8px;
 }
-
+[data-theme="dark"] .section-description {
+  background-color: rgb(36, 37, 38);
+  color: white;
+}
 .section-card:hover .section-description {
   opacity: 1; /* Affiche la description au survol */
+  border: 1px solid var(--ifm-color-primary);
 }
 
 /* Media query pour les petits écrans */
