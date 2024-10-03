@@ -65,6 +65,21 @@ export const fetchSousMatieres = async () => {
   return fetchWithCache(`${API_URL}/api/sous-matieres?populate=*`);
 };
 
+export const fetchLiensUtiles = async () => {
+  try {
+    const data = await fetchWithCache(`${API_URL}/api/liens-utiles`);
+    // Transformation des données si nécessaire
+    const liensData = data.map(item => ({
+      ...item.attributes,
+      id: item.id,
+    }));
+    return liensData;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des liens utiles:', error);
+    throw error;
+  }
+};
+
 // Correction ici pour accepter l'ID de la sous-matière
 export const fetchCasCliniques = async (sousMatiereId) => {
   if (!sousMatiereId) {

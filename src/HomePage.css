@@ -209,7 +209,6 @@ transition: 200ms ease-in-out;
 /* HomePage.css */
 
 .app-background {
-    background-image: url('/public/test2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

@@ -1,6 +1,7 @@
+// DataContext.js
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { fetchMatieres, fetchSousMatieres, fetchCoursData } from './api'; // Supprimer fetchCasCliniques
-// Supprimer preloadImage si non utilisé
+import { fetchMatieres, fetchSousMatieres, fetchCoursData, fetchLiensUtiles } from './api';
+
 export const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
@@ -9,19 +10,22 @@ export const DataProvider = ({ children }) => {
   const [casCliniques, setCasCliniques] = useState([]);
   const [cours, setCours] = useState([]);
   const [parts, setParts] = useState([]);
+  const [liensUtiles, setLiensUtiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCoursLoading, setIsCoursLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [matieresData, sousMatieresData] = await Promise.all([
+      const [matieresData, sousMatieresData, liensUtilesData] = await Promise.all([
         fetchMatieres(),
         fetchSousMatieres(),
+        fetchLiensUtiles(),
       ]);
 
       setMatieres(matieresData);
       setSousMatieres(sousMatieresData);
+      setLiensUtiles(liensUtilesData);
 
     } catch (error) {
       console.error("Erreur de récupération des données:", error);
@@ -56,7 +60,20 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{
-      matieres, sousMatieres, casCliniques, cours, parts, isLoading, isCoursLoading, setCasCliniques, setCours, setParts, setIsLoading, setIsCoursLoading, fetchCours
+      matieres,
+      sousMatieres,
+      casCliniques,
+      cours,
+      parts,
+      liensUtiles,
+      isLoading,
+      isCoursLoading,
+      setCasCliniques,
+      setCours,
+      setParts,
+      setIsLoading,
+      setIsCoursLoading,
+      fetchCours,
     }}>
       {children}
     </DataContext.Provider>

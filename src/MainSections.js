@@ -3,33 +3,39 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MainSections.css';
 
+// Importation directe des images
+import medicalCaseImage from './assets/medical_case.png';
+import diceImage from './assets/dice.png';
+import openBookImage from './assets/open_book.png';
+import linksImage from './assets/links.png';
+
 const MainSections = () => {
   const navigate = useNavigate();
 
   const sections = [
     {
       title: 'Cas Cliniques',
-      path: '/cas-cliniques', // Accès direct à MOCO
+      path: '/cas-cliniques',
       description: 'Explorez des cas cliniques détaillés pour enrichir votre expérience pratique.',
-      image: '/medical_case.png',
+      image: medicalCaseImage, // Utilisation de l'image importée
     },
     {
       title: 'Randomisation',
       path: '/randomisation',
       description: 'Générez des cas aléatoires pour tester vos connaissances et compétences.',
-      image: '/dice.png',
+      image: diceImage,
     },
     {
       title: 'Documentation',
-      path: '/documentation', // Point d'entrée pour la liste des matières
+      path: '/documentation',
       description: 'Accédez à une vaste documentation couvrant divers sujets en dentisterie.',
-      image: '/open_book.png',
+      image: openBookImage,
     },
     {
       title: 'Liens Utiles',
       path: '/liens-utiles',
       description: 'Trouvez des ressources en ligne utiles à la pratique quotidienne.',
-      image: '/links.png',
+      image: linksImage,
     },
   ];
 
