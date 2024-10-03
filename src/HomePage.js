@@ -13,7 +13,7 @@ import CoursDetailLoader from './CoursDetailLoader';
 import { CustomToothLoader } from './CustomToothLoader';
 import MainSections from './MainSections';
 import HeroBanner from './HeroBanner';
-// import RandomisationComponent from './RandomisationComponent'; // Si vous avez ce composant
+import RandomisationComponent from './RandomisationComponent';
 import BackgroundWrapper from './BackgroundWrapper'; // Importation du BackgroundWrapper
 
 const HomePage = ({ fontSize }) => {
@@ -105,7 +105,13 @@ const HomePage = ({ fontSize }) => {
           }
         />
         {/* Application de Randomisation */}
-        {/* <Route path="/randomisation" element={<RandomisationComponent />} /> */}
+        <Route 
+          path="/randomisation" 
+         element={
+           <RandomisationComponent />
+          } 
+        />
+
         {/* Détails des cours */}
         <Route
           path="/:matiereTitle/:sousMatiereTitle/:coursTitle"

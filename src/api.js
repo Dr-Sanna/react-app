@@ -132,3 +132,15 @@ export const fetchSousMatiereByPath = async (path) => {
 
   return fetchWithCache(`${API_URL}/api/sous-matieres/${sousMatiere.id}`);
 };
+
+// Ajout de la fonction fetchCasRandomisations
+export const fetchCasRandomisations = async () => {
+  try {
+    return fetchWithCache(
+      `${API_URL}/api/cas-randomisations?populate[pathologie][populate]=*&populate[image]=*`
+    );
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cas randomisés:', error);
+    throw error;
+  }
+};

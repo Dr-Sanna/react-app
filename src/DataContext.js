@@ -1,6 +1,12 @@
 // DataContext.js
 import React, { createContext, useState, useEffect, useCallback } from 'react';
-import { fetchMatieres, fetchSousMatieres, fetchCoursData, fetchLiensUtiles } from './api';
+import {
+  fetchMatieres,
+  fetchSousMatieres,
+  fetchCoursData,
+  fetchLiensUtiles,
+  fetchCasRandomisations, // Import de la nouvelle fonction
+} from './api';
 
 export const DataContext = createContext();
 
@@ -8,6 +14,8 @@ export const DataProvider = ({ children }) => {
   const [matieres, setMatieres] = useState([]);
   const [sousMatieres, setSousMatieres] = useState([]);
   const [casCliniques, setCasCliniques] = useState([]);
+  const [casRandomisations, setCasRandomisations] = useState([]); // Nouvel état
+  const [totalCases, setTotalCases] = useState(0); // Nouvel état
   const [cours, setCours] = useState([]);
   const [parts, setParts] = useState([]);
   const [liensUtiles, setLiensUtiles] = useState([]);
@@ -27,19 +35,23 @@ export const DataProvider = ({ children }) => {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [matieresData, sousMatieresData, liensUtilesData] = await Promise.all([
+      const [matieresData, sousMatieresData, liensUtilesData, casRandomisationsData] = await Promise.all([
         fetchMatieres(),
         fetchSousMatieres(),
         fetchLiensUtiles(),
+        fetchCasRandomisations(), // Appel à la nouvelle fonction
       ]);
 
       setMatieres(matieresData);
       setSousMatieres(sousMatieresData);
       setLiensUtiles(liensUtilesData);
+      setCasRandomisations(casRandomisationsData); // Mise à jour de l'état
+      setTotalCases(casRandomisationsData.length); // Mise à jour de l'état
 
-      // Précharger les images des matières et sous-matières
+      // Précharger les images des matières, sous-matières et cas randomisés
       preloadImages(matieresData);
       preloadImages(sousMatieresData);
+      preloadImages(casRandomisationsData); // Préchargement des images des cas randomisés
 
     } catch (error) {
       console.error("Erreur de récupération des données:", error);
@@ -77,6 +89,8 @@ export const DataProvider = ({ children }) => {
       matieres,
       sousMatieres,
       casCliniques,
+      casRandomisations, // Exposer les cas randomisés
+      totalCases, // Exposer le nombre total de cas
       cours,
       parts,
       liensUtiles,
