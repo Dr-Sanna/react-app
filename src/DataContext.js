@@ -14,6 +14,16 @@ export const DataProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCoursLoading, setIsCoursLoading] = useState(false);
 
+  const preloadImages = (items) => {
+    items.forEach(item => {
+      const imageUrl = item.attributes.image?.data?.attributes?.url;
+      if (imageUrl) {
+        const img = new Image();
+        img.src = imageUrl;
+      }
+    });
+  };
+
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -26,6 +36,10 @@ export const DataProvider = ({ children }) => {
       setMatieres(matieresData);
       setSousMatieres(sousMatieresData);
       setLiensUtiles(liensUtilesData);
+
+      // Précharger les images des matières et sous-matières
+      preloadImages(matieresData);
+      preloadImages(sousMatieresData);
 
     } catch (error) {
       console.error("Erreur de récupération des données:", error);

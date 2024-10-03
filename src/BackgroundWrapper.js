@@ -2,7 +2,7 @@
 import React from 'react';
 import './BackgroundWrapper.css';
 
-// Importation de l'image d'arrière-plan
+// Importation directe de l'image de fond
 import backgroundImage from './assets/background_image.png';
 
 const BackgroundWrapper = ({ children }) => {
