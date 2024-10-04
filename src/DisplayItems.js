@@ -5,7 +5,10 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
   const isDesktop = useMediaQuery({ minWidth: 992 });
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
 
-  const sortedItems = items.sort((a, b) => a.attributes.order - b.attributes.order);
+  // Filtrer les éléments dont l'ordre est différent de 0 avant de les trier
+  const sortedItems = items
+    .filter(item => item.attributes.order !== 0) // Masquer les items avec un ordre de 0
+    .sort((a, b) => a.attributes.order - b.attributes.order);
 
   const getItemStyle = () => {
     if (isDesktop) {
@@ -21,13 +24,13 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
     <div className="item-menu-container">
       {/* Titre de la sous-matière */}
       {sousMatiereTitle && (
-        <h1 style={{  marginBottom: '20px' }}>
+        <h1 style={{ marginBottom: '20px' }}>
           {sousMatiereTitle}
         </h1>
       )}
       
       <div
-      className={`quadrillage-${isMatiere ? 'matiere' : 'sous-matiere'}`}
+        className={`quadrillage-${isMatiere ? 'matiere' : 'sous-matiere'}`}
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -42,7 +45,7 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
               boxSizing: 'border-box',
               padding: '0px',
               borderRadius: '20px',
-              margin:'10px',
+              margin: '10px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -90,3 +93,4 @@ const DisplayItems = ({ items, onClickItem, isMatiere, sousMatiereTitle }) => {
 };
 
 export default DisplayItems;
+
