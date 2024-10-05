@@ -43,9 +43,12 @@ const RandomisationComponent = () => {
       <BackgroundWrapper>
         <div className="item-menu-container">
         <div className="randomisation-start-screen">
-          <h3>
-            Randomisez une pathologie ou un cas clinique parmi {totalCases} images
-          </h3>
+        <h1>
+            Randomisation
+          </h1>
+          <p>
+            Entraînez-vous à diagnostiquer des pathologies parmi {totalCases} cas cliniques tirés au hasard
+          </p>
           {isLoading || cases.length === 0 ? (
             <p>Randomisation en cours...</p>
           ) : (
