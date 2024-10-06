@@ -2,6 +2,11 @@
   .docMainContainer_EfwR {
   background: #f6f6f9;
   }
+  /* Ajoute un padding-top à l'élément principal pour compenser la hauteur de la navbar */
+.main-content {
+  padding-top: 10vh; /* Compense la hauteur de la navbar */
+}
+
 .espace-a-enlever {
   margin-left: 20px;
 }
@@ -27,6 +32,7 @@ a{
 body {
   color: inherit; /* Remet la couleur du texte à sa valeur par défaut */
   background-color: inherit; /* Remet la couleur d'arrière-plan à sa valeur par défaut */
+  overflow: visible !important;
   /* Ajoutez toutes les autres propriétés que vous souhaitez surcharger */
 
 }
@@ -442,3 +448,5 @@ td a {
   align-items: center;
   justify-content: center;
 }
+
+

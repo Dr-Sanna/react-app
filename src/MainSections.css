@@ -61,7 +61,7 @@
   right: 0;
   bottom: 0;
   padding: 10px; /* Ajustez si nécessaire */
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255);
   color: #555;
   font-size: 1em;
   opacity: 0; /* Rendre invisible par défaut */
