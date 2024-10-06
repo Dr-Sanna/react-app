@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import './RandomisationComponent.css';
 import BackgroundWrapper from './BackgroundWrapper';
 import { DataContext } from './DataContext';
-import CustomMarkdown from './CustomMarkdown';  // Import du composant CustomMarkdown
+import CustomMarkdown from './CustomMarkdown';  // Utilisation de CustomMarkdown pour le texte
+import ImageModalWithoutTransition from './ImageModalWithoutTransition';  // Utilisation de la version sans transition pour les images
 
 const RandomisationComponent = () => {
   const { casRandomisations, totalCases, isLoading } = useContext(DataContext);
@@ -42,24 +43,22 @@ const RandomisationComponent = () => {
     return (
       <BackgroundWrapper>
         <div className="item-menu-container">
-        <div className="randomisation-start-screen">
-        <h1>
-            Randomisation
-          </h1>
-          <p>
-            Entraînez-vous à diagnostiquer des pathologies parmi {totalCases} cas cliniques tirés au hasard
-          </p>
-          {isLoading || cases.length === 0 ? (
-            <p>Randomisation en cours...</p>
-          ) : (
-            <button
-              className="button-randomisation"
-              onClick={() => setHasStarted(true)}
-            >
-              C'est parti !
-            </button>
-          )}
-        </div>
+          <div className="randomisation-start-screen">
+            <h1>Randomisation</h1>
+            <p>
+              Entraînez-vous à diagnostiquer des pathologies parmi {totalCases} cas cliniques tirés au hasard
+            </p>
+            {isLoading || cases.length === 0 ? (
+              <p>Randomisation en cours...</p>
+            ) : (
+              <button
+                className="button-randomisation"
+                onClick={() => setHasStarted(true)}
+              >
+                C'est parti !
+              </button>
+            )}
+          </div>
         </div>
       </BackgroundWrapper>
     );
@@ -72,7 +71,7 @@ const RandomisationComponent = () => {
   const currentCase = cases[currentIndex];
   const caseAttributes = currentCase.attributes;
   const pathology = caseAttributes.pathologie?.data?.attributes || {};
-  
+
   const imageUrl = caseAttributes.image?.data
     ? caseAttributes.image.data.attributes.url
     : null;
@@ -84,11 +83,11 @@ const RandomisationComponent = () => {
       <div className="content-container">
         
         <div className="image-display">
-          <div className="image-counter">Image {currentIndex + 1}/{totalCases}</div>
+          <div className="image-counter">Cas {currentIndex + 1}/{totalCases}</div>
           {imageUrl ? (
-            <CustomMarkdown
-              markdownText={`![Cas clinique](${imageUrl})`}  // Utilisation de CustomMarkdown pour afficher l'image
-              imageClass="custom-image"
+            <ImageModalWithoutTransition
+              src={imageUrl}
+              alt="Cas clinique"
             />
           ) : (
             <div>Aucune image disponible pour ce cas.</div>
@@ -101,7 +100,7 @@ const RandomisationComponent = () => {
             {caseAttributes.affichercontexte && caseAttributes.contexte && (
               <div className="clinical-context">
                 <h3>Contexte Clinique :</h3>
-                <CustomMarkdown markdownText={caseAttributes.contexte} />
+                <CustomMarkdown markdownText={caseAttributes.contexte} />  {/* Utilisation de CustomMarkdown */}
               </div>
             )}
             
@@ -113,7 +112,7 @@ const RandomisationComponent = () => {
               {explanationContent && (
                 <div className={showAnswer ? "visible-answer" : "hidden-answer"}>
                   <h3>Explication :</h3>
-                  <CustomMarkdown markdownText={explanationContent} />
+                  <CustomMarkdown markdownText={explanationContent} />  {/* Utilisation de CustomMarkdown */}
                 </div>
               )}
             </div>

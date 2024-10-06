@@ -7,17 +7,16 @@
 
 .section-card {
   background-color: #fff;
-  border-radius: 8px;
-  width: 200px; /* Ajustez si nécessaire */
-  margin: 10px;
-  padding: 15px;
+  border-radius: 10px;
+  width: 240px; /* Ajustez si nécessaire */
+  margin: 15px;
+  padding: 20px;
   text-align: center;
   cursor: pointer;
-  position: relative; /* Nécessaire pour positionner la description absolue */
-  transition: box-shadow 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* Retirez overflow: hidden pour éviter de couper la description */
-  /* overflow: hidden; */
+  position: relative;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), /* Ombre définie en haut */
+              0 4px 8px rgba(0, 0, 0, 0.1);  /* Ombre plus subtile en bas */
 }
 
 [data-theme="dark"] .section-card {
