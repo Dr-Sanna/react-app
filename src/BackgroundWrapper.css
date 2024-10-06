@@ -4,4 +4,5 @@
   background-position: top right;
   background-repeat: no-repeat;
   height: 90vh; /* Pour couvrir toute la hauteur de la fenêtre */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for opacity */
 }

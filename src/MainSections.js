@@ -1,4 +1,3 @@
-// MainSections.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MainSections.css';
@@ -17,7 +16,7 @@ const MainSections = () => {
       title: 'Cas Cliniques',
       path: '/cas-cliniques',
       description: 'Explorez des cas cliniques détaillés pour enrichir votre expérience pratique.',
-      image: medicalCaseImage, // Utilisation de l'image importée
+      image: medicalCaseImage, 
     },
     {
       title: 'Randomisation',
@@ -51,7 +50,12 @@ const MainSections = () => {
           className="section-card"
           onClick={() => handleSectionClick(section)}
         >
-          <img src={section.image} alt={section.title} className="section-icon" />
+          <img 
+            src={section.image} 
+            alt={section.title} 
+            className="section-icon" 
+            onLoad={(e) => e.target.style.opacity = 1} 
+          />
           <h2>{section.title}</h2>
           <p className="section-description">{section.description}</p>
         </div>

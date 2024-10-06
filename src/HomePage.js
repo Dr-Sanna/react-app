@@ -1,4 +1,3 @@
-// HomePage.js
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { DataContext } from './DataContext';
 import './HomePage.css';
@@ -53,29 +52,23 @@ const HomePage = ({ fontSize }) => {
       id="__docusaurus_skipToContent_fallback"
       className="main-wrapper mainWrapper_PEsc"
     >
-      {/* Supprimez le HeroBanner d'ici pour éviter la duplication */}
-      {/* {location.pathname === '/' && <HeroBanner />} */}
-      <Routes>
-        {/* Page d'accueil */}
-        <Route
-          path="/"
-          element={
-            <BackgroundWrapper>
-              <HeroBanner />
-              {initialLoad ? (
-                <CustomToothLoader />
-              ) : (
-                <MainSections />
-              )}
-            </BackgroundWrapper>
-          }
-        />
-        {/* Page de documentation */}
-        <Route
-          path="/documentation"
-          element={
-            <BackgroundWrapper>
-              {matieres ? (
+      <BackgroundWrapper>
+        <Routes>
+          {/* Page d'accueil */}
+          <Route
+            path="/"
+            element={
+              <>
+                <HeroBanner />
+                {initialLoad ? <CustomToothLoader /> : <MainSections />}
+              </>
+            }
+          />
+          {/* Page de documentation */}
+          <Route
+            path="/documentation"
+            element={
+              matieres ? (
                 <DisplayItems
                   items={matieres}
                   onClickItem={handleMatiereClick}
@@ -83,70 +76,34 @@ const HomePage = ({ fontSize }) => {
                 />
               ) : (
                 <div>Loading...</div>
-              )}
-            </BackgroundWrapper>
-          }
-        />
-        {/* Liens Utiles */}
-        <Route
-          path="/liens-utiles/:lienUtileTitle"
-          element={
-            <BackgroundWrapper>
-              <LiensUtilesWithData />
-            </BackgroundWrapper>
-          }
-        />
-        <Route
-          path="/liens-utiles"
-          element={
-            <BackgroundWrapper>
-              <LiensUtilesWithData />
-            </BackgroundWrapper>
-          }
-        />
-        {/* Application de Randomisation */}
-        <Route 
-          path="/randomisation" 
-         element={
-           <RandomisationComponent />
-          } 
-        />
-
-        {/* Détails des cours */}
-        <Route
-          path="/:matiereTitle/:sousMatiereTitle/:coursTitle"
-          element={<CoursDetailLoader />}
-        />
-        {/* Sous-matières */}
-        {sousMatieres &&
-          sousMatieres.map((sousMatiere) => {
-            const Component = getComponentByActionType(
-              sousMatiere.attributes.actionType
-            );
-            const matiereTitleUrl = toUrlFriendly(
-              sousMatiere.attributes.matiere.data.attributes.titre
-            );
-            const sousMatiereTitleUrl = toUrlFriendly(
-              sousMatiere.attributes.titre
-            );
-            return (
-              <Route
-                key={sousMatiere.id}
-                path={`/${matiereTitleUrl}/${sousMatiereTitleUrl}/*`}
-                element={<Component fontSize={fontSize} />}
-              />
-            );
-          })}
-        {/* Matières */}
-        <Route
-          path="/:matiereTitle"
-          element={
-            <BackgroundWrapper>
-              <Matiere />
-            </BackgroundWrapper>
-          }
-        />
-      </Routes>
+              )
+            }
+          />
+          {/* Liens Utiles */}
+          <Route path="/liens-utiles/:lienUtileTitle" element={<LiensUtilesWithData />} />
+          <Route path="/liens-utiles" element={<LiensUtilesWithData />} />
+          {/* Application de Randomisation */}
+          <Route path="/randomisation" element={<RandomisationComponent />} />
+          {/* Détails des cours */}
+          <Route path="/:matiereTitle/:sousMatiereTitle/:coursTitle" element={<CoursDetailLoader />} />
+          {/* Sous-matières */}
+          {sousMatieres &&
+            sousMatieres.map((sousMatiere) => {
+              const Component = getComponentByActionType(sousMatiere.attributes.actionType);
+              const matiereTitleUrl = toUrlFriendly(sousMatiere.attributes.matiere.data.attributes.titre);
+              const sousMatiereTitleUrl = toUrlFriendly(sousMatiere.attributes.titre);
+              return (
+                <Route
+                  key={sousMatiere.id}
+                  path={`/${matiereTitleUrl}/${sousMatiereTitleUrl}/*`}
+                  element={<Component fontSize={fontSize} />}
+                />
+              );
+            })}
+          {/* Matières */}
+          <Route path="/:matiereTitle" element={<Matiere />} />
+        </Routes>
+      </BackgroundWrapper>
     </div>
   );
 };
