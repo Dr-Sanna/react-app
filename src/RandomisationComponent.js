@@ -72,7 +72,7 @@ const RandomisationComponent = () => {
   const currentCase = cases[currentIndex];
   const caseAttributes = currentCase.attributes;
   const pathology = caseAttributes.pathologie?.data?.attributes || {};
-
+  
   const imageUrl = caseAttributes.image?.data
     ? caseAttributes.image.data.attributes.url
     : null;
@@ -80,56 +80,59 @@ const RandomisationComponent = () => {
   const explanationContent = caseAttributes.explicationspecifique || pathology.description;
 
   return (
-<div className="randomisation-component">
-  <div className="content-container">
-    
-    <div className="image-display">
-      <div className="image-counter">Image {currentIndex + 1}/{totalCases}</div>
-      {imageUrl ? (
-        <img src={imageUrl} alt="Cas clinique" />
-      ) : (
-        <div>Aucune image disponible pour ce cas.</div>
-      )}
-    </div>
-
-    <div className="text-content">
-      <div className="clinical-info">
+    <div className="randomisation-component">
+      <div className="content-container">
         
-        {caseAttributes.affichercontexte && caseAttributes.contexte && (
-          <div className="clinical-context">
-            <h3>Contexte Clinique :</h3>
-            <CustomMarkdown markdownText={caseAttributes.contexte} />
-          </div>
-        )}
-        
-        <div className="diagnostic">
-          <h3>Diagnostic :</h3>
-          <h4 className={showAnswer ? "visible-answer" : "hidden-answer"}>
-            {caseAttributes.diagnosticspecifique || pathology.diagnostic}
-          </h4>
-          {explanationContent && (
-            <div className={showAnswer ? "visible-answer" : "hidden-answer"}>
-              <h3>Explication :</h3>
-              <CustomMarkdown markdownText={explanationContent} />
-            </div>
+        <div className="image-display">
+          <div className="image-counter">Image {currentIndex + 1}/{totalCases}</div>
+          {imageUrl ? (
+            <CustomMarkdown
+              markdownText={`![Cas clinique](${imageUrl})`}  // Utilisation de CustomMarkdown pour afficher l'image
+              imageClass="custom-image"
+            />
+          ) : (
+            <div>Aucune image disponible pour ce cas.</div>
           )}
         </div>
-      </div>
 
-      <div className="button-section">
-        {showAnswer ? (
-          <button className="button-randomisation" onClick={handleNextCase}>
-            Image Suivante
-          </button>
-        ) : (
-          <button className="button-randomisation" onClick={() => setShowAnswer(true)}>
-            Afficher la Réponse
-          </button>
-        )}
+        <div className="text-content">
+          <div className="clinical-info">
+            
+            {caseAttributes.affichercontexte && caseAttributes.contexte && (
+              <div className="clinical-context">
+                <h3>Contexte Clinique :</h3>
+                <CustomMarkdown markdownText={caseAttributes.contexte} />
+              </div>
+            )}
+            
+            <div className="diagnostic">
+              <h3>Diagnostic :</h3>
+              <h4 className={showAnswer ? "visible-answer" : "hidden-answer"}>
+                {caseAttributes.diagnosticspecifique || pathology.diagnostic}
+              </h4>
+              {explanationContent && (
+                <div className={showAnswer ? "visible-answer" : "hidden-answer"}>
+                  <h3>Explication :</h3>
+                  <CustomMarkdown markdownText={explanationContent} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="button-section">
+            {showAnswer ? (
+              <button className="button-randomisation" onClick={handleNextCase}>
+                Image Suivante
+              </button>
+            ) : (
+              <button className="button-randomisation" onClick={() => setShowAnswer(true)}>
+                Afficher la Réponse
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
   );
 };
 

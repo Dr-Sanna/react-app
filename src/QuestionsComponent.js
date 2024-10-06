@@ -29,13 +29,21 @@ const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPar
   };
 
   const handleCheckAnswers = () => {
-    setIsChecked(true);
+    if (isChecked) {
+      // Réinitialiser les options et désactiver le mode "vérification"
+      setSelectedOptions({});
+      setIsChecked(false);
+    } else {
+      // Activer la vérification
+      setIsChecked(true);
+    }
   };
 
   return (
     <>
+      {/* Affichage des questions si présentes */}
       {hasQuestions && <h3>Questions</h3>}
-      {hasQuestions ? (
+      {hasQuestions && (
         <>
           {questions.map((item, index) => (
             <Accordion
@@ -50,24 +58,27 @@ const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPar
             />
           ))}
         </>
-      ) : (
-        !hasQCMs && <p>Pas de questions disponibles.</p>
       )}
+
+      {/* N'afficher la section qcm-section que si des QCM sont présents */}
       {hasQCMs && (
-        <>
+        <div className="qcm-section"> {/* Ajout de l'espace et de la séparation */}
           <h3>QCM</h3>
           {qcms.map((qcm, qcmIndex) => (
             <QCM
               key={qcmIndex}
               question={qcm.question}
               propositions={qcm.proposition}
+              complement={qcm.complement}  // Transmission du complément au composant QCM
               selectedOptions={selectedOptions[qcmIndex] || {}}
               handleCheckboxChange={(optionIndex) => handleCheckboxChange(qcmIndex, optionIndex)}
               isChecked={isChecked}
             />
           ))}
-          <button className="check-all-button" onClick={handleCheckAnswers}>Tout vérifier</button>
-        </>
+          <button className="check-all-button" onClick={handleCheckAnswers}>
+            {isChecked ? 'Recommencer' : 'Tout vérifier'}
+          </button>
+        </div>
       )}
     </>
   );

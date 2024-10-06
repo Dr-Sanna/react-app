@@ -14,11 +14,24 @@ import MainSections from './MainSections';
 import HeroBanner from './HeroBanner';
 import RandomisationComponent from './RandomisationComponent';
 import BackgroundWrapper from './BackgroundWrapper'; // Importation du BackgroundWrapper
+import medicalCaseImage from './assets/medical_case.png';
+import diceImage from './assets/dice.png';
+import openBookImage from './assets/open_book.png';
+import linksImage from './assets/links.png';
 
 const HomePage = ({ fontSize }) => {
   const { matieres, sousMatieres, isLoading } = useContext(DataContext);
   const navigate = useNavigate();
   const [initialLoad, setInitialLoad] = useState(true);
+
+  // Précharge globalement les images
+  useEffect(() => {
+    const images = [medicalCaseImage, diceImage, openBookImage, linksImage];
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const handleMatiereClick = (matiere) => {
     const matiereTitleUrl = toUrlFriendly(matiere.attributes.titre);
