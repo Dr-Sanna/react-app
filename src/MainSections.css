@@ -6,7 +6,7 @@
 }
 
 .section-card {
-  background-color: #edf1ff;
+  background-color: #ffffff;
   border-radius: 10px;
   width: 240px; /* Ajustez si nécessaire */
   margin: 15px;
@@ -14,11 +14,13 @@
   text-align: center;
   cursor: pointer;
   position: relative;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); 
+  border: 1px solid lightgray;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .section-card {
   background-color: rgb(54, 55, 57);
+  border: 1px solid transparent;
 }
 
 .section-card h2 {
@@ -63,7 +65,7 @@
   right: 0;
   bottom: 0;
   padding: 10px; /* Ajustez si nécessaire */
-  background-color: #edf1ff;;
+  background-color: #ffffff;;
   color: #555;
   font-size: 1em;
   opacity: 0; /* Rendre invisible par défaut */
@@ -73,7 +75,7 @@
   justify-content: center;
   text-align: center;
   margin: 0;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 [data-theme="dark"] .section-description {
@@ -83,6 +85,10 @@
 
 .section-card:hover .section-description {
   opacity: 1; /* Affiche la description au survol */
+  
+}
+.section-card:hover {
+ 
   border: 1px solid var(--ifm-color-primary);
 }
 
