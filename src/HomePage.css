@@ -170,6 +170,7 @@ padding-left: 30px;
 }
 
 .text-menu-sous-matiere p {
+    padding: 5px;
     margin: 0; /* Réinitialisation des marges du paragraphe */
     text-align: center; /* Centre le texte à l'intérieur du paragraphe */
 }

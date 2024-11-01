@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Accordion from './Accordion';
 import CustomMarkdown from './CustomMarkdown';
-import QCM from './QCM'; // Assurez-vous que le chemin est correct
-import './QCM.css'; // Importez le fichier CSS
+import QCM from './QCM';
+import './QCM.css';
 
 const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPart }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
@@ -18,6 +18,12 @@ const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPar
   const hasQuestions = Array.isArray(questions) && questions.length > 0;
   const hasQCMs = Array.isArray(qcms) && qcms.length > 0;
 
+  useEffect(() => {
+    // Réinitialiser les options et isChecked quand qcms change
+    setSelectedOptions({});
+    setIsChecked(false);
+  }, [qcms]);
+
   const handleCheckboxChange = (qcmIndex, optionIndex) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -29,19 +35,14 @@ const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPar
   };
 
   const handleCheckAnswers = () => {
+    setIsChecked((prevChecked) => !prevChecked);
     if (isChecked) {
-      // Réinitialiser les options et désactiver le mode "vérification"
       setSelectedOptions({});
-      setIsChecked(false);
-    } else {
-      // Activer la vérification
-      setIsChecked(true);
     }
   };
 
   return (
     <>
-      {/* Affichage des questions si présentes */}
       {hasQuestions && <h3>Questions</h3>}
       {hasQuestions && (
         <>
@@ -60,16 +61,15 @@ const QuestionsComponent = ({ courseQuestions, partQuestions, qcms, title, isPar
         </>
       )}
 
-      {/* N'afficher la section qcm-section que si des QCM sont présents */}
       {hasQCMs && (
-        <div className="qcm-section"> {/* Ajout de l'espace et de la séparation */}
+        <div className="qcm-section">
           <h3>QCM</h3>
           {qcms.map((qcm, qcmIndex) => (
             <QCM
               key={qcmIndex}
               question={qcm.question}
               propositions={qcm.proposition}
-              complement={qcm.complement}  // Transmission du complément au composant QCM
+              complement={qcm.complement}
               selectedOptions={selectedOptions[qcmIndex] || {}}
               handleCheckboxChange={(optionIndex) => handleCheckboxChange(qcmIndex, optionIndex)}
               isChecked={isChecked}
