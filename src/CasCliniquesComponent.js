@@ -94,7 +94,11 @@ const CasCliniquesComponent = ({ fontSize }) => {
     const pathSegments = location.pathname.split('/');
     const newPath = `${pathSegments.slice(0, 3).join('/')}/${toUrlFriendly(item.attributes.test.titre)}`;
     navigate(newPath);
+    
+    // Remonte en haut de la page lors de la sélection d'une carte
+    window.scrollTo(0, 0);
   };
+  
 
   const menuItems = casCliniques.map(item => ({
     key: item.id.toString(),

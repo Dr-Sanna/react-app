@@ -67,7 +67,6 @@
 .new-navbar__actions {
   display: flex;
   align-items: center;
-  gap: 15px;
 }
 
 /* Centrage et agrandissement de l'icône GitHub */
